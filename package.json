@@ -1,0 +1,17 @@
+{
+  "name": "mockup",
+  "version": "0.1.0",
+  "private": true,
+  "description": "모두립 Next.js 목업 · 와이어프레임 + 화면별 풀스크린 목업 (claude design /app 레퍼런스 이식)",
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "lint": "next lint"
+  },
+  "dependencies": {
+    "next": "^14.2.35",
+    "react": "18.3.1",
+    "react-dom": "18.3.1"
+  }
+}

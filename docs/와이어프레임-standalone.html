@@ -1,0 +1,358 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>모두립 와이어프레임 · 15 화면</title>
+<style>
+  :root{
+    --ink:#171719; --fg:rgba(46,47,51,.88); --sub:rgba(55,56,60,.61);
+    --line:#d7dbe0; --line2:#e8ebef; --surface:#fff; --bg:#f4f6f8;
+    --primary:#0066ff; --success:#00bf40; --danger:#ff4242;
+    --nature:#009632; --heritage:#d17600; --culture:#6541f2; --festival:#d331b8;
+    --frame-w:300px;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;font-family:"Pretendard",-apple-system,system-ui,"Apple SD Gothic Neo",sans-serif;
+    background:#e9edf1;color:var(--fg);line-height:1.45;}
+  .page{max-width:1480px;margin:0 auto;padding:32px 28px 80px;}
+  header.top{margin-bottom:8px}
+  header.top h1{font-size:26px;font-weight:800;color:var(--ink);margin:0 0 6px;letter-spacing:-.02em}
+  header.top p{margin:0;color:var(--sub);font-size:14px}
+  .legend{display:flex;flex-wrap:wrap;gap:10px 18px;margin:18px 0 26px;font-size:12px;color:var(--sub)}
+  .legend b{font-weight:600;color:var(--fg)}
+  .sw{display:inline-block;width:11px;height:11px;border-radius:3px;vertical-align:-1px;margin-right:5px}
+  .gallery{display:flex;flex-wrap:wrap;gap:34px 26px}
+  /* device frame */
+  .device{width:var(--frame-w);flex:0 0 auto}
+  .device .cap{font-size:12px;color:var(--sub);margin:0 0 8px;display:flex;gap:7px;align-items:baseline}
+  .device .cap .no{font-weight:800;color:var(--ink);font-size:13px;font-variant-numeric:tabular-nums}
+  .device .cap .nm{font-weight:600;color:var(--fg);font-size:13px}
+  .device .cap .tb{margin-left:auto;font-size:10px;letter-spacing:.04em;text-transform:uppercase;color:var(--sub)}
+  .screen{position:relative;height:600px;border:1.5px solid var(--ink);border-radius:30px;
+    background:var(--bg);overflow:hidden;box-shadow:0 10px 30px -16px rgba(0,0,0,.45);}
+  .notch{position:absolute;top:8px;left:50%;transform:translateX(-50%);width:90px;height:18px;
+    background:var(--ink);border-radius:0 0 12px 12px;z-index:30}
+  .scroll{position:absolute;inset:0;overflow:hidden;padding:30px 14px 60px;}
+  .scroll.dark{background:#0f1821;padding-top:30px}
+  /* blocks */
+  .b{margin-bottom:9px}
+  .box{border:1.4px solid var(--line);border-radius:12px;background:var(--surface);
+    display:flex;align-items:center;justify-content:center;text-align:center;
+    font-size:11px;color:var(--sub);padding:8px;white-space:pre-line}
+  .img{border:1.4px dashed #b9c0c8;background:repeating-linear-gradient(135deg,#f0f3f6 0 7px,#e7ebef 7px 14px);
+    color:#8b939c;font-size:11px}
+  .row{display:flex;gap:8px}
+  .row>*{flex:1;margin-bottom:0}
+  .bar{display:flex;align-items:center;gap:8px;padding:8px 10px;background:var(--surface);
+    border:1.4px solid var(--line);border-radius:12px;font-weight:800;color:var(--ink);font-size:14px}
+  .bar .icns{margin-left:auto;display:flex;gap:7px}
+  .bar .ic{width:20px;height:20px;border:1.4px solid var(--line);border-radius:6px}
+  .hdr .sub{font-size:11px;color:var(--sub)}
+  .hdr .ttl{font-size:20px;font-weight:800;color:var(--ink);letter-spacing:-.01em;display:flex;align-items:center;gap:8px}
+  .hdr .ttl .tr{margin-left:auto;font-size:11px;font-weight:600;color:var(--primary);
+    border:1.3px solid var(--primary);border-radius:8px;padding:3px 8px}
+  .stat{display:flex;gap:8px}
+  .stat .c{flex:1;background:var(--surface);border:1.4px solid var(--line);border-radius:12px;padding:10px 6px;text-align:center}
+  .stat .v{font-weight:800;color:var(--ink);font-size:16px;font-variant-numeric:tabular-nums}
+  .stat .k{font-size:10px;color:var(--sub);margin-top:2px}
+  .chips{display:flex;gap:6px;overflow:hidden}
+  .chip{flex:0 0 auto;border:1.3px solid var(--line);border-radius:999px;padding:5px 11px;font-size:11px;background:var(--surface);color:var(--fg)}
+  .chip.on{background:var(--ink);color:#fff;border-color:var(--ink)}
+  .seg{display:flex;background:#e9edf1;border-radius:11px;padding:3px;gap:3px}
+  .seg .s{flex:1;text-align:center;font-size:11px;padding:6px 4px;border-radius:8px;color:var(--sub)}
+  .seg .s.on{background:#fff;color:var(--ink);font-weight:700;box-shadow:0 1px 4px -1px rgba(0,0,0,.2)}
+  .grid{display:grid;gap:8px}
+  .cell{border:1.4px solid var(--line);border-radius:12px;overflow:hidden;background:var(--surface)}
+  .cell .ci{height:48px;background:repeating-linear-gradient(135deg,#eef1f4 0 7px,#e6eaee 7px 14px);
+    position:relative;display:flex;align-items:center;justify-content:center;font-size:10px;color:#9aa2ab}
+  .cell .ct{padding:6px 7px;font-size:10px;color:var(--fg)}
+  .cell .idx{position:absolute;top:4px;left:5px;font-family:ui-monospace,SFMono-Regular,monospace;font-size:9px;color:var(--sub)}
+  .cell .bdg{position:absolute;top:4px;right:5px;width:14px;height:14px;border-radius:50%;background:var(--success)}
+  .cell.locked .ci{filter:grayscale(1);opacity:.7}
+  .cta{border-radius:13px;padding:13px;text-align:center;font-weight:700;font-size:13px}
+  .cta.p{background:var(--primary);color:#fff}
+  .cta.s{background:#e6f7ec;color:var(--success);border:1.3px solid #bfeccb}
+  .cta.d{background:#eef0f3;color:#aeb4bc;border:1.3px dashed #cfd5db}
+  .cat{display:flex;gap:7px}
+  .cat .cb{flex:1;border-radius:11px;padding:10px 4px;text-align:center;font-size:11px;font-weight:700;color:#fff}
+  .pager{display:flex;gap:5px;justify-content:center;padding:4px 0}
+  .pager .d{width:6px;height:6px;border-radius:3px;background:#cdd3da}
+  .pager .d.on{width:22px;background:var(--primary)}
+  .note{font-size:10.5px;color:#9098a1;font-style:italic;border-left:2px solid #cfd5db;padding-left:7px;margin:7px 0 9px}
+  .sect{font-size:13px;font-weight:800;color:var(--ink);margin:12px 2px 7px}
+  .hint{text-align:center;font-size:10.5px;color:var(--sub);padding:6px}
+  .listrow{display:flex;align-items:center;gap:9px;background:var(--surface);border:1.4px solid var(--line);border-radius:12px;padding:9px 11px;margin-bottom:9px}
+  .listrow .ld{width:26px;height:26px;border-radius:8px;background:#eef1f4;flex:0 0 auto}
+  .listrow .tx{flex:1;min-width:0}
+  .listrow .tx .t{font-size:12px;color:var(--fg);font-weight:600}
+  .listrow .tx .s{font-size:10px;color:var(--sub)}
+  .listrow .tr{font-size:10px;color:var(--sub)}
+  .av{width:34px;height:34px;border-radius:50%;background:#dfe4ea;flex:0 0 auto;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:800;color:#8b939c}
+  .prog{height:6px;border-radius:3px;background:#e6eaee;overflow:hidden;margin-top:8px}
+  .prog>i{display:block;height:100%;background:var(--primary);border-radius:3px}
+  /* tabbar */
+  .tabbar{position:absolute;left:0;right:0;bottom:0;height:48px;background:#fff;border-top:1.4px solid var(--line);
+    display:flex;z-index:20}
+  .tabbar .t{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;font-size:8.5px;color:var(--sub)}
+  .tabbar .t .g{width:17px;height:17px;border:1.6px solid var(--sub);border-radius:5px}
+  .tabbar .t.on{color:var(--primary)}
+  .tabbar .t.on .g{border-color:var(--primary);background:rgba(0,102,255,.1)}
+  /* dark/overlay */
+  .dark .box,.dark .bar{background:rgba(255,255,255,.06);border-color:rgba(255,255,255,.14);color:#cdd6df}
+  .dark .sect,.dark .hint{color:#e5ecf2}
+  .hero{border-radius:16px;padding:16px 14px;color:#fff;background:linear-gradient(135deg,#3a4654,#222b35)}
+  .hero.tone{background:linear-gradient(135deg,#2d6cf0,#1a3f9e)}
+  .hero .small{font-size:11px;opacity:.85}
+  .hero .big{font-size:20px;font-weight:800;margin-top:3px}
+  .map{border:1.4px solid var(--line);border-radius:14px;background:
+    radial-gradient(circle at 50% 42%, #e4ecff 0 30%, #eef2f6 31% 100%);
+    position:relative;display:flex;align-items:center;justify-content:center;color:#9aa2ab;font-size:11px}
+  .map .pin{position:absolute;width:16px;height:16px;border-radius:50% 50% 50% 0;transform:rotate(-45deg);border:2px solid #fff;box-shadow:0 1px 3px rgba(0,0,0,.3)}
+  .zoom{position:absolute;right:8px;top:50%;transform:translateY(-50%);display:flex;flex-direction:column;gap:5px;align-items:center}
+  .zoom .zb{width:26px;height:26px;border:1.4px solid var(--line);border-radius:8px;background:#fff;display:flex;align-items:center;justify-content:center;font-weight:800;color:var(--ink)}
+  .zoom .zp{font-size:9px;background:var(--ink);color:#fff;border-radius:999px;padding:2px 7px}
+  .sheet{position:absolute;left:8px;right:8px;bottom:8px;background:#fff;border:1.4px solid var(--line);border-radius:16px;padding:11px;z-index:10}
+  .card3d{width:170px;height:240px;margin:18px auto;border-radius:16px;border:2px solid rgba(255,255,255,.35);
+    background:linear-gradient(135deg,#1d2a55,#3a1d55 55%,#551d44);position:relative;overflow:hidden;
+    box-shadow:0 16px 40px -12px rgba(0,0,0,.6)}
+  .card3d:after{content:"";position:absolute;inset:0;background:linear-gradient(120deg,transparent 30%,rgba(255,255,255,.22) 50%,transparent 70%)}
+  .card3d .ph{position:absolute;inset:10px 10px 70px;border-radius:9px;background:repeating-linear-gradient(135deg,rgba(255,255,255,.13) 0 7px,rgba(255,255,255,.05) 7px 14px)}
+  .card3d .meta{position:absolute;left:12px;right:12px;bottom:12px;color:#fff}
+  .card3d .meta .nm{font-weight:800;font-size:13px}
+  .card3d .meta .sm{font-size:10px;opacity:.85}
+  @media(max-width:680px){:root{--frame-w:88vw}}
+</style>
+</head>
+<body>
+<div class="page">
+  <header class="top">
+    <h1>모두립 · 와이어프레임</h1>
+    <p>15개 화면 저충실도(low-fi) 설계 · 디바이스 402×874 기준 · 출처 docs/01-기능명세서 · 짝 문서 화면설계서.md</p>
+  </header>
+  <div class="legend">
+    <span><b>범례</b></span>
+    <span><span class="sw" style="background:#fff;border:1.4px solid #d7dbe0"></span>표면/카드</span>
+    <span><span class="sw img"></span>이미지 플레이스홀더</span>
+    <span><span class="sw" style="background:var(--primary)"></span>Primary/CTA</span>
+    <span><span class="sw" style="background:var(--nature)"></span>자연</span>
+    <span><span class="sw" style="background:var(--heritage)"></span>유적</span>
+    <span><span class="sw" style="background:var(--culture)"></span>문화</span>
+    <span><span class="sw" style="background:var(--festival)"></span>축제</span>
+  </div>
+  <div class="gallery" id="gallery"></div>
+</div>
+
+<script>
+const CAT=["var(--nature)","var(--heritage)","var(--culture)","var(--festival)"];
+const CATN=["자연","유적","문화","축제"];
+const R={
+  box:(l,h=40)=>`<div class="b box" style="height:${h}px">${l||""}</div>`,
+  img:(l,h=80)=>`<div class="b box img" style="height:${h}px">${l||"이미지"}</div>`,
+  bar:(l)=>`<div class="b bar">${l}<span class="icns"><span class="ic"></span><span class="ic"></span></span></div>`,
+  hdr:(s,t,tr)=>`<div class="b hdr"><div class="sub">${s}</div><div class="ttl">${t}${tr?`<span class="tr">${tr}</span>`:""}</div></div>`,
+  stat:(arr)=>`<div class="b stat">${arr.map(([v,k])=>`<div class="c"><div class="v">${v}</div><div class="k">${k}</div></div>`).join("")}</div>`,
+  chips:(arr,on=0)=>`<div class="b chips">${arr.map((c,i)=>`<span class="chip${i===on?" on":""}">${c}</span>`).join("")}</div>`,
+  seg:(arr,on=0)=>`<div class="b seg">${arr.map((s,i)=>`<div class="s${i===on?" on":""}">${s}</div>`).join("")}</div>`,
+  cta:(l,v="p")=>`<div class="b cta ${v}">${l}</div>`,
+  pager:(n,on=0)=>`<div class="b pager">${Array.from({length:n},(_,i)=>`<span class="d${i===on?" on":""}"></span>`).join("")}</div>`,
+  cat:(fill=[1,0,0,0])=>`<div class="b cat">${CAT.map((c,i)=>`<div class="cb" style="background:${fill[i]?c:'#eef1f4'};color:${fill[i]?'#fff':'#9aa2ab'}">${CATN[i]}</div>`).join("")}</div>`,
+  note:(t)=>`<div class="note">${t}</div>`,
+  sect:(t)=>`<div class="sect">${t}</div>`,
+  hint:(t)=>`<div class="hint">${t}</div>`,
+  sp:(h=6)=>`<div style="height:${h}px"></div>`,
+  prog:(p)=>`<div class="prog"><i style="width:${p}%"></i></div>`,
+  row:(items)=>`<div class="b row">${items.join("")}</div>`,
+  listrow:(t,s,tr="")=>`<div class="listrow"><span class="ld"></span><span class="tx"><span class="t">${t}</span><br><span class="s">${s}</span></span><span class="tr">${tr}</span></div>`,
+  avrow:(nm,sub,tr="")=>`<div class="listrow"><span class="av">${nm[0]}</span><span class="tx"><span class="t">${nm}</span><br><span class="s">${sub}</span></span><span class="tr">${tr}</span></div>`,
+  hero:(small,big,tone=false,extra="")=>`<div class="b hero${tone?" tone":""}"><div class="small">${small}</div><div class="big">${big}</div>${extra}</div>`,
+  grid:(cols,cells)=>`<div class="b grid" style="grid-template-columns:repeat(${cols},1fr)">${cells.join("")}</div>`,
+  cell:(idx,label,locked=false,badge=false)=>`<div class="cell${locked?" locked":""}"><div class="ci">${idx?`<span class="idx">${idx}</span>`:""}${badge?'<span class="bdg"></span>':""}사진</div><div class="ct">${label}</div></div>`,
+};
+const tabbar=(on)=>{const T=["홈","발견","도감","광장","나"];return `<div class="tabbar">${T.map((t,i)=>`<div class="t${i===on?" on":""}"><span class="g"></span>${t}</div>`).join("")}</div>`;};
+
+const S=[
+{id:"00",nm:"공통 · 탭바/토큰",scroll:[
+  R.sect("디자인 시스템 (Wanted DS)"),
+  R.box("AppHeader · subtitle / title / trailing",46),
+  R.row([R.cta("Primary","p"),R.cta("Outline","d")]),
+  R.chips(["active","inactive","칩"],0),
+  R.cat([1,1,0,0]),
+  R.sect("Badge 9변형"),
+  R.chips(["발견","인기","혼잡","유적","축제"],0),
+  R.note("하단 5탭은 모든 루트 화면 공통 · 온보딩/모달 숨김"),
+],tabbarOn:0},
+
+{id:"01",nm:"온보딩",noTab:true,scroll:[
+  R.row([R.box("",10),R.cta("건너뛰기","d")]),
+  R.img("핀 글리프 + 동심원",150),
+  R.sect("한국에는 꼭 가야 할 곳이 없었습니다"),
+  R.note("5장 풀스크린 페이저 · 스와이프/탭 이동"),
+  R.box("① 핀  ② 3×3 타일  ③ GPS  ④ 칭호  ⑤ 이름입력",54),
+  R.sp(8),
+  R.pager(5,0),
+  R.row([R.cta("이전","d"),R.cta("계속","p")]),
+  R.note("5장: 이름 입력 → '도감 시작하기' · 미입력 시 꼬마탐험가"),
+]},
+
+{id:"02",nm:"홈",scroll:[
+  R.bar("모두립"),
+  R.sect("안녕하세요, 탐험가님"),
+  R.box("오늘 어디 가볼까요?",30),
+  R.stat([["12/40","발견 자원"],["5/17","방문 지역"],["30%","달성률"]]),
+  R.sect("오늘의 추천"),
+  R.row([R.box("설악산\n혼잡 92",70),R.box("팔공산\n한산 28",70)]),
+  R.note("좌 danger·빨강 / 우 success·초록 progress + API 출처"),
+  R.sect("최근 발견"),
+  R.row([R.img("",54),R.img("",54),R.img("",54)]),
+  R.sect("아직 안 가본 지역"),
+  R.grid(2,[R.cell("","경북"),R.cell("","전남")]),
+  R.note("7초마다 4개씩 fade-up · 우측 dot"),
+],tabbarOn:0},
+
+{id:"03",nm:"발견 (GPS 지도)",custom:`
+  ${R.box("자원 검색",34)}
+  <div class="b map" style="height:300px">한반도 SVG · 도로 점선
+    <span class="pin" style="left:38%;top:30%;background:var(--nature)"></span>
+    <span class="pin" style="left:60%;top:46%;background:#fff;border-color:var(--primary);transform:rotate(-45deg) scale(1.4)"></span>
+    <span class="pin" style="left:50%;top:62%;background:var(--festival)"></span>
+    <div class="zoom"><span class="zb">+</span><span class="zp">5km</span><span class="zb">&minus;</span></div>
+  </div>
+  ${R.note("핀 3상태: 미발견(흰)·발견(색+체크)·선택(파란보더+pulse 1.4×) · 줌 9단계")}
+  <div class="sheet">${R.row([R.img("",46),R.box("설악산\n자연 · 1.2km",46)])}${R.cta("여기에서 발견하기","p")}</div>
+`,tabbarOn:1},
+
+{id:"04",nm:"발견 성공 (오버레이)",dark:true,noTab:true,scroll:[
+  R.sect("✦ 발견!"),
+  `<div class="card3d"><div class="ph"></div><div class="meta"><div class="nm">설악산</div><div class="sm">#012 · 자연 · 방금</div></div></div>`,
+  R.hint("Stage1: X축 720° flip → Stage2: spring 안착 + confetti 56"),
+  R.seg(["가벼운 발견","깊은 발견"],0),
+  R.box("강원 진행률  +1 → 13/40",40),
+  R.row([R.cta("닫기","d"),R.cta("도감에서 확인","p")]),
+]},
+
+{id:"05",nm:"도감 — 전국",scroll:[
+  R.hdr("전국 도감","대한민국",""),
+  R.seg(["지도","카드"],0),
+  R.stat([["120/640","발견"],["5/17","지역"],["19%","달성"]]),
+  `<div class="b map" style="height:230px">17광역 폴리곤 · 채움률 알파
+    <span class="pin" style="left:46%;top:40%;background:var(--primary)"></span></div>`,
+  R.note("선택 시 1.14× + 검정 보더 + 글로우 · 라벨 halo"),
+  R.row([R.box("강원\n실루엣",60),R.box("강원 · 38/120\n자연·유적·문화·축제",60)]),
+],tabbarOn:2},
+
+{id:"06",nm:"도감 — 지역 상세",scroll:[
+  R.hero("강원","강원 · 38/120곳 발견",false,R.prog(32)),
+  R.row([R.box("",10),R.cta("프리셋 만들기","d")]),
+  R.note("우상단 '프리셋 만들기'는 2곳 이상 발견 시에만 노출"),
+  R.cat([1,0,0,0]),
+  R.chips(["전체","산","해변·섬","계곡","숲"],0),
+  R.seg(["전체","발견","미발견"],0),
+  R.grid(2,[R.cell("#001","설악산",false,true),R.cell("#002","경포대",false,true),R.cell("#003","오대산",true),R.cell("#004","정동진",true)]),
+  R.note("미발견: grayscale·실제 이름 노출 / 발견: 컬러+success 뱃지"),
+],tabbarOn:2},
+
+{id:"07",nm:"장소 상세",scroll:[
+  R.img("헤로 320px · 탭 시 3D 카드 모달",118),
+  R.note("좌 뒤로/우 하트 · 우하단 발견·내사진 뱃지 · 좌하단 KTO코드"),
+  R.row([R.box("자연·산·강원\n설악산",46),R.box("카카오\n길찾기",46)]),
+  R.box("내 사진 카드 · 등록/바꾸기/제거",40),
+  R.box("설명 · 머무는 시간 / 희귀도 / 시즌",46),
+  R.sect("30일 혼잡도"),
+  R.grid(10,Array.from({length:10},(_,i)=>`<div class="cell"><div class="ci" style="height:18px;background:${i===3?'#FF8C8C':(i%3?'#FFD49C':'#7DF5A5')}"></div></div>`)),
+  R.note("한산/보통/혼잡 3색 · 오늘 cell 검정 보더"),
+  R.box("자원 정보 · 주소/전화/시간 + 공식 페이지",46),
+  R.box("반경 5km 주변 · 식당/카페/숙박",40),
+  R.cta("여기로 떠나기","p"),
+],tabbarOn:2},
+
+{id:"08",nm:"3D 카드 모달",dark:true,noTab:true,scroll:[
+  R.row([R.box("앞면 / 뒷면",26),R.box("✕",26)]),
+  `<div class="card3d"><div class="ph"></div><div class="meta"><div class="nm">설악산</div><div class="sm">#012 · 자연 · 강원</div></div></div>`,
+  R.hint("탭 시 flip (rotateY 0↔180, 700ms) · 홀로그래픽 shine"),
+  R.box("뒷면: 당신은 N번째 발견자 · N명이 담음 · 모두립 2026",54),
+]},
+
+{id:"09",nm:"광장",scroll:[
+  R.seg(["피드","인기 프리셋","리더보드","동행"],1),
+  R.box("제목/지역/태그 통합 검색",32),
+  R.chips(["전체","일출","당일치기","자연","산악"],0),
+  R.note("태그 칩 다중 선택 · savedCount 내림차순 · Top3 메달"),
+  R.row([R.box("🥇 강원 일출 코스\n5곳 · 담음 320",70),R.box("🥈 제주 오름\n4곳 · 담음 210",70)]),
+  R.avrow("작성자","등록 12 · 퍼감 540"),
+],tabbarOn:3},
+
+{id:"10",nm:"칭호 (5티어)",scroll:[
+  R.box("획득 14 / 전체 60 · 5티어 시스템 · 대표 변경",46),
+  R.sect("티어 범례"),
+  R.chips(["입문","광역","카테고리","표고","마스터"],0),
+  R.sect("획득"),
+  R.row([R.box("제주를\n발견한 자",54),R.box("봉우리\n수집가",54)]),
+  R.sect("진행 중"),
+  R.listrow("에베레스트를 넘다","누적 표고","8/14"),
+  R.note("획득: 티어색 강조 / 진행중: 회색 + progress"),
+],tabbarOn:4},
+
+{id:"11",nm:"프로필 (나)",scroll:[
+  R.hero("나의 발견","탐험가",false,R.row([R.box("5\n지역",30),R.box("120\n발견",30),R.box("14\n칭호",30)])),
+  R.listrow("칭호","5티어 시스템","›"),
+  R.listrow("가고싶다","저장한 장소","›"),
+  R.listrow("협력 혜택","배지 3","›"),
+  R.sect("계열별 진행"),
+  R.row([R.box("자연 40%",40),R.box("유적 22%",40)]),
+  R.sect("내 프리셋"),
+  R.box("아직 등록한 코스가 없어요",40),
+],tabbarOn:4},
+
+{id:"12",nm:"프리셋 — 만들기",noTab:true,scroll:[
+  R.hdr("","강원 프리셋 만들기",""),
+  R.box("코스 이름 (필수)",36),
+  R.box("설명 (선택, 멀티라인)",50),
+  R.sect("태그 (최대 6)"),
+  R.chips(["+ 일출","+ 당일치기","+ 자연","+ 산악"],99),
+  R.row([R.box("강원에서 발견한 자원 · 12곳",34),R.box("검색",34)]),
+  R.grid(3,[R.cell("","설악산"),R.cell("","경포대"),R.cell("","오대산")]),
+  R.sect("코스 순서"),
+  R.listrow("1. 설악산","위/아래/X","↑↓✕"),
+  R.cta("등록","p"),
+]},
+
+{id:"13",nm:"프리셋 — 상세",noTab:true,scroll:[
+  R.hero("강원","강원 일출 코스",true,`<div class="small" style="margin-top:4px">자원 5곳 · 담음 320회</div>`),
+  R.avrow("작성자","등록 12 · 퍼감 540","›"),
+  R.box("설명 · 멀티라인 본문",40),
+  R.chips(["일출","당일치기","자연"],99),
+  R.seg(["리스트 뷰","지도 뷰"],0),
+  R.listrow("1. 설악산","자연 · 강원","›"),
+  R.listrow("2. 경포대","자연 · 강원","›"),
+  R.cta("내 프리셋에 가져오기","p"),
+  R.note("본인: CTA 없음 / 담음: '담았어요' 초록 토글"),
+]},
+
+{id:"14",nm:"타 유저 프로필",noTab:true,scroll:[
+  R.hero("","여행자 닉네임",false,R.row([R.box("210\n발견",30),R.box("8\n지역",30),R.box("1.2k\n퍼감",30)])),
+  R.sect("수집된 칭호 · 8개"),
+  R.chips(["입문","제주발견자","봉우리수집가","해양탐험가"],0),
+  R.sect("수집한 도감 · 많이 모은 순"),
+  R.grid(3,[R.cell("","제주 88%"),R.cell("","강원 64%"),R.cell("","경북 40%")]),
+  R.pager(2,0),
+  R.note("2×3 슬라이드 · 7초 자동회전 · fade-up stagger"),
+  R.sect("등록한 프리셋"),
+  R.box("제주 오름 코스 · 4곳",40),
+]},
+];
+
+const g=document.getElementById("gallery");
+g.innerHTML=S.map(s=>{
+  const body=s.custom||(s.scroll?s.scroll.join(""):"");
+  const tb=(s.noTab)?"":(typeof s.tabbarOn==="number"?tabbar(s.tabbarOn):"");
+  return `<div class="device">
+    <div class="cap"><span class="no">${s.id}</span><span class="nm">${s.nm}</span><span class="tb">${s.noTab?"overlay/flow":"tab"}</span></div>
+    <div class="screen"><div class="notch"></div>
+      <div class="scroll${s.dark?" dark":""}">${body}</div>${tb}
+    </div>
+  </div>`;
+}).join("");
+</script>
+</body>
+</html>
