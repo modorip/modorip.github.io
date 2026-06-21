@@ -5,3 +5,6 @@
 .DS_Store
 *.log
 .env*
+
+# Claude Code 로컬(비공유) 메모
+CLAUDE.local.md

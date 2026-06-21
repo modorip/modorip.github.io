@@ -1,4 +1,5 @@
 @import url("/wanted/colors_and_type.css");
+@import "../styles/tokens.css"; /* seed-design SSOT 토큰 (client와 공유) */
 
 *, *::before, *::after { box-sizing: border-box; }
 html, body {

@@ -1,7 +1,7 @@
 # 모두립 · Mockup (Next.js)
 
 모두립 앱의 **와이어프레임**과 **화면별 풀스크린 목업**을 담은 Next.js 프로젝트.
-claude design 작업물(`../app` 의 React 레퍼런스, Wanted Design System)을 그대로 이식해 화면과 시각적으로 일치한다.
+claude design 작업물(`../seed-design/reference/app` 의 React 레퍼런스, Wanted Design System)을 그대로 이식해 화면과 시각적으로 일치한다.
 
 ## 라우트
 
@@ -38,7 +38,7 @@ src/
 │   ├── MockApp.jsx       # 스택 네비게이션 셸 (app.jsx 이식)
 │   └── ClientOnly.jsx    # localStorage/document 쓰는 번들 클라 전용 가드
 ├── design/
-│   └── bundle.jsx        # ★ /app 디자인 레퍼런스 자동 이식 번들 (수정 금지)
+│   └── bundle.jsx        # ★ seed-design/reference/app 디자인 레퍼런스 자동 이식 번들 (수정 금지)
 ├── lib/
 │   ├── screens.js        # 화면 메타데이터
 │   └── wireframes.js     # 와이어프레임 갤러리 빌더
@@ -48,19 +48,19 @@ docs/
 
 ## design/bundle.jsx 재생성
 
-`bundle.jsx`는 `../app` 의 11개 파일을 index.html 로드 순서대로 concat한 산출물이다.
+`bundle.jsx`는 `../seed-design/reference/app` 의 11개 파일을 index.html 로드 순서대로 concat한 산출물이다.
 원본 디자인이 바뀌면 아래로 재생성한다(루트에서):
 
 ```bash
 {
   printf "%s\n" "'use client';"
   printf "%s\n" "import React from 'react';"
-  cat app/icons.jsx app/primitives.jsx app/data.jsx app/region-paths.js app/ui.jsx \
-      app/screens-core.jsx app/screens-dex.jsx app/screens-discover.jsx \
-      app/screens-plaza.jsx app/screens-preset.jsx app/screens-profile.jsx
+  cat seed-design/reference/app/icons.jsx seed-design/reference/app/primitives.jsx seed-design/reference/app/data.jsx seed-design/reference/app/region-paths.js seed-design/reference/app/ui.jsx \
+      seed-design/reference/app/screens-core.jsx seed-design/reference/app/screens-dex.jsx seed-design/reference/app/screens-discover.jsx \
+      seed-design/reference/app/screens-plaza.jsx seed-design/reference/app/screens-preset.jsx seed-design/reference/app/screens-profile.jsx
   printf "\n%s\n" "export { OnboardingScreen, HomeScreen, DiscoverScreen, DiscoverSuccessScreen, DexNationScreen, DexRegionScreen, PlaceDetailScreen, PresetCreateScreen, PresetDetailScreen, UserProfileScreen, PlazaScreen, TitlesScreen, ProfileScreen, TabBar, PLACES, REGIONS, CATEGORIES, TITLES, PRESETS, FEED };"
-} > Mockup/src/design/bundle.jsx
-sed -i '' 's/Object\.assign(window,/Object.assign({},/g' Mockup/src/design/bundle.jsx
+} > mockup/src/design/bundle.jsx
+sed -i '' 's/Object\.assign(window,/Object.assign({},/g' mockup/src/design/bundle.jsx
 ```
 
 > 디자인 토큰/폰트는 `public/wanted/` 에 복사되어 `globals.css` 가 `@import url('/wanted/colors_and_type.css')` 로 로드한다.
