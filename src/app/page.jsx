@@ -15,6 +15,7 @@ export default function Home() {
         <Link href="/wireframes" style={card}><div style={{ fontSize: 18, fontWeight: 800, color: '#171719' }}>와이어프레임 →</div><div style={{ fontSize: 13, color: 'rgba(55,56,60,.61)', marginTop: 6 }}>15개 화면 저충실도 설계 갤러리</div></Link>
         <Link href="/mockup" style={card}><div style={{ fontSize: 18, fontWeight: 800, color: '#171719' }}>화면별 목업 →</div><div style={{ fontSize: 13, color: 'rgba(55,56,60,.61)', marginTop: 6 }}>디자인 충실 풀스크린 (전체화면)</div></Link>
         <Link href="/prototype" style={card}><div style={{ fontSize: 18, fontWeight: 800, color: '#171719' }}>프로토타입 →</div><div style={{ fontSize: 13, color: 'rgba(55,56,60,.61)', marginTop: 6 }}>탭 네비게이션 동작 데모</div></Link>
+        <Link href="/design" style={card}><div style={{ fontSize: 18, fontWeight: 800, color: '#171719' }}>설계 →</div><div style={{ fontSize: 13, color: 'rgba(55,56,60,.61)', marginTop: 6 }}>DB 설계 · 결정 사항</div></Link>
       </div>
       <h2 style={{ fontSize: 16, fontWeight: 800, color: '#171719', margin: '0 0 12px' }}>화면 목록</h2>
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill,minmax(220px,1fr))', gap: 8 }}>

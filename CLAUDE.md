@@ -4,7 +4,7 @@
 
 ## 스택·실행·라우트
 - Next.js(App Router) / React 18. 실행 `npm run dev` · 빌드 `npm run build`.
-- `/wireframes`(저충실도) · `/mockup`·`/mockup/[id]`(풀스크린) · `/prototype`(인터랙티브).
+- `/wireframes`(저충실도) · `/mockup`·`/mockup/[id]`(풀스크린) · `/prototype`(인터랙티브) · `/design`(설계 뷰: DB설계·결정, seed-design 토큰 사용).
 
 ## 토큰·번들
 - 디자인 토큰: `src/styles/tokens.css` = **seed-design 생성물**(직접 수정 금지, `../seed-design`에서 `npm run sync`). `globals.css`가 `@import`.

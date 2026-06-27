@@ -1,5 +1,4 @@
 'use client';
-/* AUTO-PORTED from /app design reference (claude design). Concatenated in index.html load order. Do not hand-edit; regenerate from /app. */
 import React from 'react';
 // icons.jsx — Lucide-style SVG paths used in the app
 // Extended from the Wanted UI Kit primitives.jsx I/SVG_PATHS set.
@@ -489,7 +488,7 @@ const REGIONS = [
 ];
 
 // ─────────────────────────────────────────────
-// 장소 (places) — KTO 자원 매핑 샘플
+// 장소 (places) — 공공데이터 자원 매핑 샘플
 // hue/lift used for placeholder photos
 // ─────────────────────────────────────────────
 const PLACES = [
@@ -973,7 +972,7 @@ Object.assign({}, { KOREA_PATHS, KOREA_LABELS, KOREA_VIEWBOX, KOREA_BBOX });
 
 // ─────────────────────────────────────────────
 // PhotoPlaceholder — abstract block with hue gradient and stripes
-// Lower-saturation, Wanted-appropriate (still a placeholder for KTO API photos)
+// Lower-saturation, Wanted-appropriate (still a placeholder for 공공데이터 API photos)
 // ─────────────────────────────────────────────
 function PhotoPlaceholder({ hue = 200, lift = 0, silhouette = false, style, rounded = 0 }) {
   const L = Math.max(28, Math.min(74, 56 + lift * 40));
@@ -1400,7 +1399,7 @@ function OnboardingScreen({ onComplete }) {
     {
       eyebrow: '수집하는 여행',
       title: '한국 곳곳을\n도감으로 모아요',
-      body: '자연, 유적, 문화, 축제. 한국관광공사 공식 데이터를 한 권의 도감으로 정리했어요. 여행은 일회성 소비가 아니라, 평생의 컬렉션이 됩니다.',
+      body: '자연, 유적, 문화, 축제. 공공 관광데이터를 한 권의 도감으로 정리했어요. 여행은 일회성 소비가 아니라, 평생의 컬렉션이 됩니다.',
       art: 'tiles',
     },
     {
@@ -2674,7 +2673,7 @@ function PlaceDetailScreen({ placeId, onBack, onDiscover }) {
           background: 'rgba(23,23,25,0.72)', color: 'rgba(255,255,255,0.92)',
           fontFamily: 'var(--font-mono)', fontSize: 11, fontWeight: 600,
           letterSpacing: '0.04em',
-        }}>KTO #{String(idx).padStart(4, '0')} · contentTypeId 12</div>
+        }}>#{String(idx).padStart(4, '0')} · contentTypeId 12</div>
       </div>
 
       <div style={{
@@ -2779,7 +2778,7 @@ function PlaceDetailScreen({ placeId, onBack, onDiscover }) {
               fontWeight: 500, color: 'var(--color-fg-muted)',
             }}>
               {place.collected
-                ? `${region.name}의 ${category.label} 카테고리 자원입니다. 한국관광공사 데이터랩 기준 연 ${(120 + place.id.length * 17)}만 명이 방문하는 곳입니다.`
+                ? `${region.name}의 ${category.label} 카테고리 자원입니다. 공공데이터 기준 연 ${(120 + place.id.length * 17)}만 명이 방문하는 곳입니다.`
                 : '도감의 빈칸을 채울 자원입니다. 반경에 진입하면 [발견] 버튼이 자동 활성화됩니다.'}
             </div>
             <div style={{
@@ -3132,7 +3131,7 @@ function PlaceCardModal({ place, region, category, group, idx, userPhoto, onClos
                 marginTop: 4, fontFamily: 'var(--font-mono)',
                 fontSize: 11, fontWeight: 700, color: group.color,
                 letterSpacing: '0.04em',
-              }}>KTO #{String(idx).padStart(4, '0')}</div>
+              }}>#{String(idx).padStart(4, '0')}</div>
 
               <div style={{
                 marginTop: 'auto', marginBottom: 'auto',
@@ -3711,7 +3710,7 @@ function DiscoverSuccessScreen({ placeId, onDone }) {
               fontFamily: 'var(--font-mono)', fontSize: 11, fontWeight: 500,
               color: 'var(--color-fg-subtle)', marginTop: 6,
               letterSpacing: '0.04em',
-            }}>KTO #{String(PLACES.findIndex(p => p.id === place.id) + 1).padStart(4, '0')} · 2026.05.19 14:23</div>
+            }}>#{String(PLACES.findIndex(p => p.id === place.id) + 1).padStart(4, '0')} · 2026.05.19 14:23</div>
           </div>
         </div>
       </div>

@@ -1,4 +1,5 @@
 import "./globals.css";
+import Sidebar from "@/components/Sidebar";
 
 export const metadata = {
   title: "모두립 · 목업",
@@ -8,7 +9,15 @@ export const metadata = {
 export default function RootLayout({ children }) {
   return (
     <html lang="ko">
-      <body>{children}</body>
+      <head>
+        <link rel="stylesheet" href="/wanted/colors_and_type.css" />
+      </head>
+      <body>
+        <div className="shell">
+          <Sidebar />
+          <div className="main">{children}</div>
+        </div>
+      </body>
     </html>
   );
 }
