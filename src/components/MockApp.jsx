@@ -19,7 +19,7 @@ export default function MockApp() {
     for (let i = stack.length - 1; i >= 0; i--) {
       const s = stack[i].screen;
       if (['home', 'discover', 'dex', 'plaza', 'profile'].includes(s)) return s;
-      if (s === 'dex-region' || s === 'preset-create') return 'dex';
+      if (s === 'dex-province' || s === 'dex-region' || s === 'preset-create') return 'dex';
       if (s === 'titles') return 'profile';
       if (s === 'preset' || s === 'user-profile') return 'plaza';
     }
@@ -29,10 +29,11 @@ export default function MockApp() {
   const renderScreen = () => {
     switch (top.screen) {
       case 'onboarding': return <D.OnboardingScreen onComplete={completeOnboarding} />;
-      case 'home': return <D.HomeScreen user={user} onNavigate={(s) => (s === 'titles' ? push('titles') : switchTab(s))} onOpenRegion={(id) => setStack([{ screen: 'dex' }, { screen: 'dex-region', regionId: id }])} onOpenPlace={(id) => push('place', { placeId: id })} />;
+      case 'home': return <D.HomeScreen user={user} onNavigate={(s) => (s === 'titles' ? push('titles') : switchTab(s))} onOpenRegion={(id) => setStack([{ screen: 'dex' }, { screen: 'dex-province', regionId: id }])} onOpenPlace={(id) => push('place', { placeId: id })} />;
       case 'discover': return <D.DiscoverScreen onDiscoverSuccess={onDiscoverSuccess} />;
-      case 'dex': return <D.DexNationScreen onOpenRegion={(id) => push('dex-region', { regionId: id })} />;
-      case 'dex-region': return <D.DexRegionScreen regionId={top.regionId} onBack={pop} onOpenPlace={(pid) => push('place', { placeId: pid })} onCreatePreset={(rid) => push('preset-create', { regionId: rid })} />;
+      case 'dex': return <D.DexNationScreen onOpenRegion={(id) => push('dex-province', { regionId: id })} />;
+      case 'dex-province': return <D.DexProvinceScreen regionId={top.regionId} onBack={pop} onOpenSigun={(rid, sname) => push('dex-region', { regionId: rid, sigunName: sname })} onOpenPlace={(pid) => push('place', { placeId: pid })} onOpenPreset={(pid) => push('preset', { presetId: pid })} />;
+      case 'dex-region': return <D.DexRegionScreen regionId={top.regionId} sigunName={top.sigunName} onBack={pop} onOpenPlace={(pid) => push('place', { placeId: pid })} onCreatePreset={(rid) => push('preset-create', { regionId: rid })} />;
       case 'preset-create': return <D.PresetCreateScreen regionId={top.regionId} onBack={pop} onCreated={(p) => setStack((s) => [...s.slice(0, -1), { screen: 'preset', presetId: p.id }])} />;
       case 'preset': return <D.PresetDetailScreen presetId={top.presetId} onBack={pop} onOpenPlace={(pid) => push('place', { placeId: pid })} onOpenUser={(uid) => push('user-profile', { userId: uid })} />;
       case 'user-profile': return <D.UserProfileScreen userId={top.userId} onBack={pop} onOpenPreset={(pid) => push('preset', { presetId: pid })} />;

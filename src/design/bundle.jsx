@@ -756,6 +756,61 @@ const regionFillPct = (regionId) => {
   return filled / groups.length;
 };
 
+// ─────────────────────────────────────────────
+// 목업용 시군 데이터 (실데이터 연동 전 임시) — 전국→광역→시군 3단 구조용
+// ─────────────────────────────────────────────
+// 지역 계층 규칙: docs/05-API/분류체계-지역코드.md §6. UI 단위는 시·군(구는 노출 안 함).
+const SIGUN_NAMES = {
+  // 패턴 A — 도: 전체 시·군 (구 있는 시는 시명 단일로 집계)
+  gangwon:   ['춘천시','원주시','강릉시','동해시','태백시','속초시','삼척시','홍천군','횡성군','영월군','평창군','정선군','철원군','화천군','양구군','인제군','고성군','양양군'],
+  jeonbuk:   ['전주시','군산시','익산시','정읍시','남원시','김제시','완주군','진안군','무주군','장수군','임실군','순창군','고창군','부안군'],
+  chungbuk:  ['청주시','충주시','제천시','보은군','옥천군','영동군','증평군','진천군','괴산군','음성군','단양군'],
+  chungnam:  ['천안시','공주시','보령시','아산시','서산시','논산시','계룡시','당진시','금산군','부여군','서천군','청양군','홍성군','예산군','태안군'],
+  gyeonggi:  ['수원시','성남시','의정부시','안양시','부천시','광명시','평택시','동두천시','안산시','고양시','과천시','구리시','남양주시','오산시','시흥시','군포시','의왕시','하남시','용인시','파주시','이천시','안성시','김포시','화성시','광주시','양주시','포천시','여주시','연천군','가평군','양평군'],
+  gyeongbuk: ['포항시','경주시','김천시','안동시','구미시','영주시','영천시','상주시','문경시','경산시','의성군','청송군','영양군','영덕군','청도군','고령군','성주군','칠곡군','예천군','봉화군','울진군','울릉군'],
+  gyeongnam: ['창원시','진주시','통영시','사천시','김해시','밀양시','거제시','양산시','의령군','함안군','창녕군','고성군','남해군','하동군','산청군','함양군','거창군','합천군'],
+  jeonnam:   ['목포시','여수시','순천시','나주시','광양시','담양군','곡성군','구례군','고흥군','보성군','화순군','장흥군','강진군','해남군','영암군','무안군','함평군','영광군','장성군','완도군','진도군','신안군'],
+  // 패턴 D — 제주(시·군), 세종(단일)
+  jeju:      ['제주시','서귀포시'],
+  sejong:    ['세종특별자치시'],
+  // 패턴 B — 광역시(군 없음): 광역 전체가 단일 단위
+  seoul:     ['서울특별시'],
+  gwangju:   ['광주광역시'],
+  daejeon:   ['대전광역시'],
+  // 패턴 C — 광역시(군 있음): "[시명] 도심"(구 전체 합산) + 군
+  busan:     ['부산 도심','기장군'],
+  daegu:     ['대구 도심','달성군','군위군'],
+  incheon:   ['인천 도심','강화군','옹진군'],
+  ulsan:     ['울산 도심','울주군'],
+};
+
+const hashStr = (s) => { let h = 0; for (let i = 0; i < s.length; i++) h = (h * 31 + s.charCodeAt(i)) >>> 0; return h; };
+
+// 광역 하나의 시군 목록 + 목업 발견 카운트. 미발견 시군은 collected 0 (UI에서 흐리게).
+const sigunsOf = (regionId) => {
+  const names = SIGUN_NAMES[regionId] || [];
+  const regionHasFinds = PLACES.some(p => p.region === regionId && p.collected);
+  return names.map((name, i) => {
+    const h = hashStr(regionId + name);
+    const total = 5 + (h % 10);                 // 5~14곳
+    const visited = regionHasFinds && (i % 5 < 2); // 일부 시군만 방문 처리
+    const collected = visited ? Math.min(total, 1 + (h % total)) : 0;
+    return { id: `${regionId}-${i}`, name, total, collected };
+  });
+};
+
+// 광역 인기 자원: signature → 발견 → 원래 순서 (목업 인기순)
+const popularPlaces = (regionId, n = 8) =>
+  PLACES
+    .filter(p => p.region === regionId)
+    .map((p, i) => ({ p, i }))
+    .sort((a, b) =>
+      (Number(!!b.p.signature) - Number(!!a.p.signature)) ||
+      (Number(!!b.p.collected) - Number(!!a.p.collected)) ||
+      (a.i - b.i))
+    .slice(0, n)
+    .map(x => x.p);
+
 const diversityScore = () => {
   let cells = 0;
   for (const r of REGIONS) {
@@ -2215,31 +2270,6 @@ function MapView({ selectedId, onSelect, onOpenRegion, sel, selPct }) {
               </div>
               <I n="chevron-right" s={16} c="rgba(55,56,60,0.61)" />
             </div>
-            <div style={{
-              padding: '12px 16px',
-              background: '#F7F7F8',
-              borderTop: '1px solid rgba(112,115,124,0.12)',
-              borderRadius: '0 0 16px 16px',
-              display: 'flex', justifyContent: 'space-between', alignItems: 'center',
-            }}>
-              <span style={{
-                fontSize: 12, color: 'var(--color-fg-subtle)', fontWeight: 600,
-                letterSpacing: '0.02em',
-              }}>4 계열 채움</span>
-              <div style={{ display: 'flex', gap: 4 }}>
-                {Object.values(CATEGORY_GROUPS).map(g => {
-                  const c = regionGroupStats(sel.id, g.id);
-                  return (
-                    <span key={g.id} style={{
-                      padding: '4px 9px', borderRadius: 6,
-                      background: c.filled ? g.color : '#EAEBEC',
-                      color: c.filled ? '#FFFFFF' : 'var(--color-fg-subtle)',
-                      fontSize: 10, fontWeight: 700, letterSpacing: '-0.02em',
-                    }}>{g.label}</span>
-                  );
-                })}
-              </div>
-            </div>
           </Card>
         </div>
       )}
@@ -2275,9 +2305,155 @@ function RegionGrid({ onOpenRegion }) {
 }
 
 // ─────────────────────────────────────────────
+// Dex Province (광역) — 시군 칩 + 광역 인기 자원 미리보기
+// 전국 → [광역] → 시군 3단 구조의 가운데 층
+// ─────────────────────────────────────────────
+function DexProvinceScreen({ regionId, onBack, onOpenSigun, onOpenPlace, onOpenPreset }) {
+  const region = getRegion(regionId);
+  if (!region) return null;
+
+  const siguns = sigunsOf(regionId);
+  const visitedSigun = siguns.filter(s => s.collected > 0).length;
+  const found = PLACES.filter(p => p.region === regionId && p.collected).length;
+  const total = PLACES.filter(p => p.region === regionId).length;
+  const popular = popularPlaces(regionId, 8);
+  const presets = PRESETS.filter(p => p.region === regionId);
+
+  return (
+    <div style={{ paddingBottom: 110, background: '#FFFFFF' }}>
+      {/* Hero — 광역 tone */}
+      <div style={{ background: region.tone, color: '#FFFFFF', padding: '56px 20px 24px' }}>
+        <IconButton variant="inverse" onClick={onBack} ariaLabel="뒤로">
+          <I n="chevron-left" s={20} c="#FFFFFF" />
+        </IconButton>
+        <div style={{ marginTop: 16, display: 'flex', alignItems: 'flex-end', gap: 12 }}>
+          <span style={{
+            width: 64, height: 64, borderRadius: 16,
+            background: 'rgba(255,255,255,0.16)',
+            display: 'inline-flex', alignItems: 'center', justifyContent: 'center',
+            flexShrink: 0, padding: 6,
+          }}>
+            <RegionSilhouette regionId={region.id} size={52}
+              fill="#FFFFFF" stroke="transparent" strokeWidth={0} />
+          </span>
+          <div style={{ flex: 1 }}>
+            <div style={{
+              fontSize: 11, fontWeight: 600, color: 'rgba(255,255,255,0.78)',
+              letterSpacing: '0.0252em',
+            }}>광역 도감</div>
+            <div style={{
+              fontSize: 'var(--text-title-2-size)',
+              lineHeight: 'var(--text-title-2-line)',
+              letterSpacing: 'var(--text-title-2-track)',
+              fontWeight: 700, marginTop: 2,
+            }}>{region.name}</div>
+            <div style={{
+              fontSize: 13, fontWeight: 600, marginTop: 4,
+              color: 'rgba(255,255,255,0.85)', fontVariantNumeric: 'tabular-nums',
+            }}>방문 시군 {visitedSigun}/{siguns.length} · {found}/{total}곳 발견</div>
+          </div>
+        </div>
+      </div>
+
+      {/* 시군 칩 — 미발견은 흐리게 */}
+      <div style={{ padding: '22px 20px 0' }}>
+        <div style={{
+          display: 'flex', alignItems: 'baseline', justifyContent: 'space-between', marginBottom: 12,
+        }}>
+          <div style={{
+            fontSize: 15, fontWeight: 700, color: 'var(--color-fg-strong)', letterSpacing: '-0.02em',
+          }}>시군 도감</div>
+          <div style={{
+            fontSize: 12, fontWeight: 600, color: 'var(--color-fg-subtle)',
+            fontVariantNumeric: 'tabular-nums',
+          }}>방문 {visitedSigun} / {siguns.length}</div>
+        </div>
+        <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8 }}>
+          {siguns.map(s => {
+            const visited = s.collected > 0;
+            return (
+              <button key={s.id} onClick={() => onOpenSigun?.(regionId, s.name)} style={{
+                display: 'inline-flex', alignItems: 'center', gap: 6,
+                padding: '8px 12px', borderRadius: 9999,
+                background: visited ? '#F4F4F5' : '#FAFAFB',
+                border: visited ? '1px solid rgba(112,115,124,0.16)' : '1px dashed rgba(112,115,124,0.22)',
+                cursor: 'pointer', WebkitTapHighlightColor: 'transparent',
+              }}>
+                <span style={{
+                  fontSize: 13, fontWeight: 700, letterSpacing: '-0.02em',
+                  color: visited ? 'var(--color-fg-strong)' : 'var(--color-fg-subtle)',
+                }}>{s.name}</span>
+                <span style={{
+                  fontSize: 11, fontWeight: 600, fontVariantNumeric: 'tabular-nums',
+                  color: visited ? region.tone : 'rgba(112,115,124,0.55)',
+                }}>{s.collected}/{s.total}</span>
+              </button>
+            );
+          })}
+        </div>
+      </div>
+
+      {/* 광역 인기 자원 미리보기 (인기순) */}
+      <div style={{ padding: '26px 0 0' }}>
+        <div style={{
+          padding: '0 20px', display: 'flex', alignItems: 'baseline',
+          justifyContent: 'space-between', marginBottom: 12,
+        }}>
+          <div style={{
+            fontSize: 15, fontWeight: 700, color: 'var(--color-fg-strong)', letterSpacing: '-0.02em',
+          }}>{region.name} 인기 자원</div>
+          <div style={{ fontSize: 12, fontWeight: 600, color: 'var(--color-fg-subtle)' }}>인기순</div>
+        </div>
+        <div style={{
+          display: 'flex', gap: 12, overflowX: 'auto',
+          padding: '0 20px 4px', scrollbarWidth: 'none',
+        }}>
+          {popular.map(p => (
+            <div key={p.id} style={{ width: 150, flexShrink: 0 }}>
+              <PlaceTile place={p} onClick={() => onOpenPlace?.(p.id)} />
+            </div>
+          ))}
+        </div>
+      </div>
+
+      {/* 이 지역 프리셋 (계획 관점) */}
+      <div style={{ padding: '26px 20px 0' }}>
+        <div style={{
+          display: 'flex', alignItems: 'baseline', justifyContent: 'space-between', marginBottom: 12,
+        }}>
+          <div style={{
+            fontSize: 15, fontWeight: 700, color: 'var(--color-fg-strong)', letterSpacing: '-0.02em',
+          }}>{region.name} 프리셋</div>
+          {presets.length > 0 && (
+            <div style={{
+              fontSize: 12, fontWeight: 600, color: 'var(--color-fg-subtle)',
+              fontVariantNumeric: 'tabular-nums',
+            }}>{presets.length}개</div>
+          )}
+        </div>
+        {presets.length === 0 ? (
+          <div style={{
+            padding: '20px', textAlign: 'center',
+            background: '#F7F7F8', borderRadius: 14,
+            border: '1px dashed rgba(112,115,124,0.22)',
+            fontSize: 13, fontWeight: 500, color: 'var(--color-fg-subtle)',
+          }}>아직 이 지역 프리셋이 없어요. 첫 코스를 만들어보세요.</div>
+        ) : (
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
+            {presets.slice(0, 3).map(p => (
+              <PresetCard key={p.id} preset={p} compact onClick={() => onOpenPreset?.(p.id)} />
+            ))}
+          </div>
+        )}
+      </div>
+    </div>
+  );
+}
+
+// ─────────────────────────────────────────────
 // Dex Region — 4계열 큰 버튼 + 2차 칩 다중 선택 + 자원 그리드
 // ─────────────────────────────────────────────
-function DexRegionScreen({ regionId, onBack, onOpenPlace, onCreatePreset }) {
+function DexRegionScreen({ regionId, onBack, onOpenPlace, onCreatePreset, sigunName }) {
   const region = getRegion(regionId);
   if (!region) return null;
 
@@ -2328,13 +2504,13 @@ function DexRegionScreen({ regionId, onBack, onOpenPlace, onCreatePreset }) {
             <div style={{
               fontSize: 11, fontWeight: 600, color: 'rgba(255,255,255,0.78)',
               letterSpacing: '0.0252em',
-            }}>지역 도감</div>
+            }}>{sigunName ? `${region.name} · 시군 도감` : '지역 도감'}</div>
             <div style={{
               fontSize: 'var(--text-title-2-size)',
               lineHeight: 'var(--text-title-2-line)',
               letterSpacing: 'var(--text-title-2-track)',
               fontWeight: 700, marginTop: 2,
-            }}>{region.full
+            }}>{sigunName || region.full
               .replace('특별시', '').replace('광역시', '')
               .replace('특별자치도', '').replace('특별자치시', '')}</div>
             <div style={{
@@ -5866,4 +6042,4 @@ function ProfileStatDivider() {
 
 Object.assign({}, { ProfileScreen });
 
-export { OnboardingScreen, HomeScreen, DiscoverScreen, DiscoverSuccessScreen, DexNationScreen, DexRegionScreen, PlaceDetailScreen, PresetCreateScreen, PresetDetailScreen, UserProfileScreen, PlazaScreen, TitlesScreen, ProfileScreen, TabBar, PLACES, REGIONS, CATEGORIES, TITLES, PRESETS, FEED };
+export { OnboardingScreen, HomeScreen, DiscoverScreen, DiscoverSuccessScreen, DexNationScreen, DexProvinceScreen, DexRegionScreen, PlaceDetailScreen, PresetCreateScreen, PresetDetailScreen, UserProfileScreen, PlazaScreen, TitlesScreen, ProfileScreen, TabBar, PLACES, REGIONS, CATEGORIES, TITLES, PRESETS, FEED };
