@@ -31,7 +31,8 @@ export default function ScreenHost({ id }) {
   const tab = meta?.tab;
   return (
     <div style={{ position: 'absolute', inset: 0, background: 'var(--color-bg, #f4f6f8)' }}>
-      <div style={{ position: 'absolute', inset: 0, overflowY: 'auto', overflowX: 'hidden', WebkitOverflowScrolling: 'touch' }}>
+      <div className="scroll-hidden"
+        style={{ position: 'absolute', inset: 0, overflowY: 'auto', overflowX: 'hidden', WebkitOverflowScrolling: 'touch', scrollbarWidth: 'none' }}>
         {renderScreen(id)}
       </div>
       {tab && <D.TabBar active={tab} onChange={noop} />}

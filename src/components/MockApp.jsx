@@ -50,7 +50,8 @@ export default function MockApp() {
   return (
     <div style={{ position: 'absolute', inset: 0, background: 'var(--color-bg, #f4f6f8)' }}>
       <div key={top.screen + (top.regionId || '') + (top.placeId || '')}
-        style={{ position: 'absolute', inset: 0, overflowY: 'auto', overflowX: 'hidden', WebkitOverflowScrolling: 'touch' }}>
+        className="scroll-hidden"
+        style={{ position: 'absolute', inset: 0, overflowY: 'auto', overflowX: 'hidden', WebkitOverflowScrolling: 'touch', scrollbarWidth: 'none' }}>
         {renderScreen()}
       </div>
       {!hideTabBar && <D.TabBar active={activeTab} onChange={switchTab} />}
