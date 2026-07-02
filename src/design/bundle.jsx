@@ -786,6 +786,98 @@ const SIGUN_NAMES = {
 
 const hashStr = (s) => { let h = 0; for (let i = 0; i < s.length; i++) h = (h * 31 + s.charCodeAt(i)) >>> 0; return h; };
 
+// 광역별 시그니처 도시 — 지도 핀 + "어디로 갈까요?" 시트의 인기 도시 칩 5개.
+// 좌표는 광역 path bbox 기준 normalized (0~1). 광역시·세종은 단일 단위라 시그니처 핀 없음.
+const SIGNATURE_CITIES = {
+  gangwon:   [
+    { name: '춘천시', nx: 0.32, ny: 0.30 },
+    { name: '속초시', nx: 0.66, ny: 0.18 },
+    { name: '강릉시', nx: 0.72, ny: 0.45 },
+    { name: '원주시', nx: 0.30, ny: 0.58 },
+    { name: '평창군', nx: 0.50, ny: 0.48 },
+  ],
+  jeonbuk:   [
+    { name: '전주시', nx: 0.45, ny: 0.40 },
+    { name: '군산시', nx: 0.16, ny: 0.28 },
+    { name: '익산시', nx: 0.30, ny: 0.25 },
+    { name: '남원시', nx: 0.58, ny: 0.78 },
+    { name: '정읍시', nx: 0.28, ny: 0.55 },
+  ],
+  chungbuk:  [
+    { name: '청주시', nx: 0.30, ny: 0.50 },
+    { name: '충주시', nx: 0.52, ny: 0.30 },
+    { name: '제천시', nx: 0.66, ny: 0.25 },
+    { name: '단양군', nx: 0.78, ny: 0.34 },
+    { name: '영동군', nx: 0.50, ny: 0.85 },
+  ],
+  chungnam:  [
+    { name: '천안시', nx: 0.62, ny: 0.18 },
+    { name: '공주시', nx: 0.55, ny: 0.50 },
+    { name: '아산시', nx: 0.55, ny: 0.22 },
+    { name: '서산시', nx: 0.22, ny: 0.30 },
+    { name: '보령시', nx: 0.18, ny: 0.62 },
+  ],
+  gyeonggi:  [
+    { name: '수원시', nx: 0.42, ny: 0.52 },
+    { name: '성남시', nx: 0.50, ny: 0.42 },
+    { name: '고양시', nx: 0.28, ny: 0.30 },
+    { name: '용인시', nx: 0.54, ny: 0.55 },
+    { name: '평택시', nx: 0.40, ny: 0.74 },
+  ],
+  gyeongbuk: [
+    { name: '포항시', nx: 0.78, ny: 0.55 },
+    { name: '경주시', nx: 0.72, ny: 0.70 },
+    { name: '안동시', nx: 0.55, ny: 0.40 },
+    { name: '구미시', nx: 0.42, ny: 0.55 },
+    { name: '영주시', nx: 0.50, ny: 0.22 },
+  ],
+  gyeongnam: [
+    { name: '창원시', nx: 0.55, ny: 0.62 },
+    { name: '진주시', nx: 0.35, ny: 0.55 },
+    { name: '통영시', nx: 0.52, ny: 0.85 },
+    { name: '김해시', nx: 0.65, ny: 0.60 },
+    { name: '거제시', nx: 0.62, ny: 0.85 },
+  ],
+  jeonnam:   [
+    { name: '목포시', nx: 0.18, ny: 0.55 },
+    { name: '여수시', nx: 0.70, ny: 0.78 },
+    { name: '순천시', nx: 0.62, ny: 0.55 },
+    { name: '광양시', nx: 0.68, ny: 0.55 },
+    { name: '나주시', nx: 0.42, ny: 0.42 },
+  ],
+  jeju: [
+    { name: '제주시', nx: 0.50, ny: 0.32 },
+    { name: '서귀포시', nx: 0.55, ny: 0.72 },
+  ],
+};
+// 시그니처 정의가 없으면 빈 배열 — UI 쪽에서 광역시·세종 case로 fallback 처리
+const signatureCities = (regionId) => SIGNATURE_CITIES[regionId] || [];
+
+// 광역 = 챕터 메타포: 짧은 catchphrase + REGIONS 순서 기반 chapterNo
+const REGION_CATCHPHRASES = {
+  seoul:     '한강이 흐르는 도시',
+  busan:     '바람의 항구',
+  daegu:     '분지의 도시',
+  incheon:   '관문과 섬',
+  gwangju:   '예술과 빛의 도시',
+  daejeon:   '과학과 평야',
+  ulsan:     '산업과 고래',
+  sejong:    '행정의 새 도시',
+  gyeonggi:  '수도를 품은 너른 들',
+  gangwon:   '동쪽의 산과 바다',
+  chungbuk:  '내륙의 호수와 동굴',
+  chungnam:  '서해를 따라 흐르다',
+  jeonbuk:   '전통과 들녘',
+  jeonnam:   '바다와 차, 다도해의 빛',
+  gyeongbuk: '고도의 길',
+  gyeongnam: '남해의 풍경',
+  jeju:      '바람과 돌, 해풍의 섬',
+};
+const chapterOf = (regionId) => {
+  const i = REGIONS.findIndex(r => r.id === regionId);
+  return i >= 0 ? i + 1 : null;
+};
+
 // 광역 하나의 시군 목록 + 목업 발견 카운트. 미발견 시군은 collected 0 (UI에서 흐리게).
 const sigunsOf = (regionId) => {
   const names = SIGUN_NAMES[regionId] || [];
@@ -2308,144 +2400,385 @@ function RegionGrid({ onOpenRegion }) {
 // Dex Province (광역) — 시군 칩 + 광역 인기 자원 미리보기
 // 전국 → [광역] → 시군 3단 구조의 가운데 층
 // ─────────────────────────────────────────────
-function DexProvinceScreen({ regionId, onBack, onOpenSigun, onOpenPlace, onOpenPreset }) {
+function DexProvinceScreen({ regionId, onBack, onOpenSigun, onOpenPlace, onOpenPreset, onOpenSigunPicker }) {
   const region = getRegion(regionId);
+  const [showAllPresets, setShowAllPresets] = React.useState(false);
   if (!region) return null;
 
   const siguns = sigunsOf(regionId);
   const visitedSigun = siguns.filter(s => s.collected > 0).length;
   const found = PLACES.filter(p => p.region === regionId && p.collected).length;
-  const total = PLACES.filter(p => p.region === regionId).length;
   const popular = popularPlaces(regionId, 8);
   const presets = PRESETS.filter(p => p.region === regionId);
 
+  // 챕터 메타포: 광역 = 챕터. catchphrase만 표지 소제목으로 노출.
+  const catchphrase = REGION_CATCHPHRASES[region.id] || '';
+
+  // 시그니처 도시 칩 (시트 안 "시군별로 보기"). 발견 수만 작은 보조 텍스트로.
+  const sigCities = signatureCities(region.id);
+  const sigunFor = (name) => siguns.find(s => s.name === name);
+  const cityChips = (sigCities.length > 0
+    ? sigCities.map(c => ({ name: c.name, sigun: sigunFor(c.name) })).filter(x => x.sigun)
+    : siguns.slice(0, 5).map(s => ({ name: s.name, sigun: s })))
+    .sort((a, b) => {
+      const av = a.sigun.collected > 0;
+      const bv = b.sigun.collected > 0;
+      if (av !== bv) return av ? -1 : 1;
+      return a.name.localeCompare(b.name, 'ko');
+    });
+  const visitedRatio = siguns.length > 0 ? visitedSigun / siguns.length : 0;
+
   return (
-    <div style={{ paddingBottom: 110, background: '#FFFFFF' }}>
-      {/* Hero — 광역 tone */}
-      <div style={{ background: region.tone, color: '#FFFFFF', padding: '56px 20px 24px' }}>
-        <IconButton variant="inverse" onClick={onBack} ariaLabel="뒤로">
-          <I n="chevron-left" s={20} c="#FFFFFF" />
-        </IconButton>
-        <div style={{ marginTop: 16, display: 'flex', alignItems: 'flex-end', gap: 12 }}>
-          <span style={{
-            width: 64, height: 64, borderRadius: 16,
-            background: 'rgba(255,255,255,0.16)',
-            display: 'inline-flex', alignItems: 'center', justifyContent: 'center',
-            flexShrink: 0, padding: 6,
-          }}>
-            <RegionSilhouette regionId={region.id} size={52}
-              fill="#FFFFFF" stroke="transparent" strokeWidth={0} />
-          </span>
-          <div style={{ flex: 1 }}>
-            <div style={{
-              fontSize: 11, fontWeight: 600, color: 'rgba(255,255,255,0.78)',
-              letterSpacing: '0.0252em',
-            }}>광역 도감</div>
-            <div style={{
-              fontSize: 'var(--text-title-2-size)',
-              lineHeight: 'var(--text-title-2-line)',
-              letterSpacing: 'var(--text-title-2-track)',
-              fontWeight: 700, marginTop: 2,
-            }}>{region.name}</div>
-            <div style={{
-              fontSize: 13, fontWeight: 600, marginTop: 4,
-              color: 'rgba(255,255,255,0.85)', fontVariantNumeric: 'tabular-nums',
-            }}>방문 시군 {visitedSigun}/{siguns.length} · {found}/{total}곳 발견</div>
-          </div>
-        </div>
-      </div>
-
-      {/* 시군 칩 — 미발견은 흐리게 */}
-      <div style={{ padding: '22px 20px 0' }}>
+    <div style={{ paddingBottom: 110, background: '#FFFFFF', position: 'relative' }}>
+      {/* 챕터 표지 — 그라데이션 + 챕터 번호 + 큰 타이포 + catchphrase */}
+      <div style={{
+        height: 300,
+        background: `linear-gradient(165deg, ${region.tone} 0%, ${region.tone} 55%, ${region.tone}B3 100%)`,
+        color: '#FFFFFF',
+        position: 'relative', overflow: 'hidden',
+      }}>
+        {/* floating top bar */}
         <div style={{
-          display: 'flex', alignItems: 'baseline', justifyContent: 'space-between', marginBottom: 12,
+          position: 'absolute', top: 0, left: 0, right: 0, zIndex: 2,
+          padding: '52px 16px 0',
+          display: 'flex', alignItems: 'center', justifyContent: 'space-between',
         }}>
+          <IconButton variant="inverse" onClick={onBack} ariaLabel="뒤로">
+            <I n="chevron-left" s={20} c="#FFFFFF" />
+          </IconButton>
           <div style={{
-            fontSize: 15, fontWeight: 700, color: 'var(--color-fg-strong)', letterSpacing: '-0.02em',
-          }}>시군 도감</div>
-          <div style={{
-            fontSize: 12, fontWeight: 600, color: 'var(--color-fg-subtle)',
+            padding: '6px 11px', borderRadius: 9999,
+            background: 'rgba(255,255,255,0.18)',
+            fontSize: 11, fontWeight: 600, color: '#FFFFFF',
             fontVariantNumeric: 'tabular-nums',
-          }}>방문 {visitedSigun} / {siguns.length}</div>
+          }}>{found}곳 발견</div>
         </div>
-        <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8 }}>
-          {siguns.map(s => {
-            const visited = s.collected > 0;
-            return (
-              <button key={s.id} onClick={() => onOpenSigun?.(regionId, s.name)} style={{
-                display: 'inline-flex', alignItems: 'center', gap: 6,
-                padding: '8px 12px', borderRadius: 9999,
-                background: visited ? '#F4F4F5' : '#FAFAFB',
-                border: visited ? '1px solid rgba(112,115,124,0.16)' : '1px dashed rgba(112,115,124,0.22)',
-                cursor: 'pointer', WebkitTapHighlightColor: 'transparent',
-              }}>
-                <span style={{
-                  fontSize: 13, fontWeight: 700, letterSpacing: '-0.02em',
-                  color: visited ? 'var(--color-fg-strong)' : 'var(--color-fg-subtle)',
-                }}>{s.name}</span>
-                <span style={{
-                  fontSize: 11, fontWeight: 600, fontVariantNumeric: 'tabular-nums',
-                  color: visited ? region.tone : 'rgba(112,115,124,0.55)',
-                }}>{s.collected}/{s.total}</span>
-              </button>
-            );
-          })}
-        </div>
-      </div>
 
-      {/* 광역 인기 자원 미리보기 (인기순) */}
-      <div style={{ padding: '26px 0 0' }}>
+        {/* 표지 본문 */}
         <div style={{
-          padding: '0 20px', display: 'flex', alignItems: 'baseline',
-          justifyContent: 'space-between', marginBottom: 12,
+          position: 'absolute', top: 114, left: 0, right: 0,
+          display: 'flex', flexDirection: 'column', alignItems: 'center',
+          padding: '0 24px',
         }}>
           <div style={{
-            fontSize: 15, fontWeight: 700, color: 'var(--color-fg-strong)', letterSpacing: '-0.02em',
-          }}>{region.name} 인기 자원</div>
-          <div style={{ fontSize: 12, fontWeight: 600, color: 'var(--color-fg-subtle)' }}>인기순</div>
-        </div>
-        <div style={{
-          display: 'flex', gap: 12, overflowX: 'auto',
-          padding: '0 20px 4px', scrollbarWidth: 'none',
-        }}>
-          {popular.map(p => (
-            <div key={p.id} style={{ width: 150, flexShrink: 0 }}>
-              <PlaceTile place={p} onClick={() => onOpenPlace?.(p.id)} />
-            </div>
-          ))}
-        </div>
-      </div>
-
-      {/* 이 지역 프리셋 (계획 관점) */}
-      <div style={{ padding: '26px 20px 0' }}>
-        <div style={{
-          display: 'flex', alignItems: 'baseline', justifyContent: 'space-between', marginBottom: 12,
-        }}>
-          <div style={{
-            fontSize: 15, fontWeight: 700, color: 'var(--color-fg-strong)', letterSpacing: '-0.02em',
-          }}>{region.name} 프리셋</div>
-          {presets.length > 0 && (
+            fontSize: 42, fontWeight: 800,
+            letterSpacing: '-0.04em', color: '#FFFFFF', lineHeight: 1,
+          }}>{region.name}</div>
+          {catchphrase && (
             <div style={{
-              fontSize: 12, fontWeight: 600, color: 'var(--color-fg-subtle)',
-              fontVariantNumeric: 'tabular-nums',
-            }}>{presets.length}개</div>
+              fontSize: 13, fontWeight: 500, marginTop: 14,
+              color: 'rgba(255,255,255,0.85)', textAlign: 'center',
+            }}>{catchphrase}</div>
           )}
         </div>
-        {presets.length === 0 ? (
+
+        {/* 진행 프로그레스 바 */}
+        <div style={{
+          position: 'absolute', bottom: 44, left: 32, right: 32,
+        }}>
           <div style={{
-            padding: '20px', textAlign: 'center',
-            background: '#F7F7F8', borderRadius: 14,
-            border: '1px dashed rgba(112,115,124,0.22)',
-            fontSize: 13, fontWeight: 500, color: 'var(--color-fg-subtle)',
-          }}>아직 이 지역 프리셋이 없어요. 첫 코스를 만들어보세요.</div>
-        ) : (
-          <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
-            {presets.slice(0, 3).map(p => (
-              <PresetCard key={p.id} preset={p} compact onClick={() => onOpenPreset?.(p.id)} />
+            height: 3, background: 'rgba(255,255,255,0.18)',
+            borderRadius: 9999, overflow: 'hidden',
+          }}>
+            <div style={{
+              width: `${visitedRatio * 100}%`,
+              height: '100%', background: '#FFFFFF',
+            }} />
+          </div>
+        </div>
+      </div>
+
+      {/* "어디로 갈까요?" 시트 — 지도 절반 가린 위치에서 시작, 페이지 스크롤 시 위로 */}
+      <div style={{
+        position: 'relative', zIndex: 3,
+        marginTop: -72,
+        background: '#FFFFFF',
+        borderTopLeftRadius: 22, borderTopRightRadius: 22,
+        boxShadow: '0 -8px 24px rgba(15,24,33,0.06)',
+        padding: '10px 20px 26px',
+      }}>
+        {/* drag handle */}
+        <div style={{ display: 'flex', justifyContent: 'center', marginBottom: 14 }}>
+          <span style={{
+            width: 36, height: 4, borderRadius: 2,
+            background: 'rgba(112,115,124,0.22)',
+          }} />
+        </div>
+
+        {/* prompt */}
+        <div>
+          <div style={{
+            fontSize: 19, fontWeight: 700, color: 'var(--color-fg-strong)',
+            letterSpacing: '-0.02em',
+          }}>어디로 갈까요?</div>
+          <div style={{
+            fontSize: 12, fontWeight: 500, color: 'var(--color-fg-subtle)',
+            marginTop: 3,
+          }}>{region.name}에서 둘러볼 곳을 골라보세요</div>
+        </div>
+
+        {/* 인기 자원 */}
+        <div style={{ marginTop: 22 }}>
+          <div style={{
+            display: 'flex', alignItems: 'baseline', justifyContent: 'space-between',
+            marginBottom: 10, marginRight: -20, paddingRight: 20,
+          }}>
+            <div style={{
+              fontSize: 14, fontWeight: 700, color: 'var(--color-fg-strong)',
+              letterSpacing: '-0.02em',
+            }}>인기 자원</div>
+            <button onClick={() => onOpenSigun?.(regionId, null)} style={{
+              display: 'inline-flex', alignItems: 'center', gap: 2,
+              padding: 0, background: 'transparent', border: 'none',
+              cursor: 'pointer', WebkitTapHighlightColor: 'transparent',
+              fontSize: 11, fontWeight: 600, color: 'var(--color-fg-subtle)',
+            }}>
+              모두 보기
+              <I n="chevron-right" s={12} c="rgba(55,56,60,0.55)" />
+            </button>
+          </div>
+          <div className="scroll-hidden" style={{
+            display: 'flex', gap: 12, overflowX: 'auto',
+            marginRight: -20, paddingRight: 20, paddingBottom: 4,
+            scrollbarWidth: 'none',
+          }}>
+            {popular.map(p => (
+              <div key={p.id} style={{ width: 140, flexShrink: 0 }}>
+                <PlaceTile place={p} onClick={() => onOpenPlace?.(p.id)} />
+              </div>
             ))}
           </div>
-        )}
+        </div>
+
+        {/* 코스 프리셋 */}
+        <div style={{ marginTop: 26 }}>
+          <div style={{
+            display: 'flex', alignItems: 'baseline', justifyContent: 'space-between',
+            marginBottom: 10,
+          }}>
+            <div style={{
+              fontSize: 14, fontWeight: 700, color: 'var(--color-fg-strong)',
+              letterSpacing: '-0.02em',
+            }}>코스 프리셋</div>
+            {presets.length > 3 && (
+              <button onClick={() => setShowAllPresets(v => !v)} style={{
+                display: 'inline-flex', alignItems: 'center', gap: 2,
+                padding: 0, background: 'transparent', border: 'none',
+                cursor: 'pointer', WebkitTapHighlightColor: 'transparent',
+                fontSize: 11, fontWeight: 600, color: 'var(--color-fg-subtle)',
+                fontVariantNumeric: 'tabular-nums',
+              }}>
+                {showAllPresets ? '접기' : `모두 보기 · ${presets.length}`}
+                <I n={showAllPresets ? 'chevron-down' : 'chevron-right'} s={12} c="rgba(55,56,60,0.55)"
+                   style={showAllPresets ? { transform: 'rotate(180deg)' } : undefined} />
+              </button>
+            )}
+          </div>
+          {presets.length === 0 ? (
+            <div style={{
+              padding: '18px', textAlign: 'center',
+              background: '#F7F7F8', borderRadius: 12,
+              border: '1px dashed rgba(112,115,124,0.22)',
+              fontSize: 12, fontWeight: 500, color: 'var(--color-fg-subtle)',
+            }}>아직 이 지역 프리셋이 없어요. 첫 코스를 만들어보세요.</div>
+          ) : (
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
+              {(showAllPresets ? presets : presets.slice(0, 3)).map(p => (
+                <PresetCard key={p.id} preset={p} compact onClick={() => onOpenPreset?.(p.id)} />
+              ))}
+            </div>
+          )}
+        </div>
+
+        {/* 시군별로 보기 — 시그니처 도시 5칩 + 전체 보기 */}
+        <div style={{ marginTop: 26 }}>
+          <div style={{
+            display: 'flex', alignItems: 'baseline', justifyContent: 'space-between',
+            marginBottom: 10,
+          }}>
+            <div style={{
+              fontSize: 14, fontWeight: 700, color: 'var(--color-fg-strong)',
+              letterSpacing: '-0.02em',
+            }}>시군별로 보기</div>
+            <div style={{
+              fontSize: 11, fontWeight: 500, color: 'var(--color-fg-subtle)',
+              fontVariantNumeric: 'tabular-nums',
+            }}>방문 {visitedSigun}/{siguns.length}</div>
+          </div>
+          {cityChips.length > 0 && (
+            <div style={{
+              display: 'flex', flexWrap: 'wrap', gap: 6, marginBottom: 10,
+            }}>
+              {cityChips.map(({ name, sigun }) => {
+                const visited = sigun.collected > 0;
+                return (
+                  <button key={sigun.id}
+                    onClick={() => onOpenSigun?.(regionId, name)}
+                    style={{
+                      display: 'inline-flex', alignItems: 'center', gap: 5,
+                      padding: '7px 11px', borderRadius: 9999,
+                      background: visited ? `${region.tone}14` : '#FAFAFB',
+                      border: visited ? `1px solid ${region.tone}33` : '1px dashed rgba(112,115,124,0.22)',
+                      cursor: 'pointer', WebkitTapHighlightColor: 'transparent',
+                    }}>
+                    <span style={{
+                      fontSize: 12, fontWeight: 700, letterSpacing: '-0.02em',
+                      color: visited ? region.tone : 'var(--color-fg-subtle)',
+                    }}>{name.replace(/시$|군$/, '')}</span>
+                    {visited && (
+                      <span style={{
+                        fontSize: 10, fontWeight: 600, color: region.tone,
+                        opacity: 0.65, fontVariantNumeric: 'tabular-nums',
+                      }}>{sigun.collected}</span>
+                    )}
+                  </button>
+                );
+              })}
+            </div>
+          )}
+          <button onClick={() => onOpenSigunPicker?.(regionId)} style={{
+            width: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center',
+            gap: 6, padding: '11px 14px', borderRadius: 12,
+            background: 'transparent',
+            border: '1px dashed rgba(112,115,124,0.28)',
+            cursor: 'pointer', WebkitTapHighlightColor: 'transparent',
+            fontSize: 12, fontWeight: 600, color: 'var(--color-fg-subtle)',
+          }}>
+            <I n="search" s={13} c="rgba(55,56,60,0.55)" />
+            전체 {siguns.length}개 시·군 보기
+          </button>
+        </div>
       </div>
+    </div>
+  );
+}
+
+// ─────────────────────────────────────────────
+// Dex Sigun Picker — 검색 + 방문/미방문 분리 리스트
+// ─────────────────────────────────────────────
+function DexSigunPickerScreen({ regionId, onBack, onOpenSigun }) {
+  const region = getRegion(regionId);
+  const [query, setQuery] = React.useState('');
+  if (!region) return null;
+
+  const siguns = sigunsOf(regionId);
+  const norm = (s) => s.replace(/\s+/g, '').toLowerCase();
+  const q = norm(query);
+  const matches = q.length === 0
+    ? siguns
+    : siguns.filter(s => norm(s.name).includes(q));
+
+  const byName = (a, b) => a.name.localeCompare(b.name, 'ko');
+  const visited = matches.filter(s => s.collected > 0).slice().sort(byName);
+  const unvisited = matches.filter(s => s.collected === 0).slice().sort(byName);
+  const totalVisited = siguns.filter(s => s.collected > 0).length;
+
+  const renderRow = (s) => {
+    const isV = s.collected > 0;
+    return (
+      <button key={s.id} onClick={() => onOpenSigun?.(regionId, s.name)} style={{
+        width: '100%', display: 'flex', alignItems: 'center', justifyContent: 'space-between',
+        padding: '12px 20px', background: 'transparent', border: 'none',
+        cursor: 'pointer', WebkitTapHighlightColor: 'transparent', textAlign: 'left',
+      }}>
+        <span style={{ display: 'inline-flex', alignItems: 'center', gap: 10 }}>
+          <span style={{
+            width: 6, height: 6, borderRadius: 9999,
+            background: isV ? region.tone : 'rgba(112,115,124,0.32)',
+          }} />
+          <span style={{
+            fontSize: 14, fontWeight: isV ? 700 : 600, letterSpacing: '-0.01em',
+            color: isV ? region.tone : 'var(--color-fg-subtle)',
+          }}>{s.name}</span>
+        </span>
+        <span style={{
+          fontSize: 11, fontWeight: 600, fontVariantNumeric: 'tabular-nums',
+          color: isV ? region.tone : 'var(--color-fg-subtle)',
+          opacity: isV ? 0.65 : 0.6,
+        }}>{s.collected}/{s.total}</span>
+      </button>
+    );
+  };
+
+  return (
+    <div style={{ paddingBottom: 110, background: '#FFFFFF', minHeight: '100%' }}>
+      {/* Header */}
+      <div style={{ padding: '52px 20px 14px', borderBottom: '0.5px solid rgba(112,115,124,0.16)' }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 14 }}>
+          <IconButton onClick={onBack} ariaLabel="뒤로">
+            <I n="chevron-left" s={20} c="rgba(55,56,60,0.88)" />
+          </IconButton>
+          <div style={{ flex: 1 }}>
+            <div style={{
+              fontSize: 15, fontWeight: 700, letterSpacing: '-0.02em',
+              color: 'var(--color-fg-strong)',
+            }}>{region.name} 시·군</div>
+            <div style={{
+              fontSize: 11, fontWeight: 500, color: 'var(--color-fg-subtle)',
+              marginTop: 1, fontVariantNumeric: 'tabular-nums',
+            }}>{siguns.length}곳 · 방문 {totalVisited}</div>
+          </div>
+        </div>
+
+        <div style={{
+          display: 'flex', alignItems: 'center', gap: 8,
+          padding: '10px 12px', borderRadius: 10,
+          background: '#F4F4F5',
+        }}>
+          <I n="search" s={15} c="rgba(55,56,60,0.55)" />
+          <input
+            value={query}
+            onChange={e => setQuery(e.target.value)}
+            placeholder="시군 이름으로 검색"
+            style={{
+              flex: 1, border: 'none', outline: 'none', background: 'transparent',
+              fontSize: 13, fontFamily: 'inherit',
+              color: 'var(--color-fg-strong)',
+            }}
+          />
+          {query.length > 0 && (
+            <button onClick={() => setQuery('')} aria-label="검색어 지우기" style={{
+              display: 'inline-flex', alignItems: 'center', justifyContent: 'center',
+              width: 18, height: 18, borderRadius: 9999,
+              background: 'rgba(112,115,124,0.28)', border: 'none', padding: 0,
+              cursor: 'pointer',
+            }}>
+              <I n="close" s={10} c="#FFFFFF" w={2.5} />
+            </button>
+          )}
+        </div>
+      </div>
+
+      {/* List */}
+      {matches.length === 0 ? (
+        <div style={{
+          padding: '60px 20px', textAlign: 'center',
+          fontSize: 13, color: 'var(--color-fg-subtle)',
+        }}>"{query}"에 해당하는 시군이 없어요</div>
+      ) : (
+        <div>
+          {visited.length > 0 && (
+            <>
+              <div style={{
+                padding: '14px 20px 6px',
+                fontSize: 11, fontWeight: 600, color: 'var(--color-fg-subtle)',
+                letterSpacing: '0.02em',
+              }}>방문 중 · {visited.length}곳</div>
+              {visited.map(renderRow)}
+            </>
+          )}
+          {unvisited.length > 0 && (
+            <>
+              <div style={{
+                padding: visited.length > 0 ? '16px 20px 6px' : '14px 20px 6px',
+                fontSize: 11, fontWeight: 600, color: 'var(--color-fg-subtle)',
+                letterSpacing: '0.02em',
+              }}>아직 가지 않은 곳 · {unvisited.length}곳</div>
+              {unvisited.map(renderRow)}
+            </>
+          )}
+        </div>
+      )}
     </div>
   );
 }
@@ -6042,4 +6375,4 @@ function ProfileStatDivider() {
 
 Object.assign({}, { ProfileScreen });
 
-export { OnboardingScreen, HomeScreen, DiscoverScreen, DiscoverSuccessScreen, DexNationScreen, DexProvinceScreen, DexRegionScreen, PlaceDetailScreen, PresetCreateScreen, PresetDetailScreen, UserProfileScreen, PlazaScreen, TitlesScreen, ProfileScreen, TabBar, PLACES, REGIONS, CATEGORIES, TITLES, PRESETS, FEED };
+export { OnboardingScreen, HomeScreen, DiscoverScreen, DiscoverSuccessScreen, DexNationScreen, DexProvinceScreen, DexSigunPickerScreen, DexRegionScreen, PlaceDetailScreen, PresetCreateScreen, PresetDetailScreen, UserProfileScreen, PlazaScreen, TitlesScreen, ProfileScreen, TabBar, PLACES, REGIONS, CATEGORIES, TITLES, PRESETS, FEED };

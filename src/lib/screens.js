@@ -6,6 +6,7 @@ export const SCREENS = [
   { id: "discover-success",no: "04", name: "발견 성공 (오버레이)",tab: "discover",group: "발견" },
   { id: "dex",             no: "05", name: "도감 — 전국",        tab: "dex",     group: "도감" },
   { id: "dex-province",    no: "06", name: "도감 — 광역",        tab: "dex",     group: "도감" },
+  { id: "dex-sigun-picker",no: "06C",name: "도감 — 시·군 피커",    tab: "dex",     group: "도감" },
   { id: "dex-region",      no: "06B",name: "도감 — 시군 상세",    tab: "dex",     group: "도감" },
   { id: "place",           no: "07", name: "장소 상세",          tab: "dex",     group: "도감" },
   { id: "preset-create",   no: "12", name: "프리셋 — 만들기",     tab: "dex",     group: "프리셋" },

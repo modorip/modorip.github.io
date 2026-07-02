@@ -13,7 +13,8 @@ function renderScreen(id) {
     case 'discover':         return <D.DiscoverScreen onDiscoverSuccess={noop} />;
     case 'discover-success': return (<><D.DiscoverScreen onDiscoverSuccess={noop} /><D.DiscoverSuccessScreen placeId={S.undiscovered} onDone={noop} /></>);
     case 'dex':              return <D.DexNationScreen onOpenRegion={noop} />;
-    case 'dex-province':     return <D.DexProvinceScreen regionId={S.region} onBack={noop} onOpenSigun={noop} onOpenPlace={noop} onOpenPreset={noop} />;
+    case 'dex-province':     return <D.DexProvinceScreen regionId={S.region} onBack={noop} onOpenSigun={noop} onOpenPlace={noop} onOpenPreset={noop} onOpenSigunPicker={noop} />;
+    case 'dex-sigun-picker': return <D.DexSigunPickerScreen regionId={S.region} onBack={noop} onOpenSigun={noop} />;
     case 'dex-region':       return <D.DexRegionScreen regionId={S.region} onBack={noop} onOpenPlace={noop} onCreatePreset={noop} sigunName="제주시" />;
     case 'place':            return <D.PlaceDetailScreen placeId={S.place} onBack={noop} onDiscover={noop} />;
     case 'preset-create':    return <D.PresetCreateScreen regionId={S.region} onBack={noop} onCreated={noop} />;
