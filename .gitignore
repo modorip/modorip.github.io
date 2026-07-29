@@ -4,6 +4,7 @@
 /build
 .DS_Store
 *.log
+*.tsbuildinfo
 .env*
 
 # Claude Code 로컬(비공유) 메모

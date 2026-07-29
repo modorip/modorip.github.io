@@ -4,12 +4,16 @@
   "private": true,
   "description": "모두립 Next.js 목업 · 와이어프레임 + 화면별 풀스크린 목업 (claude design /app 레퍼런스 이식)",
   "scripts": {
-    "dev": "next dev",
+    "dev": "next dev -p 3080",
     "build": "next build",
-    "start": "next start",
-    "lint": "next lint"
+    "start": "next start -p 3080",
+    "lint": "eslint ."
   },
   "dependencies": {
+    "@karrotmarket/react-monochrome-icon": "^1.25.0",
+    "@karrotmarket/react-multicolor-icon": "^1.27.0",
+    "@seed-design/css": "^2.2.2",
+    "@seed-design/react": "^2.0.5",
     "mermaid": "^11.16.0",
     "next": "^16.2.9",
     "react": "^19.2.7",
@@ -17,5 +21,13 @@
   },
   "overrides": {
     "postcss": "^8.5.10"
+  },
+  "devDependencies": {
+    "@types/node": "^26.1.2",
+    "@types/react": "^19.2.17",
+    "@types/react-dom": "^19.2.3",
+    "eslint": "^9.39.5",
+    "eslint-config-next": "^16.2.12",
+    "typescript": "^6.0.3"
   }
 }
