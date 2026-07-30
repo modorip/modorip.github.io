@@ -69,7 +69,11 @@ npm run lint      # ESLint 9 flat config. 오류·경고 없이 exit 0
 
 client 착수 전 실기기 검증 4종: ① Kakao Map 네이티브 뷰 + 현재 위치 + Flutter 오버레이 ② 포그라운드·백그라운드 위치 권한과 지오펜스 수명주기 ③ Supabase 카카오·구글·애플 로그인과 딥링크 ④ SEED 토큰을 옮긴 대표 화면 1개(텍스트 확대·스크린 리더). 지도 결합이나 위치 수명주기가 불안정하면 React Native보다 Kotlin·Swift 네이티브를 먼저 재평가한다.
 
-SEED는 Flutter 런타임 패키지가 없다. `@seed-design/css`의 light-only 값을 Dart 토큰으로 옮기고 필요한 컴포넌트를 재구현한다. `/licenses` 상당 화면·NOTICE 고지·제휴 부인도 함께 이식한다. **`../client/lib/design/tokens.dart`는 구 선언값이니 기준으로 쓰지 마라.**
+SEED는 Flutter 런타임 패키지가 없다. `@seed-design/css`의 light-only 값을 Dart 토큰으로 옮기고 필요한 컴포넌트를 재구현한다. `/licenses` 상당 화면·NOTICE 고지·제휴 부인도 함께 이식한다.
+
+토큰 이식은 끝났다(2026-07-30). client는 고정 커밋 `25050dd7`의 Rootage 2.2.1과 설치된 CSS 2.2.2에서 `lib/design/tokens/seed_tokens.g.dart`를 **생성**한다(client ADR-0002(고정 커밋 생성 토큰과 재구현 컴포넌트)). 경고 대상이던 손선언 `../client/lib/design/tokens.dart`는 이제 존재하지 않는다.
+
+⚠️ **`spacingX.globalGutter`가 두 저장소에서 다르다.** mockup은 402px 프레임 실측으로 20px로 재정의했지만 client는 SEED 원본 그대로 16px이다. `List.Item`류가 이 토큰으로 좌우 패딩을 잡으므로 같은 화면의 좌우 여백이 4px 어긋난다. 어느 쪽으로 맞출지 아직 정하지 않았다. 대표 화면을 Golden으로 비교하기 전에 결정해야 한다. 선택지는 docs `03-디자인/디자인시스템.md` "간격" 절에 적어 뒀다.
 
 ### 재사용 자산 - `bundle.tsx` 도메인 데이터가 최고 가치
 
@@ -179,17 +183,19 @@ grep -rhoE '(fontSize|gap|padding|margin)[A-Za-z]*: [1-9][0-9]*' src/  # 1 (온�
 
 호출부 시그니처를 유지한 어댑터로 감싸 15개 화면이 코드 변경 없이 SEED로 렌더된다.
 
-| 우리 프리미티브 | SEED 대응 | 채널 |
-|---|---|---|
-| `Button` | `ActionButton` (primary→brandSolid · neutral→neutralSolid · outline→neutralOutline · subtle/soft→neutralWeak · ghost→ghost) | 런타임 |
-| `Badge` | `Badge` (tone 6종 매핑, 계열 3종은 색만 주입) | 런타임 |
-| `Chip` | `Chip.Toggle` (`active`/`onClick` → `checked`/`onCheckedChange`) | 스니펫 |
-| `Avatar` | `Avatar` (px → size enum 스냅) | 스니펫 |
-| `ListRow` | `List.Item` + Prefix/Content/Title/Detail/Suffix | 런타임 |
-| `ViewToggle` | `SegmentedControl` (`aria-label` 필수) | 스니펫 |
-| `IconButton` | `ActionButton layout="iconOnly"` (자식은 SEED `<Icon svg={<I/>}>` 필수, `inverse`는 `neutralWeak`) | 런타임 |
-| `Sidebar` | `SideNavigation` (Item은 `asChild`로 `next/link` 위임, 활성은 `current`) | 런타임 |
-| `Card` · `Progress` · `AppHeader` · `TabBar` | 없음 → `Box` 조립 | - |
+Flutter 열은 client에 이미 있는 대응 Widget이다. 비어 있으면 아직 이식하지 않았다는 뜻이고, 정확한 상태는 `client/tool/seed_specs/seed_component_coverage.json`이 정본이다.
+
+| 우리 프리미티브 | SEED 대응 | 채널 | Flutter (client) |
+|---|---|---|---|
+| `Button` | `ActionButton` (primary→brandSolid · neutral→neutralSolid · outline→neutralOutline · subtle/soft→neutralWeak · ghost→ghost) | 런타임 | `SeedActionButton` |
+| `Badge` | `Badge` (tone 6종 매핑, 계열 3종은 색만 주입) | 런타임 | `SeedBadge` |
+| `Chip` | `Chip.Toggle` (`active`/`onClick` → `checked`/`onCheckedChange`) | 스니펫 | `SeedToggleChip` |
+| `Avatar` | `Avatar` (px → size enum 스냅) | 스니펫 | `SeedAvatar` (badgeMask는 `none`·`circle`만) |
+| `ListRow` | `List.Item` + Prefix/Content/Title/Detail/Suffix | 런타임 | `SeedListItem` (`last` 구분선은 미대응) |
+| `ViewToggle` | `SegmentedControl` (`aria-label` 필수) | 스니펫 | 미이식 |
+| `IconButton` | `ActionButton layout="iconOnly"` (자식은 SEED `<Icon svg={<I/>}>` 필수, `inverse`는 `neutralWeak`) | 런타임 | `SeedIconButton` (`semanticLabel` 필수) |
+| `Sidebar` | `SideNavigation` (Item은 `asChild`로 `next/link` 위임, 활성은 `current`) | 런타임 | 미이식 (웹 전용) |
+| `Card` · `Progress` · `AppHeader` · `TabBar` | 없음 → `Box` 조립 | - | 미이식 |
 
 ### 이미 밟은 지뢰 (반복하지 마라)
 
