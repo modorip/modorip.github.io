@@ -16,6 +16,10 @@ import {
   Box,
   HStack,
   List as SeedList,
+  TextFieldRoot,
+  TextFieldInput,
+  TextFieldTextarea,
+  TextFieldPrefixIcon,
 } from '@seed-design/react';
 // 당근 SEED - CLI 스니펫(조립된 레시피)
 import { ToggleChip } from 'seed-design/ui/chip';
@@ -73,6 +77,87 @@ import {
   IconTrophyLine,
 } from '@karrotmarket/react-monochrome-icon';
 import { CUSTOM_ICON_PATHS as ICON_PATHS } from '@/lib/customIcons';
+
+// 당근 SEED - TextField 어댑터
+// 기존 호출부의 (value, onChange, placeholder) 시그니처를 유지한 채 SEED 레시피로 렌더한다.
+// raw <input> 을 쓰면 focus-visible·disabled·invalid 와 prefix/suffix 슬롯을 전부 손으로
+// 만들어야 하고, Flutter 이식 때 기준으로 삼을 스펙이 없어진다.
+interface TextInputProps {
+  /** aria-label. SEED 는 label 없는 TextFieldInput 에 접근성 경고를 낸다. 필수로 둔다. */
+  label: string;
+  value: string;
+  onChange: (value: string) => void;
+  placeholder?: string;
+  autoFocus?: boolean;
+  onKeyDown?: KeyboardEventHandler<HTMLInputElement>;
+  prefixIcon?: ReactNode;
+  suffix?: ReactNode;
+  variant?: 'outline' | 'underline';
+  size?: 'large' | 'medium';
+  style?: CSSProperties;
+}
+
+function TextInput({
+  label, value, onChange, placeholder, autoFocus, onKeyDown,
+  prefixIcon, suffix, variant = 'outline', size = 'large', style,
+}: TextInputProps) {
+  return (
+    <TextFieldRoot
+      variant={variant} size={size}
+      value={value} onValueChange={onChange}
+      style={style}
+    >
+      {prefixIcon}
+      <TextFieldInput
+        aria-label={label}
+        placeholder={placeholder} autoFocus={autoFocus} onKeyDown={onKeyDown}
+      />
+      {suffix ? (
+        // 레시피의 오른쪽 여백은 `suffixIcon:last-child` 클래스에만 붙는다.
+        // 생 <button> 은 그 클래스가 없어 여백 0으로 모서리에 붙고,
+        // root 의 overflow:hidden + radius 에 잘린다. 같은 값을 직접 준다.
+        <span style={{
+          display: 'inline-flex', alignItems: 'center', flexShrink: 0,
+          marginRight: size === 'medium'
+            ? 'var(--seed-dimension-x3_5)'
+            : 'var(--seed-dimension-x4)',
+        }}>
+          {suffix}
+        </span>
+      ) : null}
+    </TextFieldRoot>
+  );
+}
+
+interface TextAreaProps {
+  /** aria-label. TextInput 과 같은 이유로 필수다. */
+  label: string;
+  value: string;
+  onChange: (value: string) => void;
+  placeholder?: string;
+  /**
+   * SEED 기본값은 true 이고, 입력할수록 높이가 무한히 늘어난다.
+   * 화면 레이아웃을 고정해야 하면 false 로 끄고 [style] 로 높이를 준다.
+   */
+  autoresize?: boolean;
+  /** textarea 노드에 직접 적용한다. 높이 제한 용도로만 쓴다. */
+  style?: CSSProperties;
+}
+
+function TextArea({
+  label, value, onChange, placeholder, autoresize = true, style,
+}: TextAreaProps) {
+  return (
+    <TextFieldRoot variant="outline" size="large" value={value} onValueChange={onChange}>
+      <TextFieldTextarea
+        aria-label={label}
+        placeholder={placeholder}
+        autoresize={autoresize}
+        style={style}
+      />
+    </TextFieldRoot>
+  );
+}
 
 // icons.jsx - 아이콘 어댑터
 //
@@ -1755,8 +1840,8 @@ function Brand({ size = 22, color = 'var(--seed-color-fg-brand)' }: BrandProps) 
 //
 // SEED rootage 에 top-navigation.json 스펙은 있으나 React 배포분이 없다.
 // HStack/VStack/Box 로 조립하고 간격은 SEED 의미 기반 토큰만 참조한다.
-//   좌우: --space-global-gutter (SEED spacingX.globalGutter)
-//   상단: --space-screen-top    (노치 회피)
+//   좌우: --seed-dimension-spacing-x-global-gutter
+//   상단: 노치 회피 (SEED 에 대응 토큰 없음)
 // ─────────────────────────────────────────────
 export interface AppHeaderProps {
   title?: ReactNode;
@@ -2133,8 +2218,8 @@ function KoreaMap({ selectedId, onSelect, height = 400 }: KoreaMapProps) {
 // SectionHeader - 섹션 제목
 //
 // 간격을 SEED 의미 축으로 바꿨다.
-//   좌우 = --space-global-gutter, 위 = --space-nav-to-title(dense) / x7,
-//   아래 = --space-component-default
+//   좌우 = spacing-x-global-gutter, 위 = spacing-y-nav-to-title(dense) / x7,
+//   아래 = spacing-y-component-default
 // ─────────────────────────────────────────────
 export interface SectionHeaderProps {
   title: ReactNode;
@@ -2284,20 +2369,16 @@ function OnboardingScreen({ onComplete }: OnboardingScreenProps) {
         }}>{cur.body}</div>
         {cur.art === 'name' && (
           <div style={{ marginTop: 'var(--seed-dimension-x7)' }}>
-            <input
+            {/* 화면에 입력이 하나뿐이라 SEED 가 권장하는 underline 을 쓴다.
+                outline/large 는 t5 지만 underline/large 는 t6 이라 구 히어로
+                타이포(t6)가 그대로 유지된다. 굵기 변형은 SEED 에 없어 버렸다. */}
+            <TextInput
+              label="닉네임"
+              variant="underline"
               autoFocus
               value={name}
-              onChange={(e) => setName(e.target.value)}
+              onChange={setName}
               placeholder="예: 도장킹"
-              style={{
-                width: '100%', boxSizing: 'border-box',
-                background: 'var(--seed-color-bg-neutral-weak)', border: '1px solid transparent',
-                borderRadius: 'var(--seed-radius-r3)', padding: 'var(--seed-dimension-x3_5) var(--seed-dimension-x4)',
-                fontFamily: 'inherit', fontSize: 'var(--seed-font-size-t6)',
-                color: 'var(--seed-color-fg-neutral)', fontWeight: 'var(--seed-font-weight-bold)',
-                outline: 'none', }}
-              onFocus={e => e.target.style.borderColor = 'var(--seed-color-stroke-brand-solid)'}
-              onBlur={e => e.target.style.borderColor = 'transparent'}
             />
           </div>
         )}
@@ -3308,23 +3389,13 @@ function DexSigunPickerScreen({ regionId, onBack, onOpenSigun }: DexSigunPickerS
           </div>
         </div>
 
-        <div style={{
-          display: 'flex', alignItems: 'center', gap: 'var(--seed-dimension-x2)',
-          padding: 'var(--seed-dimension-x2_5) var(--seed-dimension-x3)', borderRadius: 'var(--seed-radius-r3)',
-          background: 'var(--seed-color-bg-neutral-weak)',
-        }}>
-          <I n="search" s={15} c="var(--seed-color-fg-neutral-subtle)" />
-          <input
-            value={query}
-            onChange={e => setQuery(e.target.value)}
-            placeholder="시군 이름으로 검색"
-            style={{
-              flex: 1, border: 'none', outline: 'none', background: 'transparent',
-              fontSize: 'var(--seed-font-size-t3)', fontFamily: 'inherit',
-              color: 'var(--seed-color-fg-neutral)',
-            }}
-          />
-          {query.length > 0 && (
+        <TextInput
+          label="시군 이름으로 검색"
+          value={query}
+          onChange={setQuery}
+          placeholder="시군 이름으로 검색"
+          prefixIcon={<TextFieldPrefixIcon svg={<I n="search" />} />}
+          suffix={query.length > 0 ? (
             <button onClick={() => setQuery('')} aria-label="검색어 지우기" style={{
               display: 'inline-flex', alignItems: 'center', justifyContent: 'center',
               width: 'var(--seed-dimension-x4_5)', height: 'var(--seed-dimension-x4_5)', borderRadius: 'var(--seed-radius-full)',
@@ -3333,8 +3404,8 @@ function DexSigunPickerScreen({ regionId, onBack, onOpenSigun }: DexSigunPickerS
             }}>
               <I n="close" s={10} c="var(--seed-color-palette-static-white)" w={2.5} />
             </button>
-          )}
-        </div>
+          ) : undefined}
+        />
       </div>
 
       {/* List */}
@@ -5122,24 +5193,17 @@ function PlazaPresets({ onOpenPreset, onOpenUser }: PlazaPresetsProps) {
   return (
     <div style={{ padding: '0 var(--seed-dimension-spacing-x-global-gutter)', display: 'flex', flexDirection: 'column', gap: 'var(--seed-dimension-x3)' }}>
       {/* Search input */}
-      <div style={{
-        display: 'flex', alignItems: 'center', gap: 'var(--seed-dimension-x2)',
-        padding: 'var(--seed-dimension-x2_5) var(--seed-dimension-x3_5)', borderRadius: 'var(--seed-radius-r3)',
-        background: 'var(--seed-color-bg-neutral-weak)', border: '1px solid transparent',
-      }}>
-        <I n="search" s={16} c="var(--seed-color-fg-neutral-subtle)" />
-        <input value={query} onChange={(e) => setQuery(e.target.value)}
-          placeholder="태그나 키워드로 검색 (예: 일출, 제주, 당일치기)"
-          style={{
-            flex: 1, border: 'none', background: 'transparent', outline: 'none',
-            fontSize: 'var(--seed-font-size-t4)', fontWeight: 'var(--seed-font-weight-medium)', fontFamily: 'inherit',
-            color: 'var(--seed-color-fg-neutral)', }} />
-        {query && (
-          <button onClick={() => setQuery('')} style={{
+      <TextInput
+        label="프리셋 검색"
+        value={query} onChange={setQuery}
+        placeholder="태그나 키워드로 검색 (예: 일출, 제주, 당일치기)"
+        prefixIcon={<TextFieldPrefixIcon svg={<I n="search" />} />}
+        suffix={query ? (
+          <button onClick={() => setQuery('')} aria-label="검색어 지우기" style={{
             background: 'transparent', border: 'none', cursor: 'pointer', padding: 'var(--seed-dimension-x1)',
           }}><I n="close" s={14} c="var(--seed-color-fg-neutral-subtle)" w={2} /></button>
-        )}
-      </div>
+        ) : undefined}
+      />
 
       {/* Tag chips */}
       <div style={{
@@ -6110,33 +6174,16 @@ function PresetCreateScreen({ regionId, onBack, onCreated }: PresetCreateScreenP
 
       {/* Title input */}
       <div style={{ padding: '0 var(--seed-dimension-spacing-x-global-gutter)', marginBottom: 'var(--seed-dimension-x3)' }}>
-        <input value={title} onChange={(e) => setTitle(e.target.value)}
-          placeholder="코스 이름 (예: 제주 동부 일출 코스)"
-          style={{
-            width: '100%', boxSizing: 'border-box',
-            padding: 'var(--seed-dimension-x3_5) var(--seed-dimension-x4)', borderRadius: 'var(--seed-radius-r3)',
-            background: 'var(--seed-color-bg-neutral-weak)', border: '1px solid transparent',
-            fontSize: 'var(--seed-font-size-t5)', fontWeight: 'var(--seed-font-weight-bold)', fontFamily: 'inherit',
-            color: 'var(--seed-color-fg-neutral)', outline: 'none',
-          }}
-          onFocus={e => e.target.style.borderColor = 'var(--seed-color-stroke-brand-solid)'}
-          onBlur={e => e.target.style.borderColor = 'transparent'}
-        />
+        <TextInput label="코스 이름" value={title} onChange={setTitle}
+          placeholder="코스 이름 (예: 제주 동부 일출 코스)" />
       </div>
       <div style={{ padding: '0 var(--seed-dimension-spacing-x-global-gutter)', marginBottom: 'var(--seed-dimension-x1)' }}>
-        <textarea value={description} onChange={(e) => setDescription(e.target.value)}
+        {/* 구 textarea 의 rows=2 · resize:none 에 해당한다. 자동 확장을 끄지 않으면
+            입력할수록 아래 섹션이 밀린다. */}
+        <TextArea label="코스 설명" value={description} onChange={setDescription}
           placeholder="코스 설명 (선택 사항)"
-          rows={2}
-          style={{
-            width: '100%', boxSizing: 'border-box', resize: 'none',
-            padding: 'var(--seed-dimension-x3_5) var(--seed-dimension-x4)', borderRadius: 'var(--seed-radius-r3)',
-            background: 'var(--seed-color-bg-neutral-weak)', border: '1px solid transparent',
-            fontSize: 'var(--seed-font-size-t4)', fontWeight: 'var(--seed-font-weight-medium)', fontFamily: 'inherit',
-            color: 'var(--seed-color-fg-neutral)', outline: 'none', lineHeight: 1.5,
-          }}
-          onFocus={e => e.target.style.borderColor = 'var(--seed-color-stroke-brand-solid)'}
-          onBlur={e => e.target.style.borderColor = 'transparent'}
-        />
+          autoresize={false}
+          style={{ height: 'var(--seed-dimension-x14)' }} />
       </div>
 
       {/* Tags */}
@@ -6154,19 +6201,11 @@ function PresetCreateScreen({ regionId, onBack, onCreated }: PresetCreateScreenP
           ))}
         </div>
         <div style={{ display: 'flex', gap: 'var(--seed-dimension-x1_5)' }}>
-          <input value={tagDraft}
-            onChange={(e) => setTagDraft(e.target.value)}
+          <TextInput label="태그 입력" value={tagDraft}
+            onChange={setTagDraft}
             onKeyDown={(e) => { if (e.key === 'Enter') { e.preventDefault(); addTag(); } }}
             placeholder="예: 일출, 당일치기, 자연"
-            style={{
-              flex: 1, boxSizing: 'border-box',
-              padding: 'var(--seed-dimension-x2_5) var(--seed-dimension-x3_5)', borderRadius: 'var(--seed-radius-r3)',
-              background: 'var(--seed-color-bg-neutral-weak)', border: '1px solid transparent',
-              fontSize: 'var(--seed-font-size-t4)', fontWeight: 'var(--seed-font-weight-medium)', fontFamily: 'inherit',
-              color: 'var(--seed-color-fg-neutral)', outline: 'none',
-            }}
-            onFocus={e => e.target.style.borderColor = 'var(--seed-color-stroke-brand-solid)'}
-            onBlur={e => e.target.style.borderColor = 'transparent'} />
+            style={{ flex: 1 }} />
           <Button variant="outline" size="small" onClick={() => addTag()}
             disabled={!tagDraft.trim() || tags.length >= 6}>
             추가
@@ -6249,27 +6288,20 @@ function PresetCreateScreen({ regionId, onBack, onCreated }: PresetCreateScreenP
       <SectionHeader title={`${region.name}에서 발견한 자원`}
         subtitle={`${candidatesAll.length}곳${q ? ` · 검색 ${candidates.length}곳` : ''}`}
         trailing={
-          <div style={{
-            display: 'inline-flex', alignItems: 'center', gap: 'var(--seed-dimension-x1_5)',
-            padding: 'var(--seed-dimension-x1_5) var(--seed-dimension-x2_5)', borderRadius: 'var(--seed-radius-r3)',
-            background: 'var(--seed-color-bg-neutral-weak)', border: '1px solid transparent',
-            width: 160,
-          }} onFocus={e => e.currentTarget.style.borderColor = 'var(--seed-color-stroke-brand-solid)'}
-             onBlur={e => e.currentTarget.style.borderColor = 'transparent'}>
-            <I n="search" s={13} c="var(--seed-color-fg-neutral-subtle)" />
-            <input value={query} onChange={(e) => setQuery(e.target.value)}
-              placeholder="자원 검색"
-              style={{
-                flex: 1, minWidth: 0, border: 'none', background: 'transparent', outline: 'none',
-                fontSize: 'var(--seed-font-size-t2)', fontWeight: 'var(--seed-font-weight-medium)', fontFamily: 'inherit',
-                color: 'var(--seed-color-fg-neutral)', }} />
-            {query && (
-              <button onClick={() => setQuery('')} style={{
+          <TextInput
+            label="자원 검색"
+            value={query} onChange={setQuery}
+            placeholder="자원 검색"
+            size="medium"
+            style={{ width: 160 }}
+            prefixIcon={<TextFieldPrefixIcon svg={<I n="search" />} />}
+            suffix={query ? (
+              <button onClick={() => setQuery('')} aria-label="검색어 지우기" style={{
                 background: 'transparent', border: 'none', cursor: 'pointer', padding: 0,
                 display: 'inline-flex', alignItems: 'center',
               }}><I n="close" s={12} c="var(--seed-color-fg-neutral-subtle)" w={2} /></button>
-            )}
-          </div>
+            ) : undefined}
+          />
         } />
       <div style={{
         padding: '0 var(--seed-dimension-spacing-x-global-gutter)',

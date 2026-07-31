@@ -12,8 +12,8 @@
   "dependencies": {
     "@karrotmarket/react-monochrome-icon": "^1.25.0",
     "@karrotmarket/react-multicolor-icon": "^1.27.0",
-    "@seed-design/css": "^2.2.2",
-    "@seed-design/react": "^2.0.5",
+    "@seed-design/css": "^2.3.0",
+    "@seed-design/react": "^2.1.0",
     "mermaid": "^11.16.0",
     "next": "^16.2.9",
     "react": "^19.2.7",
