@@ -7,11 +7,12 @@ Next.js 16 · React 19 · TypeScript 6. **공모전 제출물이 아니다**(구
 ## 실행
 
 ```sh
-npm run build     # ✅ exit 0, 정적 25 페이지(10 static + /mockup/[id] SSG 15). TypeScript 검사 포함
+npm run build     # ✅ exit 0, 26 페이지(11 static + /mockup/[id] SSG 15). TypeScript 검사 포함
 npm run dev
 npm run start     # http://localhost:3080
 npx tsc --noEmit  # 경고·오류 없이 exit 0 이어야 한다
 npm run lint      # ESLint 9 flat config. 오류·경고 없이 exit 0
+npx @seed-design/cli@latest compat   # 커밋된 SEED 스니펫 ↔ 설치 패키지 호환성
 ```
 
 빌드 통과만으로 화면 렌더를 검증할 수 없다. `/mockup/*`·`/prototype`은 `ClientOnly`로 감싸 클라이언트에서 렌더되므로 SSG HTML이 비어 있는 게 정상이다. UI 변경 후에는 `npm run start`로 실제 화면을 확인한다.
@@ -73,7 +74,7 @@ SEED는 Flutter 런타임 패키지가 없다. `@seed-design/css`의 light-only 
 
 토큰 이식은 끝났다(2026-07-30). client는 고정 커밋 `25050dd7`의 Rootage 2.2.1과 설치된 CSS 2.2.2에서 `lib/design/tokens/seed_tokens.g.dart`를 **생성**한다(client ADR-0002(고정 커밋 생성 토큰과 재구현 컴포넌트)). 경고 대상이던 손선언 `../client/lib/design/tokens.dart`는 이제 존재하지 않는다.
 
-⚠️ **`spacingX.globalGutter`가 두 저장소에서 다르다.** mockup은 402px 프레임 실측으로 20px로 재정의했지만 client는 SEED 원본 그대로 16px이다. `List.Item`류가 이 토큰으로 좌우 패딩을 잡으므로 같은 화면의 좌우 여백이 4px 어긋난다. 어느 쪽으로 맞출지 아직 정하지 않았다. 대표 화면을 Golden으로 비교하기 전에 결정해야 한다. 선택지는 docs `03-디자인/디자인시스템.md` "간격" 절에 적어 뒀다.
+**간격 토큰 드리프트는 없다(2026-07-31 실측).** 여기에 `spacingX.globalGutter`가 mockup 20px / client 16px로 어긋난다는 경고가 있었으나 사실이 아니었다. SEED 전환으로 자체 CSS가 사라지면서 재정의도 함께 없어졌고, 지금은 양쪽 모두 SEED 원본 `x4`(16px)를 쓴다. 확인 명령은 [DESIGN.md](./DESIGN.md)에 있다.
 
 ### 재사용 자산 - `bundle.tsx` 도메인 데이터가 최고 가치
 
@@ -98,114 +99,16 @@ Dart const로 바로 옮길 수 있다. 위치는 심볼명으로 grep 하라(�
 
 `PLACES` 81개는 분포 편향이 심하다(제주가 절반 가까이, 광주·세종·울산·대구·대전 0개). `r.total = Math.max(list.length, 12)`가 지역 총계를 인위 보정하고 있어 서버 카운트로 교체해야 한다.
 
-## ⚠️ 라이선스 (SEED = Apache-2.0 + 당근 상표 조항)
+## 디자인 - SEED 적용 규칙은 [DESIGN.md](./DESIGN.md)
 
-`@seed-design/react` · `@seed-design/css` · `@karrotmarket/react-monochrome-icon` · `@karrotmarket/react-multicolor-icon` 전부 Apache-2.0. 코드·토큰은 상업 목적 포함 자유롭게 쓸 수 있다. 다만:
+토큰 정본·조사 순서·자체 CSS 0 규칙과 검증 명령·수치 스케일·프리미티브 매핑·아이콘·이미 밟은 지뢰·SEED 라이선스는 전부 [DESIGN.md](./DESIGN.md)에 있다. **UI를 건드리기 전에 읽어라.**
 
-1. **귀속 고지 의무(제4조).** 재배포 시 LICENSE 사본 + NOTICE 고지를 함께 전달해야 한다. mockup은 `/licenses` 라우트가 빌드 시점에 `node_modules`의 원문을 읽어 이행한다. **client(제출물) 이식 시 같은 화면 필수** - 앱스토어 출시물에 빠지면 위반이다.
-2. **브랜드 리소스 조항.** 로고·상호명·캐릭터 등 당근으로 식별되는 요소는 사전 협의 없이는 비상업 한정이며, 당근 사칭·제휴 오인 유발은 무조건 금지다. 앱 화면에 당근 로고·상호명·캐릭터를 쓰지 않는다. Multicolor 아이콘은 브랜드 리소스 여부를 개별 검토하기 전에는 앱 화면에 넣지 않는다(`/icons`는 개발용 전체 카탈로그라 예외). 가이드라인: `app.notion.com/p/daangn/6fdd92981e4a42d8b29c89cbbba7a8b7`
+요점만 옮기면:
 
-**⚠️ 남은 리스크 - 브랜드색이 당근 carrot 주황(`#f60`) 그대로다.** SEED에는 브랜드 팔레트 교체 API가 없고(공식 테마는 라이트/다크뿐), 컴포넌트 13개(action-button·badge·checkmark·switchmark 등)가 brand 토큰에 내부 결합돼 있어 팔레트 CSS 재정의 말고는 회피 수단이 없다. 2026-07-29 사용자 결정으로 "자체 CSS 0"을 우선해 주황을 유지한다. 되돌리려면 `layout.tsx` `<style>`에 `--seed-color-palette-carrot-100~1000` 재지정 10줄. **앱스토어 출시 전 재검토 대상.**
-
-## ⚠️ SEED 조사 순서 (한 단계만 쓰면 반드시 틀린다)
-
-| 단계 | 도구 | 답하는 질문 |
-|---|---|---|
-| ① 발견 | `seed-docs` MCP | "SEED에 이런 게 있나?" |
-| ② 확인 | `node_modules/@seed-design/*` | "설치된 2.0.5에 실제로 있나?" |
-
-- ①을 건너뛰면 있는 걸 없다고 단정한다(실제로 `SideNavigation`·`Layout`을 없다며 손으로 조립했었다). `index.d.ts` grep은 re-export 구조라 이름이 안 잡히니 **부재 판정 근거로 쓰지 마라.**
-- ②를 건너뛰면 문서에만 있는 API를 쓴다. 문서 사이트는 `dev` 브랜치를 추적해 **설치 버전보다 앞선다**(예: `SideNavigationItemButton` · `Layout density="high"`는 2.0.5에 없다).
-
-```sh
-ls -d node_modules/@seed-design/react/lib/components/*/   # 82개. 부재 판정은 이걸로만
-grep -oE 'seed-[a-z-]+--[a-z]+_[a-zA-Z]+' node_modules/@seed-design/css/all.css | sort -u   # 실제 variant
-```
-
-MCP 섹션은 5개: `react`(components · **blocks** · getting-started · stackflow · migration · updates) · `docs`(Foundation) · `breeze` · `ai-integration` · `lynx`. **`blocks`를 빼먹지 마라** - `Layout`·`SideNavigation`·`Footer`가 거기 있다.
-
-## 스타일 규칙 - 토큰 정본은 `@seed-design/css` (자체 CSS 0)
-
-- **자체 CSS를 만들지 마라.** `.css` 파일 추가·`<style>` 삽입·자체 `--*` 토큰 선언 전부 금지. 유일한 예외는 `layout.tsx`의 리셋이며 디자인 값은 담지 않는다.
-- 스타일 소스는 `layout.tsx`의 `import "@seed-design/css/all.css"` 하나뿐이고, 거기서 선언되는 **`--seed-*` 575개**가 유일한 토큰 집합이다. 실값은 all.css의 `[data-seed-color-mode="light-only"]` 블록을 직독하라(`layout.tsx`가 light-only 고정).
-- 값이 필요하면 all.css에서 찾고, 없으면 SEED가 그 축을 안 만든 것이니 축을 포기하거나 있는 토큰으로 조립한다.
-
-```sh
-# 검증 - 기대값은 0 / 1 / 0 / 1 이다
-find src public -name '*.css'                                          # 0
-grep -rho 'var(--[a-z0-9_-]*' src/ | grep -v -- '--seed-'              # 1 (Mermaid.tsx 주석 오탐)
-grep -rn 'className=' src/                                             # 0
-grep -rhoE '(fontSize|gap|padding|margin)[A-Za-z]*: [1-9][0-9]*' src/  # 1 (온보딩 아트 marginTop: 90)
-```
-
-### 수치 스케일
-
-| 속성 | 스케일 | 한계 |
-|---|---|---|
-| `fontSize`·`lineHeight` | `--seed-font-size-t1~t14` · `--seed-line-height-t1~t14` | 최소 t1 = 11px. 그 아래는 표현 불가 |
-| `borderRadius` | `--seed-radius-r1~r6` + `-full` | 4·8·12·16·20·24 뿐 |
-| `gap`·`padding*`·`margin*` | `--seed-dimension-x0_5~x16` | 최대 x16 = 64 |
-| `width`·`height` | 정확히 일치할 때만 토큰 | 레이아웃 치수를 흔들지 않기 위함 |
-
-토큰 대응이 없어 raw 값으로 남긴 곳: `MockFrame` 베젤 라운드 52·42, 온보딩 아트 `height:300`·`marginTop:90`·`borderRadius:28`.
-
-### SEED가 안 만드는 축 - 버리거나 조립한 것
-
-1. **letter-spacing 없음** → 축 자체를 버렸다. 다시 넣지 마라.
-2. **폰트 미배포**(`font-family: inherit`뿐) → 시스템 폰트 위임. mono가 필요하면 CSS 일반 키워드 `ui-monospace, monospace`.
-3. **CSS 리셋 미배포** → `layout.tsx` 리셋이 유일한 예외.
-4. **keyframe은 SEED 파라미터형을 쓴다.** `seed-enter`/`seed-exit`가 `--seed-enter-*`/`--seed-exit-*`로 opacity·translate-x/y·scale·rotate를 받는다. 자체 `@keyframes`를 만들지 마라.
-5. **4계열·17광역 식별색 축 없음** → 4계열은 SEED 팔레트 배정(자연=green · 유적=yellow · 문화=purple · 축제=red). 17광역 `tone`은 데이터로서 raw hex 유지(`` `${tone}33` `` 알파 문자열 연결 때문에 `var()` 불가).
-6. **TopNavigation·BottomNavigation React 미배포** → `AppHeader`·`TabBar`는 `Box` 조립. 단 **사이드바는 조립 대상이 아니다** - `SideNavigation` 일습을 실제로 배포한다(과거에 "없다"고 잘못 단정했던 전례가 있다. 위 조사 순서를 지켜라).
-
-### 화면 골격·문서형 페이지
-
-- `src/app/layout.tsx`: 셸은 SEED `LayoutRoot` + `Sidebar`(`SideNavigation`) + `SideNavigationInset`.
-- `src/components/doc.tsx`: 문서형 페이지(설계·스토리보드·와이어프레임) 공용 스타일. SEED에 문서 타이포 프리셋이 없어 직접 조립.
-- `src/lib/wireframeStyles.ts`: `buildGallery()` HTML 문자열의 class를 인라인 style로 치환하는 리졸버.
-- `/design/database`는 `Text`·`Callout`·`Badge`·`Divider` 등 SEED 컴포넌트로 조립돼 있다. 컨텍스트 배지 9개만 토큰 배경 pill이다(`Badge` tone이 enum 6종이라 9색 식별색 표현 불가).
-
-## 아이콘
-
-- **SEED 모노크롬 41종**(`bundle.tsx` `SEED_ICONS`) + **자체 path 12종**(`src/lib/customIcons.ts`). 자체 12종 = SEED에 대응물 없음 8종(`mountain`·`waves`·`droplets`·`trees`·`mountain-snow`·`wind`·`church`·`lamp`) + 대체 시 의미 손실 4종(`landmark`·`library`·`sunset`·`message-circle`).
-- SEED `Line` 아이콘은 stroke가 아니라 **fill 기반**이라 선 굵기를 바꿀 수 없다. 활성 상태는 `Line`↔`Fill` 스왑으로 표현한다(Fill 5종: user·users·compass·home·book-open).
-- **앱 화면에서 `import * as` 금지.** named import만. 예외는 `/icons` 카탈로그(각 패키지 `loader` 진입점으로 지연 로딩).
-
-## 당근 SEED 적용
-
-`@seed-design/react` 2.0.5 + `@seed-design/css` 2.2.2 + `@karrotmarket/react-monochrome-icon` 1.25.0 + `@karrotmarket/react-multicolor-icon` 1.27.0. 이 4개가 SEED 의존성의 전부다.
-
-- **`@seed-design/design-token`은 설치하지 마라** - npm description부터 `DEPRECATED: see @seed-design/css`다. `@seed-design/cli`·`docs-mcp`는 `npx`로만 쓰고 의존성에 넣지 않는다.
-- 두 채널을 섞어 쓴다: **런타임** `@seed-design/react`(export 492개) + **CLI 스니펫** `seed-design/ui/*.tsx` 25개(레포 루트 = CLI 기본 경로, `seed-design.json`이 `"tsx": true`).
-- 문서 확인: `claude mcp add seed-docs -- npx -y @seed-design/docs-mcp`
-
-### 프리미티브 매핑 (`bundle.tsx` 상단 어댑터가 SEED API 사용법의 정답지)
-
-호출부 시그니처를 유지한 어댑터로 감싸 15개 화면이 코드 변경 없이 SEED로 렌더된다.
-
-Flutter 열은 client에 이미 있는 대응 Widget이다. 비어 있으면 아직 이식하지 않았다는 뜻이고, 정확한 상태는 `client/tool/seed_specs/seed_component_coverage.json`이 정본이다.
-
-| 우리 프리미티브 | SEED 대응 | 채널 | Flutter (client) |
-|---|---|---|---|
-| `Button` | `ActionButton` (primary→brandSolid · neutral→neutralSolid · outline→neutralOutline · subtle/soft→neutralWeak · ghost→ghost) | 런타임 | `SeedActionButton` |
-| `Badge` | `Badge` (tone 6종 매핑, 계열 3종은 색만 주입) | 런타임 | `SeedBadge` |
-| `Chip` | `Chip.Toggle` (`active`/`onClick` → `checked`/`onCheckedChange`) | 스니펫 | `SeedToggleChip` |
-| `Avatar` | `Avatar` (px → size enum 스냅) | 스니펫 | `SeedAvatar` (badgeMask는 `none`·`circle`만) |
-| `ListRow` | `List.Item` + Prefix/Content/Title/Detail/Suffix | 런타임 | `SeedListItem` (`last` 구분선은 미대응) |
-| `ViewToggle` | `SegmentedControl` (`aria-label` 필수) | 스니펫 | 미이식 |
-| `IconButton` | `ActionButton layout="iconOnly"` (자식은 SEED `<Icon svg={<I/>}>` 필수, `inverse`는 `neutralWeak`) | 런타임 | `SeedIconButton` (`semanticLabel` 필수) |
-| `Sidebar` | `SideNavigation` (Item은 `asChild`로 `next/link` 위임, 활성은 `current`) | 런타임 | 미이식 (웹 전용) |
-| `Card` · `Progress` · `AppHeader` · `TabBar` | 없음 → `Box` 조립 | - | 미이식 |
-
-### 이미 밟은 지뢰 (반복하지 마라)
-
-1. **TDZ 오류** - 섹션을 객체/배열로 모으면 모듈 로드 시 JSX가 즉시 평가된다. 헬퍼는 `const` 화살표가 아니라 **`function` 선언으로 호이스팅하라.**
-2. **`asChild` 중첩 금지** - `BottomSheetTrigger`는 내부에서 이미 Slot을 쓴다. 자식에 또 주면 "Slot failed to slot onto its children".
-3. **Icon/Asset 슬롯에 문자열 금지** - `FloatingActionButton`의 `icon`과 `ContentPlaceholder` children은 React 엘리먼트(SVG)여야 한다. 이모지 문자열은 프리렌더를 실패시킨다.
-4. **스니펫 `ContentPlaceholder`는 children을 내부에서 `.Asset`으로 감싼다.** `ContentPlaceholder.Asset` 직접 접근은 undefined다.
-5. **`SegmentedControl`은 `aria-label`/`aria-labelledby` 필수.** 없으면 프리렌더 실패.
-6. **`ActionButton layout="iconOnly"`의 자식은 SEED `<Icon svg={} />`여야 한다.** raw `<svg>`는 dev에서 throw(`IconRequired`). 아이콘 컴포넌트는 `forwardRef` + rest 전달로 Radix Slot의 className/ref를 `<svg>`까지 흘려야 한다(`I`가 그 예).
-7. **`SegmentedControl` 아이템은 `min-width: 86px` + `padding-inline: 24px`.** 402px 프레임의 헤더 trailing 슬롯에 안 들어가니 헤더 아래 전폭 행으로 내려라.
+- **스타일 소스는 `@seed-design/css` 하나뿐이고 자체 CSS는 0개다.** `.css` 파일 추가·`<style>` 삽입·자체 `--*` 토큰 선언 전부 금지.
+- **새 UI는 SEED에 있는지 먼저 확인**하고 없을 때만 `Box`로 조립한다. 조사 순서를 건너뛰면 있는 걸 없다고 단정한다(전례 있음).
+- **SEED는 Apache-2.0 + 당근 상표 조항이다.** `/licenses` 라우트가 귀속 고지를 이행한다. 당근 로고·상호명·캐릭터를 앱 화면에 쓰지 않는다.
+- 플랫폼 중립 디자인 결정과 근거는 `../docs/03-디자인/디자인시스템.md`.
 
 ## 남은 결함
 
@@ -213,7 +116,7 @@ Flutter 열은 client에 이미 있는 대응 Widget이다. 비어 있으면 아
 
 ## 주의
 
-- 새 UI가 필요하면 **SEED에 있는지 먼저 확인하고**(위 조사 순서) 없을 때만 `Box`로 조립한다. 조립할 때도 색·간격·라운드는 SEED 토큰만 참조한다.
+- 새 UI가 필요하면 **SEED에 있는지 먼저 확인하고**([DESIGN.md](./DESIGN.md)의 조사 순서) 없을 때만 `Box`로 조립한다. 조립할 때도 색·간격·라운드는 SEED 토큰만 참조한다.
 - 화면을 바꾸면 `../docs/01-기능명세서/`도 갱신한다. 현재 06 계층 확장이 미반영 상태다.
 - 자체 토큰 → SEED 치환 이력(매핑표·치환 통계)은 이 문서에서 뺐다. 필요하면 git 히스토리(2026-07-28~29 커밋)를 보라.
 - 개인 메모는 `CLAUDE.local.md`(gitignore).
