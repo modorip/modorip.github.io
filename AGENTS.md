@@ -7,7 +7,7 @@ Next.js 16 · React 19 · TypeScript 6. **공모전 제출물이 아니다**(구
 ## 실행
 
 ```sh
-npm run build     # ✅ exit 0, 26 페이지(11 static + /mockup/[id] SSG 15). TypeScript 검사 포함
+npm run build     # ✅ exit 0, 25 페이지(10 static + /mockup/[id] SSG 15). TypeScript 검사 포함
 npm run dev
 npm run start     # http://localhost:3080
 npx tsc --noEmit  # 경고·오류 없이 exit 0 이어야 한다
@@ -30,7 +30,6 @@ npx @seed-design/cli@latest compat   # 커밋된 SEED 스니펫 ↔ 설치 패�
 | URL | 목적 |
 |---|---|
 | `/` | 인덱스 (4카드 + 15화면 링크) |
-| `/wireframes` | 저충실도 갤러리 |
 | `/storyboard` | 6 시나리오 × 단계별 프리뷰 |
 | `/mockup`, `/mockup/[id]` | 고충실도 썸네일 / 풀스크린 (15개 SSG) |
 | `/prototype` | `MockApp` 스택 네비게이션 |

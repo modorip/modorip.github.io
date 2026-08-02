@@ -8,7 +8,6 @@ import {
   IconChevronDownLine,
   IconDocumentCheckmarkLine,
   IconDocumentPenLine,
-  IconGridLine,
   IconHouseLine,
   IconMapLocationpinLine,
   IconPaletteLine,
@@ -170,7 +169,6 @@ export default function Sidebar() {
         </SideNavigationHeader>
         <SideNavigationContent>
           <SideNavigationGroup>
-            <NavItem href="/wireframes" icon={<IconGridLine />} current={is('/wireframes')} collapsed={collapsed}>와이어프레임</NavItem>
             <NavItem href="/storyboard" icon={<IconDocumentPenLine />} current={is('/storyboard')} collapsed={collapsed}>스토리보드</NavItem>
             <NavItem href="/prototype" icon={<IconSparkleViewfinderLine />} current={is('/prototype')} collapsed={collapsed}>프로토타입</NavItem>
           </SideNavigationGroup>

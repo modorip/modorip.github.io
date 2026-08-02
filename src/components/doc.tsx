@@ -1,4 +1,4 @@
-// 문서형 페이지(설계·스토리보드·와이어프레임)의 공용 스타일과 이동 컴포넌트.
+// 문서형 페이지(설계·스토리보드)의 공용 스타일과 이동 컴포넌트.
 // 자체 CSS 파일 없이 SEED 토큰만 참조한다. SEED 는 문서 타이포그래피 프리셋을
 // 배포하지 않으므로 font-size·line-height·spacing 토큰으로 직접 조립한다.
 import type { CSSProperties, ReactNode } from 'react';

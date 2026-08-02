@@ -1,6 +1,6 @@
 # 모두립 · Mockup
 
-모두립 앱의 **화면 설계 레퍼런스**입니다. 와이어프레임(저충실도)부터 15개 화면의 풀스크린 목업, 동작하는 프로토타입까지 한 곳에서 봅니다.
+모두립 앱의 **화면 설계 레퍼런스**입니다. 15개 화면의 풀스크린 목업과 동작하는 프로토타입을 한 곳에서 봅니다.
 
 > **이 저장소는 공모전 제출물이 아닙니다.** 제출물은 Flutter 앱(`modorip/client`)이고, 여기는 그 구현의 근거가 되는 화면 설계본입니다.
 
@@ -57,7 +57,7 @@ npm run dev                # http://localhost:3080
 ### 4. 프로덕션 빌드 확인
 
 ```bash
-npm run build              # 26 페이지 SSG. exit 0 이어야 합니다
+npm run build              # 25 페이지 SSG. exit 0 이어야 합니다
 npm run start              # http://localhost:3080
 ```
 
@@ -168,7 +168,6 @@ cp -R .claude/skills/seed-design /path/to/other-project/.claude/skills/
 | 경로 | 내용 |
 |---|---|
 | `/` | 인덱스 · 15개 화면 링크 |
-| `/wireframes` | 저충실도 와이어프레임 갤러리 (15개) |
 | `/storyboard` | 시나리오별 화면 흐름 · 단계별 미리보기 |
 | `/mockup` | 고충실도 목업 썸네일 |
 | `/mockup/[id]` | 단일 화면 풀스크린 (15개 SSG) |
@@ -249,7 +248,7 @@ src/
 ├── app/                      # Next App Router
 │   ├── layout.tsx            # ★ 유일한 CSS import + 브라우저 리셋 + SEED 셸
 │   ├── page.tsx              # 인덱스
-│   └── wireframes/ storyboard/ mockup/ prototype/ design/ licenses/
+│   └── storyboard/ mockup/ prototype/ design/ licenses/
 ├── components/
 │   ├── Sidebar.tsx           # SEED SideNavigation
 │   ├── MockFrame.tsx         # 402×874 디바이스 프레임 + useFitScale
@@ -265,8 +264,6 @@ src/
 └── lib/
     ├── screens.ts            # ★ 화면 메타데이터 정본 (15개)
     ├── customIcons.ts        # 모두립 전용 SVG path 정본 (12개)
-    ├── wireframes.ts         # 와이어프레임 갤러리 빌더
-    ├── wireframeStyles.ts    # 위 빌더의 class → SEED 인라인 스타일 리졸버
     ├── storyboard.ts         # 화면 전이 그래프
     └── designData.ts         # ERD·설계 원칙 데이터
 seed-design/ui/               # SEED CLI 스니펫 .tsx 25개 (shadcn 모델)

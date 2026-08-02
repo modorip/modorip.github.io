@@ -187,7 +187,6 @@ grep -n '<input\|<textarea' src/design/bundle.tsx
 
 - `src/app/layout.tsx`: 셸은 SEED `LayoutRoot` + `Sidebar`(`SideNavigation`) + `SideNavigationInset`.
 - `src/components/doc.tsx`: 문서형 페이지 공용 스타일. SEED에 문서 타이포 프리셋이 없어 직접 조립.
-- `src/lib/wireframeStyles.ts`: `buildGallery()` HTML 문자열의 class를 인라인 style로 치환하는 리졸버.
 - `/design/database`는 `Text`·`Callout`·`Badge`·`Divider` 등 SEED 컴포넌트로 조립돼 있다. 컨텍스트 배지 9개만 토큰 배경 pill이다(`Badge` tone이 enum 6종이라 9색 식별색 표현 불가).
 
 ## 아이콘

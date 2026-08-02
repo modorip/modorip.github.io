@@ -7,7 +7,7 @@ import Sidebar from "@/components/Sidebar";
 
 export const metadata: Metadata = {
   title: "모두립 · 목업",
-  description: "와이어프레임 + 화면별 풀스크린 목업 (당근 SEED 기반)",
+  description: "화면별 풀스크린 목업 (당근 SEED 기반)",
 };
 
 // 브라우저 정규화. SEED 는 리셋을 배포하지 않는다 - `box-sizing: border-box` 를
