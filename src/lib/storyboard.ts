@@ -50,7 +50,7 @@ export const FLOWS: readonly Flow[] = [
       },
       {
         id: 'discover-success',
-        action: '카드 회전·confetti 보상 확인, 가벼운/깊은 발견 선택',
+        action: '카드 회전·confetti 보상 확인, 후기 남기기',
         result: '도감 +1 · 칭호 점수 재계산 · 광장 피드 생성',
       },
       {

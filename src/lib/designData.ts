@@ -138,7 +138,7 @@ export const MERMAID_DETAIL: string = `erDiagram
   categories ||..o{ discoveries : "계열"
   place_snapshot ||..o{ discoveries : "자원(캐시)"
   users { uuid id PK  text provider "apple|google|kakao"  text status  text role  int token_version }
-  discoveries { uuid id PK  uuid user_id FK  text place_id "KTO"  text mode "light|deep" }
+  discoveries { uuid id PK  uuid user_id FK  text place_id "KTO"  text review "선택" }
   place_counters { text place_id PK  int total_count }
   wishlist { uuid user_id PK  text place_id PK }
   account_titles { uuid user_id PK  text title_id PK  bool earned }

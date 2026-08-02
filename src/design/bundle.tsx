@@ -3876,7 +3876,7 @@ function PlaceDetailScreen({ placeId, onBack, onDiscover }: PlaceDetailScreenPro
                   marginTop: 'var(--seed-dimension-x1_5)', display: 'flex', alignItems: 'center', gap: 'var(--seed-dimension-x1_5)',
                 }}>
                   <I n="map-pin" s={14} c="var(--seed-color-fg-neutral-subtle)" />
-                  <span>{place.date} 발견 · {group.id === 'nature' ? '가벼운 발견' : '깊은 발견'}</span>
+                  <span>{place.date} 발견</span>
                 </div>
               )}
             </div>
@@ -4749,7 +4749,8 @@ function DiscoverSuccessScreen({ placeId, onDone }: DiscoverSuccessScreenProps) 
   const category = getCategory(place.category);
   const group = getGroup(place.category);
   const [stage, setStage] = React.useState(0);
-  const [deepMode, setDeepMode] = React.useState(false);
+  const [writing, setWriting] = React.useState(false);
+  const [review, setReview] = React.useState('');
 
   // Stage 0: scanning (dark, scan line)
   // Stage 1: card flipping & growing (rotateX spin)
@@ -4853,35 +4854,25 @@ function DiscoverSuccessScreen({ placeId, onDone }: DiscoverSuccessScreenProps) 
         <>
           <div style={{ padding: 'var(--seed-dimension-x2) var(--seed-dimension-x6) 0', animation: 'seed-enter 320ms var(--seed-timing-function-enter) 100ms both',
             '--seed-enter-opacity': 0, '--seed-enter-translate-y': '10px' } as SeedCSSProperties}>
-            <div style={{
-              display: 'flex', background: 'var(--seed-color-bg-neutral-weak)', borderRadius: 'var(--seed-radius-r3)', padding: 'var(--seed-dimension-x1)',
-            }}>
-              <button onClick={() => setDeepMode(false)} style={{
-                flex: 1, padding: 'var(--seed-dimension-x2_5)', borderRadius: 'var(--seed-radius-r2)',
-                background: !deepMode ? 'var(--seed-color-palette-static-white)' : 'transparent',
-                color: !deepMode ? 'var(--seed-color-fg-neutral)' : 'var(--seed-color-fg-neutral-subtle)',
-                border: 'none', cursor: 'pointer',
-                fontWeight: 'var(--seed-font-weight-bold)', fontSize: 'var(--seed-font-size-t3)',
-              }}>
-                가벼운 발견 (GPS)
-              </button>
-              <button onClick={() => setDeepMode(true)} style={{
-                flex: 1, padding: 'var(--seed-dimension-x2_5)', borderRadius: 'var(--seed-radius-r2)',
-                background: deepMode ? 'var(--seed-color-palette-static-white)' : 'transparent',
-                color: deepMode ? 'var(--seed-color-fg-neutral)' : 'var(--seed-color-fg-neutral-subtle)',
-                border: 'none', cursor: 'pointer',
-                fontWeight: 'var(--seed-font-weight-bold)', fontSize: 'var(--seed-font-size-t3)',
-              }}>
-                깊은 발견 (사진·후기)
-              </button>
-            </div>
-            {deepMode && (
-              <div style={{
-                marginTop: 'var(--seed-dimension-x2_5)', padding: 'var(--seed-dimension-x2_5) var(--seed-dimension-x3)', borderRadius: 'var(--seed-radius-r3)',
-                background: 'var(--seed-color-palette-yellow-100)', border: '1px solid var(--seed-color-palette-yellow-200)',
-                fontSize: 'var(--seed-font-size-t2)', fontWeight: 'var(--seed-font-weight-medium)', color: 'var(--seed-color-palette-yellow-900)',
-                lineHeight: 1.55, }}>사진과 후기를 추가하면 표고 칭호 점수에 반영되고, 광장에서 다른 탐험가에게 노출됩니다.</div>
+            {writing ? (
+              <TextArea
+                label="후기"
+                value={review}
+                onChange={setReview}
+                placeholder="이곳은 어땠나요?"
+                autoresize={false}
+                style={{ minHeight: 96 }}
+              />
+            ) : (
+              <Button variant="soft" size="large" fullWidth onClick={() => setWriting(true)}>
+                후기 남기기
+              </Button>
             )}
+            <div style={{
+              marginTop: 'var(--seed-dimension-x2)', textAlign: 'center',
+              fontSize: 'var(--seed-font-size-t2)', fontWeight: 'var(--seed-font-weight-medium)',
+              color: 'var(--seed-color-fg-neutral-subtle)', lineHeight: 1.55,
+            }}>후기를 남기면 광장에서 다른 탐험가에게 보여요</div>
           </div>
 
           <div style={{ padding: 'var(--seed-dimension-x3) var(--seed-dimension-x6) 0', animation: 'seed-enter 320ms var(--seed-timing-function-enter) 180ms both',
