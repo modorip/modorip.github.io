@@ -26,7 +26,7 @@ export type RelationRow = readonly [
 export type MappingRow = readonly [aggregate: string, tables: string, context: string];
 
 export const PRIN: readonly IconTextRow[] = [
-  ['IconKeyholeShieldLine','<b>OAuth 전용 로그인</b> - Apple · Google · Kakao 3종만. 비밀번호/이메일 가입 없음 → <code>users</code>에 password 없음. 세션은 프로바이더 재교환 + access JWT(서버 refresh 토큰 없음, 필요 시 <code>token_version</code> 일괄 무효화).'],
+  ['IconKeyholeShieldLine','<b>OAuth 전용 로그인</b> - Apple · Google · Kakao 3종만. 비밀번호/이메일 가입 없음 → <code>users</code>에 password 없음. <b>Supabase Auth가 JWT를 발급</b>하고 서버는 검증만 한다. 자체 발급을 하지 않으므로 <code>refresh_tokens</code>와 <code>token_version</code>은 없다.'],
   ['IconCircle4SquareLine','<b>모듈러 모놀리스</b> - <code>com.modorip.server</code> 컨텍스트별 모듈. 협력은 도메인 이벤트 + ID 참조.'],
   ['IconHashLine','<b>물리 FK는 컨텍스트 내부만</b>. 컨텍스트 간은 <code>*_id</code> 문자열 ID 참조(논리 분리).'],
   ['IconArrowCounterclockwiseCircularLine','<b>KTO 자원: 실시간 호출 + read-through 캐시</b> - 자원은 <code>place_snapshot</code>에 read-through 캐시(미스 시 호출, KTO 원천). <code>regions/categories</code>는 시드. 벌크 동기화 금지(ADR-0011).'],
@@ -137,8 +137,8 @@ export const MERMAID_DETAIL: string = `erDiagram
   regions ||..o{ discoveries : "지역"
   categories ||..o{ discoveries : "계열"
   place_snapshot ||..o{ discoveries : "자원(캐시)"
-  users { uuid id PK  text provider "apple|google|kakao"  text status  text role  int token_version }
-  discoveries { uuid id PK  uuid user_id FK  text place_id "KTO"  text review "선택" }
+  users { uuid id PK  text supabase_user_id UK  text provider "google|apple|kakao"  text status  text role }
+  discoveries { uuid id PK  uuid user_id "논리 참조"  text place_id "KTO"  text review "선택" }
   place_counters { text place_id PK  int total_count }
   wishlist { uuid user_id PK  text place_id PK }
   account_titles { uuid user_id PK  text title_id PK  bool earned }
