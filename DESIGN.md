@@ -17,6 +17,8 @@
 
 스타일 소스는 `src/app/layout.tsx`의 `import "@seed-design/css/all.css"` 하나뿐이고, 거기서 선언되는 `--seed-*`가 유일한 토큰 집합이다. `layout.tsx`가 `light-only`로 고정하므로 실값은 `all.css`의 `[data-seed-color-mode="light-only"]` 블록을 직독한다.
 
+**단 브랜드 8개는 예외다.** 같은 파일의 `BRAND` 블록이 값을 덮어쓰므로 brand 축의 실값은 `all.css`가 아니라 `layout.tsx`를 봐야 한다(아래 "브랜드색 - 확정" 절). 토큰 **이름**은 그대로라 집합 크기는 변하지 않는다.
+
 ```sh
 # L1 - 현재 버전과 토큰 개수
 node -p "require('./node_modules/@seed-design/css/package.json').version"
@@ -35,9 +37,11 @@ grep -o -- '--seed-dimension-spacing-x-global-gutter:[^;]*' node_modules/@seed-d
 
 ### client와의 버전 핀 일치
 
-client는 `tool/seed_tokens/vendor/`에 동봉한 SEED 원본에서 Dart 토큰을 생성한다. 감시 대상은 재정의가 아니라 **두 저장소의 토큰 값 일치**다.
+client는 `tool/seed_tokens/vendor/`에 동봉한 SEED 원본에서 Dart 토큰을 생성한다. 감시 대상은 **두 저장소의 토큰 값 일치**다.
 
-**기준은 버전 문자열이 아니라 토큰 값이다.** 버전이 달라도 값이 같으면 화면은 갈라지지 않는다. 실제로 지금 그 상태다.
+**기준은 버전 문자열이 아니라 토큰 값이다.** 버전이 달라도 값이 같으면 화면은 갈라지지 않는다.
+
+**⚠️ 2026-08-02부터 브랜드 8개는 갈라져 있다.** mockup은 `layout.tsx`에서 brand 축을 청색으로 재정의했고(아래 "브랜드색 - 확정" 절), client의 생성 토큰은 아직 SEED 원본 carrot 값이다. 아래 `diff`는 SEED 원본끼리 비교하므로 이 차이를 **잡아내지 못한다.** client 이식 시 8개를 손으로 옮겨야 한다.
 
 ```sh
 # 핀 확인
@@ -95,21 +99,26 @@ llms.txt는 clone·MCP 없이 URL만으로 읽을 수 있다.
 
 MCP를 쓰면 더 빠르다(`claude mcp add seed-docs -- npx -y @seed-design/docs-mcp`). **필수는 아니다.**
 
-## 스타일 규칙 - 자체 CSS 0
+## 스타일 규칙 - SEED 토큰 재정의 1블록 외 자체 CSS 0
 
-- **자체 CSS를 만들지 마라.** `.css` 파일 추가·`<style>` 삽입·자체 `--*` 토큰 선언 전부 금지. 유일한 예외는 `layout.tsx`의 리셋이며 디자인 값은 담지 않는다.
+- **자체 CSS를 만들지 마라.** `.css` 파일 추가·자체 `--*` 토큰 선언 전부 금지.
+- `<style>`은 `layout.tsx`에 **정확히 2개**뿐이고 둘 다 늘리지 않는다.
+  1. `RESET` - 브라우저 정규화. 디자인 값을 일절 담지 않는다.
+  2. `BRAND` - **브랜드 축 8개 재정의**(아래 "브랜드색" 절). SEED가 이미 쓰는 이름만 덮어쓰고, **새 `--*` 토큰은 만들지 않는다.**
 - 값이 필요하면 `all.css`에서 찾고, 없으면 SEED가 그 축을 안 만든 것이니 **축을 포기하거나 있는 토큰으로 조립한다.**
 - 새 UI가 필요하면 위 조사 순서로 SEED에 있는지 먼저 확인하고, 없을 때만 `Box`로 조립한다. 조립할 때도 색·간격·라운드는 SEED 토큰만 참조한다.
 
 ```sh
-# 검증 - 기대값은 0 / 1 / 0 / 1 이다
+# 검증 - 기대값은 0 / 1 / 0 / 1 / 2 / 8 이다
 find src public -name '*.css'                                          # 0
 grep -rho 'var(--[a-z0-9_-]*' src/ | grep -v -- '--seed-'              # 1 (Mermaid.tsx 주석 오탐)
 grep -rn 'className=' src/                                             # 0
 grep -rhoE '(fontSize|gap|padding|margin)[A-Za-z]*: [1-9][0-9]*' src/  # 1 (온보딩 아트 marginTop: 90)
+grep -o '<style>' src/app/layout.tsx | wc -l                           # 2 (RESET · BRAND)
+grep -c -- '--seed-color-.*brand.*:#' src/app/layout.tsx               # 8 (재정의는 브랜드 8개뿐)
 ```
 
-이 규칙 덕분에 **SEED 토큰을 재정의할 경로 자체가 없다.** client와 값이 갈라지려면 버전 핀이 갈라지는 수밖에 없다.
+**재정의 경로는 브랜드 축 하나뿐이다.** 나머지 축은 여전히 재정의할 경로가 없고, client와 값이 갈라지려면 버전 핀이 갈라지는 수밖에 없다. **브랜드 8개는 예외이므로 client에도 같은 값을 심어야 한다**(client의 생성 토큰은 SEED 원본 carrot 값을 그대로 들고 있다).
 
 ### 수치 스케일
 
@@ -134,7 +143,7 @@ grep -ohE '^[[:space:]]*--seed-(font-size|radius|dimension-x)[a-z0-9_-]*:[^;]*' 
 2. **폰트 미배포**(`font-family: inherit`뿐) → 시스템 폰트 위임. mono가 필요하면 CSS 일반 키워드 `ui-monospace, monospace`.
 3. **CSS 리셋 미배포** → `layout.tsx` 리셋이 유일한 예외.
 4. **keyframe은 SEED 파라미터형을 쓴다.** `seed-enter`/`seed-exit`가 `--seed-enter-*`/`--seed-exit-*`로 opacity·translate·scale·rotate를 받는다. 자체 `@keyframes`를 만들지 마라.
-5. **4계열·17광역 식별색 축 없음** → 4계열은 SEED 팔레트 배정(자연=green · 유적=yellow · 문화=purple · 축제=red). 17광역 `tone`은 디자인 토큰이 아니라 도메인 데이터라 raw hex를 유지한다(`` `${tone}33` `` 알파 문자열 연결 때문에 `var()` 불가).
+5. **4계열·17광역 식별색 축 없음** → SEED 유채색 palette 6개는 전부 임자가 있어(brand·informative·positive·warning·critical·magic) 21색을 배정할 수 없다. 그래서 4계열(`CATEGORY_GROUPS`)도 17광역 `tone`(`REGIONS`)도 **디자인 토큰이 아니라 도메인 데이터**로 보고 raw hex를 `bundle.tsx`에 둔다(`` `${tone}33` `` 알파 문자열 연결 때문에 `var()` 불가). 두 집합 다 **브랜드 청색과 겹치지 않게** 잡혀 있다. 값을 바꾸려면 `bundle.tsx`가 정본이고, CSS나 토큰으로 옮기지 마라.
 6. **TopNavigation·BottomNavigation 미배포** → `AppHeader`·`TabBar`는 `Box` 조립.
    - 단 **`AppBar`는 "없는" 게 아니다.** `@seed-design/stackflow`가 배포하고 레시피 CSS(`app-bar.css`·`app-bar-main.css`·`app-screen.css`)는 설치본에 이미 있다. 스니펫이 `@stackflow/react`에 의존해 Next.js인 이 저장소에서 못 쓰는 것뿐이다. **"없다"가 아니라 "stackflow 전용이라 안 쓴다"가 정확한 근거다.**
    - **사이드바는 조립 대상이 아니다.** `SideNavigation` 일습을 실제로 배포한다.
@@ -215,4 +224,47 @@ grep -n '<input\|<textarea' src/design/bundle.tsx
 1. **귀속 고지 의무(제4조).** 재배포 시 LICENSE 사본 + NOTICE 고지를 함께 전달해야 한다. mockup은 `/licenses` 라우트가 빌드 시점에 `node_modules`의 원문을 읽어 이행한다. **client(제출물)에도 같은 화면이 필수다.** 앱스토어 출시물에 빠지면 위반이고, 공모전 규정상 저작권 위반은 심사 결격 사유다.
 2. **브랜드 리소스 조항.** 로고·상호명·캐릭터 등 당근으로 식별되는 요소는 사전 협의 없이는 비상업 한정이며, 당근 사칭·제휴 오인 유발은 무조건 금지다. 앱 화면에 당근 로고·상호명·캐릭터를 쓰지 않는다. Multicolor 아이콘은 브랜드 리소스 여부를 개별 검토하기 전에는 앱 화면에 넣지 않는다(`/icons`는 개발용 전체 카탈로그라 예외).
 
-**⚠️ 브랜드색 미확정.** brand 토큰이 당근 carrot ramp 그대로다. SEED에는 브랜드 팔레트 교체 API가 없고(`@seed-design/css/theming`이 노출하는 건 `generateThemingScript({ mode, fontScaling })`뿐이며 `mode`는 `system`·`light-only`·`dark-only` 3종이다), 여러 컴포넌트가 brand 토큰에 내부 결합돼 있어 팔레트 CSS 재정의 말고는 회피 수단이 없다. 2026-07-29 결정으로 "자체 CSS 0"을 우선해 유지 중이다. 배경과 후보는 `../docs/03-디자인/디자인시스템.md`의 "브랜드색 - 보류" 절에 있다. **앱스토어 출시 전 재검토 대상.**
+## 브랜드색 - 확정 (2026-08-02)
+
+브랜드 축은 **청색**으로 확정했고, `src/app/layout.tsx`의 `BRAND` 블록이 SEED 토큰 8개를 재정의한다. 이전의 "브랜드색 미확정 · 자체 CSS 0 우선" 보류는 이것으로 해소됐다.
+
+### 값 - 여기가 mockup의 정본이다
+
+| 토큰 | 값 | 역할 |
+|---|---|---|
+| `--seed-color-bg-brand-solid` | `#0A84D8` | 버튼·핀 **바탕**(위에 흰 글자) |
+| `--seed-color-bg-brand-solid-pressed` | `#075C97` | 위 바탕의 press |
+| `--seed-color-fg-brand` | `#075C97` | 브랜드 **글자·아이콘** |
+| `--seed-color-fg-brand-contrast` | `#075C97` | 고대비 글자 |
+| `--seed-color-stroke-brand-solid` | `#075C97` | 진한 경계 |
+| `--seed-color-bg-brand-weak` | `#EDF6FC` | 약배경 |
+| `--seed-color-bg-brand-weak-pressed` | `#DEEEFA` | 약배경 press |
+| `--seed-color-stroke-brand-weak` | `#C3E1F5` | 옅은 경계 |
+
+### 왜 재정의인가
+
+SEED에는 **브랜드 팔레트 교체 API가 없다.** `@seed-design/css/theming`이 노출하는 건 `generateThemingScript({ mode, fontScaling })`뿐이고 `mode`는 `system`·`light-only`·`dark-only` 3종이다. `ActionButton` 등 여러 컴포넌트가 brand 토큰에 내부 결합돼 있어 **CSS 재정의 말고는 회피 수단이 없다.** 그래서 "자체 CSS 0"에 예외 1블록을 뚫는 쪽을 택했다.
+
+### 왜 carrot을 버렸나
+
+1. **대비 미달.** carrot-600 `#E65200`은 흰 배경 대비 3.77:1, carrot-700 `#E14D00`은 3.99:1로 둘 다 본문 대비 기준(4.5:1)에 못 미친다. 새 `fg.brand` `#075C97`은 **7.03:1**이다.
+2. **지역색 충돌.** carrot은 17광역 `tone`의 주황 계열과 사실상 같은 색이라 "브랜드"와 "지역 식별색"을 화면에서 구분할 수 없었다. 브랜드를 청색으로 옮기고 17광역 `tone`을 전면 교체해 두 축을 갈랐다.
+
+### 바탕과 글자의 역할을 나눈다
+
+carrot 시절에는 `bg.brand-solid`도 `fg.brand`도 carrot-600 **하나**였다. 한 색으로 둘을 겸하면 반드시 한쪽이 깨진다. 지금은 나눈다.
+
+- **바탕** `#0A84D8` - 흰 글자를 얹는 면적 요소용. 흰색 대비 3.96:1로 큰 글자·UI 컴포넌트 기준(3:1)을 넘는다.
+- **글자·아이콘** `#075C97` - 흰 배경에 얹는 선/점 요소용. 7.03:1. `bg.brand-weak` 위에서도 6.42:1.
+
+**`fg.brand`를 바탕으로, `bg.brand-solid`를 글자색으로 바꿔 쓰지 마라.** 역할이 뒤집히면 대비 근거가 통째로 무너진다.
+
+### 지켜야 할 것
+
+- 이 8개 **외에** brand 토큰을 더 재정의하지 마라. 위 8개가 `all.css` light 블록의 brand 토큰 전부다.
+- 새 `--*` 토큰을 만들지 마라. 이 블록은 **재정의 전용**이다.
+- 선택자는 `:root[data-seed][data-seed-color-mode="light-only"]`(특정도 0-3-0)다. `all.css`의 light 블록이 `:root[data-seed-color-mode="light-only"]`(0-2-0)로 선언하므로 **맨 `:root`(0-1-0)로 쓰면 소스 순서와 무관하게 진다.** 특정도를 낮추지 마라.
+- `src/components/Mermaid.tsx`의 `token()` fallback 2개가 같은 값을 복제하고 있다(SSR용). 값을 바꾸면 **같이 바꿔라.**
+- **client에도 같은 8개를 심어야 한다.** client의 생성 토큰은 SEED 원본 carrot 값을 그대로 들고 있어 지금은 두 저장소의 브랜드색이 갈라져 있다.
+
+플랫폼 중립 근거는 `../docs/03-디자인/디자인시스템.md`.

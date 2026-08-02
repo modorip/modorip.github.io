@@ -20,10 +20,30 @@ a{color:inherit;text-decoration:none}
 button{font-family:inherit}
 @media (prefers-reduced-motion: reduce){*,*::before,*::after{animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important;scroll-behavior:auto!important}}`;
 
+// 브랜드 축 재정의 - 이 저장소가 두는 유일한 SEED 토큰 재정의 블록이다.
+// SEED 의 brand 토큰은 당근 carrot ramp 이고 교체 API 가 없다(theming 은 mode·fontScaling 만
+// 노출한다). carrot 을 그대로 두면 (1) fg.brand 의 흰 배경 대비가 약 2.94:1 로 WCAG AA 미달이고
+// (2) 17광역 tone 과 색이 겹쳐 브랜드와 지역 식별색을 구분할 수 없다. 그래서 brand 8개만
+// 갈아끼운다. 바탕(bg.brand-solid)은 밝은 청색, 글자·아이콘(fg.brand)은 짙은 청색으로
+// 역할을 나눈다. carrot 은 둘 다 carrot-600 하나였다.
+//
+// 선택자 주의: all.css 의 light 블록이 `:root[data-seed-color-mode="light-only"]`(0-2-0)로
+// 선언하므로 맨 `:root`(0-1-0)는 소스 순서와 무관하게 진다. 특정도를 한 단계 올려 확실히 이긴다.
+// 새 `--*` 토큰은 만들지 않는다. 여기 있는 8개는 전부 SEED 가 이미 쓰는 이름이다.
+const BRAND = `:root[data-seed][data-seed-color-mode="light-only"]{
+--seed-color-bg-brand-solid:#0A84D8;
+--seed-color-bg-brand-solid-pressed:#075C97;
+--seed-color-fg-brand:#075C97;
+--seed-color-fg-brand-contrast:#075C97;
+--seed-color-stroke-brand-solid:#075C97;
+--seed-color-bg-brand-weak:#EDF6FC;
+--seed-color-bg-brand-weak-pressed:#DEEEFA;
+--seed-color-stroke-brand-weak:#C3E1F5}`;
+
 export default function RootLayout({ children }: { children: ReactNode }) {
   return (
     <html lang="ko" data-seed data-seed-color-mode="light-only" data-seed-user-color-scheme="light">
-      <head><style>{RESET}</style></head>
+      <head><style>{RESET}</style><style>{BRAND}</style></head>
       <body style={{
         background: 'var(--seed-color-bg-layer-basement)',
         color: 'var(--seed-color-fg-neutral)',

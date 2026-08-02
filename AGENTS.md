@@ -73,6 +73,8 @@ SEED는 Flutter 런타임 패키지가 없다. `@seed-design/css`의 light-only 
 
 토큰 이식은 끝났다(2026-07-30). client는 고정 커밋 `25050dd7`의 Rootage 2.2.1과 설치된 CSS 2.2.2에서 `lib/design/tokens/seed_tokens.g.dart`를 **생성**한다(client ADR-0002(고정 커밋 생성 토큰과 재구현 컴포넌트)). 경고 대상이던 손선언 `../client/lib/design/tokens.dart`는 이제 존재하지 않는다.
 
+**⚠️ 브랜드 8개는 지금 client와 갈라져 있다(2026-08-02).** mockup은 brand 축을 청색으로 재정의했고 client의 생성 토큰은 아직 SEED 원본 carrot이다. 생성 파이프라인이 SEED 원본만 읽으므로 자동으로 따라오지 않는다. **client 이식 시 8개를 명시적으로 옮겨라.** 4계열·17광역 식별색도 함께 갱신 대상이다.
+
 **간격 토큰 드리프트는 없다(2026-07-31 실측).** 여기에 `spacingX.globalGutter`가 mockup 20px / client 16px로 어긋난다는 경고가 있었으나 사실이 아니었다. SEED 전환으로 자체 CSS가 사라지면서 재정의도 함께 없어졌고, 지금은 양쪽 모두 SEED 원본 `x4`(16px)를 쓴다. 확인 명령은 [DESIGN.md](./DESIGN.md)에 있다.
 
 ### 재사용 자산 - `bundle.tsx` 도메인 데이터가 최고 가치
@@ -100,11 +102,13 @@ Dart const로 바로 옮길 수 있다. 위치는 심볼명으로 grep 하라(�
 
 ## 디자인 - SEED 적용 규칙은 [DESIGN.md](./DESIGN.md)
 
-토큰 정본·조사 순서·자체 CSS 0 규칙과 검증 명령·수치 스케일·프리미티브 매핑·아이콘·이미 밟은 지뢰·SEED 라이선스는 전부 [DESIGN.md](./DESIGN.md)에 있다. **UI를 건드리기 전에 읽어라.**
+토큰 정본·조사 순서·자체 CSS 규칙과 검증 명령·수치 스케일·프리미티브 매핑·아이콘·이미 밟은 지뢰·SEED 라이선스·**브랜드색 확정값**은 전부 [DESIGN.md](./DESIGN.md)에 있다. **UI를 건드리기 전에 읽어라.**
 
 요점만 옮기면:
 
-- **스타일 소스는 `@seed-design/css` 하나뿐이고 자체 CSS는 0개다.** `.css` 파일 추가·`<style>` 삽입·자체 `--*` 토큰 선언 전부 금지.
+- **스타일 소스는 `@seed-design/css` 하나뿐이고, 자체 CSS는 SEED 토큰 재정의 1블록 외 0개다.** `.css` 파일 추가·자체 `--*` 토큰 선언은 금지. `<style>`은 `layout.tsx`의 `RESET`·`BRAND` 2개가 전부이며 늘리지 않는다.
+- **브랜드색은 청색으로 확정됐다(2026-08-02).** `layout.tsx`의 `BRAND` 블록이 SEED brand 토큰 8개를 덮어쓴다. 바탕 `bg.brand-solid` `#0A84D8`, 글자·아이콘 `fg.brand` `#075C97`로 **역할이 나뉘어 있으니 뒤집어 쓰지 마라.** 값과 근거는 [DESIGN.md](./DESIGN.md)의 "브랜드색 - 확정" 절.
+- **4계열·17광역 식별색은 디자인 토큰이 아니라 도메인 데이터다.** `bundle.tsx`의 `CATEGORY_GROUPS`·`REGIONS`가 정본이고 raw hex로 둔다. 토큰으로 옮기지 마라.
 - **새 UI는 SEED에 있는지 먼저 확인**하고 없을 때만 `Box`로 조립한다. 조사 순서를 건너뛰면 있는 걸 없다고 단정한다(전례 있음).
 - **SEED는 Apache-2.0 + 당근 상표 조항이다.** `/licenses` 라우트가 귀속 고지를 이행한다. 당근 로고·상호명·캐릭터를 앱 화면에 쓰지 않는다.
 - 플랫폼 중립 디자인 결정과 근거는 `../docs/03-디자인/디자인시스템.md`.

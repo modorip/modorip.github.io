@@ -834,10 +834,10 @@ export interface Companion {
 }
 
 const CATEGORY_GROUPS: Record<string, CategoryGroup> = {
-  nature:   { id: 'nature',   label: '자연', color: '#009632', soft: '#D9FFE6', dark: '#006E25', icon: 'leaf' },
-  heritage: { id: 'heritage', label: '유적', color: '#D17600', soft: '#FEF4E6', dark: '#9C5800', icon: 'landmark' },
-  culture:  { id: 'culture',  label: '문화', color: '#6541F2', soft: '#F0ECFE', dark: '#3A16C9', icon: 'library' },
-  festival: { id: 'festival', label: '축제', color: '#D331B8', soft: '#FEECFB', dark: '#A81690', icon: 'sparkles' },
+  nature:   { id: 'nature',   label: '자연', color: '#00882D', soft: '#E0F1E6', dark: '#006A23', icon: 'leaf' },
+  heritage: { id: 'heritage', label: '유적', color: '#AF6300', soft: '#F5ECE0', dark: '#884D00', icon: 'landmark' },
+  culture:  { id: 'culture',  label: '문화', color: '#6541F2', soft: '#EDE8FD', dark: '#4F33BD', icon: 'library' },
+  festival: { id: 'festival', label: '축제', color: '#CD2CB3', soft: '#F9E6F6', dark: '#A0228C', icon: 'sparkles' },
 };
 
 // ─────────────────────────────────────────────
@@ -873,26 +873,28 @@ const CATEGORIES: Category[] = [
 
 // ─────────────────────────────────────────────
 // 17 광역 (with abstract silhouette SVG paths)
-// tone: Wanted-aligned hues, not warm
+// tone: 광역 식별색. 디자인 토큰이 아니라 도메인 데이터라 raw hex 를 유지한다
+//       (`${tone}33` 알파 문자열 연결 때문에 var() 를 못 쓴다).
+//       브랜드 청색(bg.brand-solid #0A84D8 / fg.brand #075C97)과 겹치지 않게 잡혀 있다.
 // ─────────────────────────────────────────────
 const REGIONS: Region[] = [
-  { id: 'seoul',     name: '서울', full: '서울특별시',       tone: '#0066FF', sil: 'city' },
-  { id: 'busan',     name: '부산', full: '부산광역시',       tone: '#00AEFF', sil: 'bridge' },
-  { id: 'daegu',     name: '대구', full: '대구광역시',       tone: '#FF9200', sil: 'apple' },
-  { id: 'incheon',   name: '인천', full: '인천광역시',       tone: '#00BDDE', sil: 'plane' },
-  { id: 'gwangju',   name: '광주', full: '광주광역시',       tone: '#6541F2', sil: 'palette' },
-  { id: 'daejeon',   name: '대전', full: '대전광역시',       tone: '#D17600', sil: 'atom' },
-  { id: 'ulsan',     name: '울산', full: '울산광역시',       tone: '#0098B2', sil: 'whale' },
-  { id: 'sejong',    name: '세종', full: '세종특별자치시',   tone: '#429E00', sil: 'scroll' },
-  { id: 'gyeonggi',  name: '경기', full: '경기도',           tone: '#1A75FF', sil: 'castle' },
-  { id: 'gangwon',   name: '강원', full: '강원특별자치도',   tone: '#009632', sil: 'peaks' },
-  { id: 'chungbuk',  name: '충북', full: '충청북도',         tone: '#FF5E00', sil: 'cave' },
-  { id: 'chungnam',  name: '충남', full: '충청남도',         tone: '#9C5800', sil: 'island' },
-  { id: 'jeonbuk',   name: '전북', full: '전북특별자치도',   tone: '#CC4B00', sil: 'bowl' },
-  { id: 'jeonnam',   name: '전남', full: '전라남도',         tone: '#006E25', sil: 'tea' },
-  { id: 'gyeongbuk', name: '경북', full: '경상북도',         tone: '#B20C0C', sil: 'pagoda' },
-  { id: 'gyeongnam', name: '경남', full: '경상남도',         tone: '#003E9C', sil: 'sail' },
-  { id: 'jeju',      name: '제주', full: '제주특별자치도',   tone: '#FF4242', sil: 'volcano' },
+  { id: 'seoul',     name: '서울', full: '서울특별시',       tone: '#723149', sil: 'city' },
+  { id: 'busan',     name: '부산', full: '부산광역시',       tone: '#5D4228', sil: 'bridge' },
+  { id: 'daegu',     name: '대구', full: '대구광역시',       tone: '#7E2E16', sil: 'apple' },
+  { id: 'incheon',   name: '인천', full: '인천광역시',       tone: '#573A88', sil: 'plane' },
+  { id: 'gwangju',   name: '광주', full: '광주광역시',       tone: '#731DA5', sil: 'palette' },
+  { id: 'daejeon',   name: '대전', full: '대전광역시',       tone: '#8B1870', sil: 'atom' },
+  { id: 'ulsan',     name: '울산', full: '울산광역시',       tone: '#981B3C', sil: 'whale' },
+  { id: 'sejong',    name: '세종', full: '세종특별자치시',   tone: '#315D28', sil: 'scroll' },
+  { id: 'gyeonggi',  name: '경기', full: '경기도',           tone: '#7E5416', sil: 'castle' },
+  { id: 'gangwon',   name: '강원', full: '강원특별자치도',   tone: '#1E6764', sil: 'peaks' },
+  { id: 'chungbuk',  name: '충북', full: '충청북도',         tone: '#C2002D', sil: 'cave' },
+  { id: 'chungnam',  name: '충남', full: '충청남도',         tone: '#C20067', sil: 'island' },
+  { id: 'jeonbuk',   name: '전북', full: '전북특별자치도',   tone: '#C23A00', sil: 'bowl' },
+  { id: 'jeonnam',   name: '전남', full: '전라남도',         tone: '#727231', sil: 'tea' },
+  { id: 'gyeongbuk', name: '경북', full: '경상북도',         tone: '#557B0A', sil: 'pagoda' },
+  { id: 'gyeongnam', name: '경남', full: '경상남도',         tone: '#007DA3', sil: 'sail' },
+  { id: 'jeju',      name: '제주', full: '제주특별자치도',   tone: '#00855D', sil: 'volcano' },
 ].map((region) => ({ ...region, total: 0, collected: 0 }));
 
 // ─────────────────────────────────────────────
@@ -1014,10 +1016,14 @@ REGIONS.forEach(r => {
 // 칭호 - 5 tiers
 // ─────────────────────────────────────────────
 const TITLE_TIERS: Record<string, TitleTier> = {
+  // 티어 색은 흰 배경 위 글자·아이콘으로 쓰인다. 전부 흰 배경 대비 4.5:1 이상이며
+  // 티어 상호 최소 ΔE 29.6, 브랜드 #0A84D8 과 최소 ΔE 39 로 확보했다(2026-08-02).
+  // 구 값은 표고 #FF9200 이 2.24:1 로 AA 미달이었고, 광역 #0066FF 는 구 서울 tone 과 같은
+  // 값이라 브랜드가 파랑이 된 뒤 브랜드와 혼동되는 자리였다.
   intro:     { id: 'intro',     label: '입문',     color: '#70737C', tone: 'neutral' },
-  region:    { id: 'region',    label: '광역',     color: '#0066FF', tone: 'primary' },
+  region:    { id: 'region',    label: '광역',     color: '#243960', tone: 'primary' },
   category:  { id: 'category',  label: '카테고리', color: '#6541F2', tone: 'accent' },
-  elevation: { id: 'elevation', label: '표고',     color: '#FF9200', tone: 'warning' },
+  elevation: { id: 'elevation', label: '표고',     color: '#8A5200', tone: 'warning' },
   master:    { id: 'master',    label: '마스터',   color: '#171719', tone: 'neutral' },
 };
 
@@ -4978,7 +4984,9 @@ function TitlesScreen({ onBack }: TitlesScreenProps) {
               <span style={{
                 fontSize: 'var(--seed-font-size-t2)', fontWeight: 'var(--seed-font-weight-bold)', color: t.color, }}>{t.label}</span>
               <span style={{
-                fontSize: 'var(--seed-font-size-t1)', fontWeight: 'var(--seed-font-weight-bold)', color: t.color, opacity: 0.6,
+                // opacity 를 걸지 않는다. 흰 배경에 합성되면 티어 색의 실효 대비가
+                // 4.5:1 아래로 떨어진다(2026-08-02 실측: 0.6 적용 시 2.30~2.72).
+                fontSize: 'var(--seed-font-size-t1)', fontWeight: 'var(--seed-font-weight-bold)', color: t.color,
               }}>{got}/{cnt}</span>
             </div>
           );
@@ -6505,8 +6513,9 @@ function UserProfileScreen({ userId, onBack, onOpenPreset, onOpenRegion }: UserP
                   fontSize: 'var(--seed-font-size-t3)', fontWeight: 'var(--seed-font-weight-bold)', color: tier.color,
                   }}>{t.name}</div>
                 <div style={{
+                  // opacity 금지. 위 4987행과 같은 이유다(0.7 적용 시 실효 대비 2.71~3.30).
                   fontSize: 'var(--seed-font-size-t1)', fontWeight: 'var(--seed-font-weight-bold)', color: tier.color,
-                  opacity: 0.7, marginTop: 'var(--seed-dimension-x0_5)',
+                  marginTop: 'var(--seed-dimension-x0_5)',
                 }}>{tier.label}</div>
               </div>
             </div>
