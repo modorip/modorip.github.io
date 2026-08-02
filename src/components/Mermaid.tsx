@@ -35,7 +35,7 @@ export default function Mermaid({ chart }: MermaidProps) {
           fontFamily: 'inherit',
           // fallback 은 SSR 등 getComputedStyle 을 못 쓸 때만 쓰인다.
           // layout.tsx 의 브랜드 재정의 블록과 같은 값을 유지하라.
-          primaryColor: token('--seed-color-bg-brand-weak', '#EDF6FC'),
+          primaryColor: token('--seed-color-bg-brand-weak', '#EDF4FB'),
           primaryBorderColor: token('--seed-color-stroke-brand-solid', '#075C97'),
           lineColor: token('--seed-color-fg-neutral-subtle', '#868b94'),
           primaryTextColor: token('--seed-color-fg-neutral', '#1a1c20'),

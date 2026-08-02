@@ -875,7 +875,7 @@ const CATEGORIES: Category[] = [
 // 17 광역 (with abstract silhouette SVG paths)
 // tone: 광역 식별색. 디자인 토큰이 아니라 도메인 데이터라 raw hex 를 유지한다
 //       (`${tone}33` 알파 문자열 연결 때문에 var() 를 못 쓴다).
-//       브랜드 청색(bg.brand-solid #0A84D8 / fg.brand #075C97)과 겹치지 않게 잡혀 있다.
+//       브랜드 청색(bg.brand-solid #0B72C4 / fg.brand #075C97)과 겹치지 않게 잡혀 있다.
 // ─────────────────────────────────────────────
 const REGIONS: Region[] = [
   { id: 'seoul',     name: '서울', full: '서울특별시',       tone: '#723149', sil: 'city' },
@@ -1017,7 +1017,7 @@ REGIONS.forEach(r => {
 // ─────────────────────────────────────────────
 const TITLE_TIERS: Record<string, TitleTier> = {
   // 티어 색은 흰 배경 위 글자·아이콘으로 쓰인다. 전부 흰 배경 대비 4.5:1 이상이며
-  // 티어 상호 최소 ΔE 29.6, 브랜드 #0A84D8 과 최소 ΔE 39 로 확보했다(2026-08-02).
+  // 티어 상호 최소 ΔE 29.6, 브랜드 #0B72C4 과 최소 ΔE 33 로 확보했다(2026-08-02).
   // 구 값은 표고 #FF9200 이 2.24:1 로 AA 미달이었고, 광역 #0066FF 는 구 서울 tone 과 같은
   // 값이라 브랜드가 파랑이 된 뒤 브랜드와 혼동되는 자리였다.
   intro:     { id: 'intro',     label: '입문',     color: '#70737C', tone: 'neutral' },

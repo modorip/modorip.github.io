@@ -29,16 +29,25 @@ button{font-family:inherit}
 //
 // 선택자 주의: all.css 의 light 블록이 `:root[data-seed-color-mode="light-only"]`(0-2-0)로
 // 선언하므로 맨 `:root`(0-1-0)는 소스 순서와 무관하게 진다. 특정도를 한 단계 올려 확실히 이긴다.
-// 새 `--*` 토큰은 만들지 않는다. 여기 있는 8개는 전부 SEED 가 이미 쓰는 이름이다.
+// 새 `--*` 토큰은 만들지 않는다. 여기 있는 9개는 전부 SEED 가 이미 쓰는 이름이다.
+//
+// 9번째 `palette-carrot-200` 은 시맨틱이 아니라 팔레트 단계다. SEED 가 이 단계만
+// 컴포넌트 규칙에서 **직접** 참조하기 때문에 시맨틱 8개로는 덮이지 않는다(all.css 5곳:
+// progress-circle tone_brand · action-button brandOutline · reaction-button 의 `--track-color`,
+// checkmark ghost-tone_brand hover 배경). 덮지 않으면 로딩 중인 brand 버튼에서 파란 arc 아래
+// 트랙이 주황으로 깔린다. 값은 `bg.brand-weak-pressed` 와 같다 - SEED 도 그 별칭을
+// carrot-200 으로 정의하므로 두 경로가 같은 값을 가리키게 맞춘 것이다.
+// 나머지 carrot 단계(100·300·600·700·800)는 시맨틱 별칭 정의에만 쓰여 위 8개로 이미 덮인다.
 const BRAND = `:root[data-seed][data-seed-color-mode="light-only"]{
---seed-color-bg-brand-solid:#0A84D8;
+--seed-color-bg-brand-solid:#0B72C4;
 --seed-color-bg-brand-solid-pressed:#075C97;
 --seed-color-fg-brand:#075C97;
 --seed-color-fg-brand-contrast:#075C97;
 --seed-color-stroke-brand-solid:#075C97;
---seed-color-bg-brand-weak:#EDF6FC;
---seed-color-bg-brand-weak-pressed:#DEEEFA;
---seed-color-stroke-brand-weak:#C3E1F5}`;
+--seed-color-bg-brand-weak:#EDF4FB;
+--seed-color-bg-brand-weak-pressed:#DEECF7;
+--seed-color-stroke-brand-weak:#C3DCF1;
+--seed-color-palette-carrot-200:#DEECF7}`;
 
 export default function RootLayout({ children }: { children: ReactNode }) {
   return (

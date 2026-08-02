@@ -41,7 +41,7 @@ client는 `tool/seed_tokens/vendor/`에 동봉한 SEED 원본에서 Dart 토큰�
 
 **기준은 버전 문자열이 아니라 토큰 값이다.** 버전이 달라도 값이 같으면 화면은 갈라지지 않는다.
 
-**⚠️ 2026-08-02부터 브랜드 8개는 갈라져 있다.** mockup은 `layout.tsx`에서 brand 축을 청색으로 재정의했고(아래 "브랜드색 - 확정" 절), client의 생성 토큰은 아직 SEED 원본 carrot 값이다. 아래 `diff`는 SEED 원본끼리 비교하므로 이 차이를 **잡아내지 못한다.** client 이식 시 8개를 손으로 옮겨야 한다.
+**⚠️ 브랜드 축은 양쪽 다 SEED 원본에서 갈라져 있다(2026-08-02).** mockup은 `layout.tsx`의 `BRAND` 블록으로, client는 `lib/design/tokens/brand_overrides.dart`의 `SeedBrandColors`로 각각 청색을 덮는다(아래 "브랜드색 - 확정" 절). **두 저장소의 값은 서로 일치한다.** 다만 아래 `diff`는 SEED 원본끼리 비교하므로 이 재정의를 **잡아내지 못한다.** 브랜드 값을 바꿀 때는 두 곳을 손으로 함께 고쳐야 하고, 기계가 어긋남을 알려주지 않는다.
 
 ```sh
 # 핀 확인
@@ -118,7 +118,7 @@ grep -o '<style>' src/app/layout.tsx | wc -l                           # 2 (RESE
 grep -c -- '--seed-color-.*brand.*:#' src/app/layout.tsx               # 8 (재정의는 브랜드 8개뿐)
 ```
 
-**재정의 경로는 브랜드 축 하나뿐이다.** 나머지 축은 여전히 재정의할 경로가 없고, client와 값이 갈라지려면 버전 핀이 갈라지는 수밖에 없다. **브랜드 8개는 예외이므로 client에도 같은 값을 심어야 한다**(client의 생성 토큰은 SEED 원본 carrot 값을 그대로 들고 있다).
+**재정의 경로는 브랜드 축 하나뿐이다.** 나머지 축은 여전히 재정의할 경로가 없고, client와 값이 갈라지려면 버전 핀이 갈라지는 수밖에 없다. **브랜드는 예외다.** 양쪽이 각자 SEED 원본을 덮고 있고 지금은 값이 일치하지만, 동기화를 보장하는 기계가 없다.
 
 ### 수치 스케일
 
@@ -226,20 +226,27 @@ grep -n '<input\|<textarea' src/design/bundle.tsx
 
 ## 브랜드색 - 확정 (2026-08-02)
 
-브랜드 축은 **청색**으로 확정했고, `src/app/layout.tsx`의 `BRAND` 블록이 SEED 토큰 8개를 재정의한다. 이전의 "브랜드색 미확정 · 자체 CSS 0 우선" 보류는 이것으로 해소됐다.
+브랜드 축은 **청색**으로 확정했고, `src/app/layout.tsx`의 `BRAND` 블록이 SEED 토큰 **9개**(시맨틱 8 + 팔레트 1)를 재정의한다. 이전의 "브랜드색 미확정 · 자체 CSS 0 우선" 보류는 이것으로 해소됐다.
 
 ### 값 - 여기가 mockup의 정본이다
 
 | 토큰 | 값 | 역할 |
 |---|---|---|
-| `--seed-color-bg-brand-solid` | `#0A84D8` | 버튼·핀 **바탕**(위에 흰 글자) |
+| `--seed-color-bg-brand-solid` | `#0B72C4` | 버튼·핀 **바탕**(위에 흰 글자) |
 | `--seed-color-bg-brand-solid-pressed` | `#075C97` | 위 바탕의 press |
 | `--seed-color-fg-brand` | `#075C97` | 브랜드 **글자·아이콘** |
 | `--seed-color-fg-brand-contrast` | `#075C97` | 고대비 글자 |
 | `--seed-color-stroke-brand-solid` | `#075C97` | 진한 경계 |
-| `--seed-color-bg-brand-weak` | `#EDF6FC` | 약배경 |
-| `--seed-color-bg-brand-weak-pressed` | `#DEEEFA` | 약배경 press |
-| `--seed-color-stroke-brand-weak` | `#C3E1F5` | 옅은 경계 |
+| `--seed-color-bg-brand-weak` | `#EDF4FB` | 약배경 |
+| `--seed-color-bg-brand-weak-pressed` | `#DEECF7` | 약배경 press |
+| `--seed-color-stroke-brand-weak` | `#C3DCF1` | 옅은 경계 |
+| `--seed-color-palette-carrot-200` | `#DEECF7` | **팔레트 단계.** 아래 설명 참조 |
+
+**9번째는 시맨틱이 아니라 팔레트 단계다.** SEED가 이 단계만 컴포넌트 규칙에서 **직접** 참조해서, 시맨틱 8개로는 덮이지 않는다. `all.css` 5곳이 해당한다 - progress-circle `tone_brand` · action-button `brandOutline` · reaction-button의 `--track-color`, 그리고 checkmark `ghost-tone_brand` hover 배경. 덮지 않으면 **로딩 중인 brand 버튼에서 파란 arc 아래 트랙이 주황으로 깔린다.** 값을 `bg.brand-weak-pressed`와 같게 둔 이유는 SEED도 그 별칭을 `carrot-200`으로 정의하기 때문이다. 두 경로가 같은 값을 가리키게 맞춘 것이다.
+
+나머지 carrot 단계(100 · 300 · 600 · 700 · 800)는 시맨틱 별칭 정의에만 쓰이므로 위 8개로 이미 덮인다. 확인은 `rg "var\(--seed-color-palette-carrot-" node_modules/@seed-design/css/all.css`로 한다.
+
+**`bg.brand-solid` 위 흰 글자는 4.98:1이라 모든 글자 크기에서 WCAG AA를 통과한다.** 글자 크기 제약이 없으므로 `SeedActionButton`·`SeedBadge` 어느 크기에 써도 된다.
 
 ### 왜 재정의인가
 
@@ -254,17 +261,17 @@ SEED에는 **브랜드 팔레트 교체 API가 없다.** `@seed-design/css/themi
 
 carrot 시절에는 `bg.brand-solid`도 `fg.brand`도 carrot-600 **하나**였다. 한 색으로 둘을 겸하면 반드시 한쪽이 깨진다. 지금은 나눈다.
 
-- **바탕** `#0A84D8` - 흰 글자를 얹는 면적 요소용. 흰색 대비 3.96:1로 큰 글자·UI 컴포넌트 기준(3:1)을 넘는다.
-- **글자·아이콘** `#075C97` - 흰 배경에 얹는 선/점 요소용. 7.03:1. `bg.brand-weak` 위에서도 6.42:1.
+- **바탕** `#0B72C4` - 흰 글자를 얹는 면적 요소용. 흰색 대비 4.98:1로 **본문 기준(4.5:1)까지 넘어 글자 크기 제약이 없다.**
+- **글자·아이콘** `#075C97` - 흰 배경에 얹는 선/점 요소용. 7.03:1. `bg.brand-weak` 위에서도 6.34:1.
 
 **`fg.brand`를 바탕으로, `bg.brand-solid`를 글자색으로 바꿔 쓰지 마라.** 역할이 뒤집히면 대비 근거가 통째로 무너진다.
 
 ### 지켜야 할 것
 
-- 이 8개 **외에** brand 토큰을 더 재정의하지 마라. 위 8개가 `all.css` light 블록의 brand 토큰 전부다.
+- 시맨틱 8개 **외에** brand 토큰을 더 재정의하지 마라. 그 8개가 `all.css` light 블록의 brand 토큰 전부다. 팔레트는 컴포넌트가 직접 참조하는 `carrot-200` 하나만 예외로 덮는다.
 - 새 `--*` 토큰을 만들지 마라. 이 블록은 **재정의 전용**이다.
 - 선택자는 `:root[data-seed][data-seed-color-mode="light-only"]`(특정도 0-3-0)다. `all.css`의 light 블록이 `:root[data-seed-color-mode="light-only"]`(0-2-0)로 선언하므로 **맨 `:root`(0-1-0)로 쓰면 소스 순서와 무관하게 진다.** 특정도를 낮추지 마라.
 - `src/components/Mermaid.tsx`의 `token()` fallback 2개가 같은 값을 복제하고 있다(SSR용). 값을 바꾸면 **같이 바꿔라.**
-- **client에도 같은 8개를 심어야 한다.** client의 생성 토큰은 SEED 원본 carrot 값을 그대로 들고 있어 지금은 두 저장소의 브랜드색이 갈라져 있다.
+- **client에도 같은 값이 심겨 있다**(`lib/design/tokens/brand_overrides.dart`의 `SeedBrandColors`). 값을 바꾸면 반드시 두 곳을 함께 고쳐라. 어긋나도 기계가 잡지 못한다.
 
 플랫폼 중립 근거는 `../docs/03-디자인/디자인시스템.md`.
