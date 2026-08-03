@@ -68,9 +68,11 @@ npx @seed-design/cli@latest compat   # 커밋된 SEED 스니펫 ↔ 설치 패�
 
 ## Flutter 이식
 
-프레임워크는 Flutter를 우선한다: 16개 커스텀 화면·도감·카드·애니메이션 등 공통 UI 비중이 높고, 네이티브 경계를 Kakao Map(`PlatformView` + platform channel) 하나로 좁힐 수 있다. 이 목업이 React라는 사실은 선택 근거가 아니다(DOM·CSS 기반이라 React Native로도 재작성이 필요하다).
+프레임워크는 Flutter를 우선한다: 16개 커스텀 화면·도감·카드·애니메이션 등 공통 UI 비중이 높다. 이 목업이 React라는 사실은 선택 근거가 아니다(DOM·CSS 기반이라 React Native로도 재작성이 필요하다).
 
-client 착수 전 실기기 검증 4종: ① Kakao Map 네이티브 뷰 + 현재 위치 + Flutter 오버레이 ② 포그라운드·백그라운드 위치 권한과 지오펜스 수명주기 ③ Supabase 카카오·구글·애플 로그인과 딥링크 ④ SEED 토큰을 옮긴 대표 화면 1개(텍스트 확대·스크린 리더). 지도 결합이나 위치 수명주기가 불안정하면 React Native보다 Kotlin·Swift 네이티브를 먼저 재평가한다.
+**⚠️ 지도는 상용 SDK를 쓰지 않는다(2026-08-04, client ADR-0007(지도를 상용 SDK 대신 자체 그림 지도로 그린다)).** 배경 지도를 직접 그린다. 이전에 이 문단은 "네이티브 경계를 Kakao Map(`PlatformView` + platform channel) 하나로 좁힐 수 있다"고 적고 있었으나, **그 하나마저 없어졌다.** 지도가 순수 Flutter 렌더링이 되므로 네이티브 경계는 위치 권한뿐이다.
+
+client 착수 전 실기기 검증: ① **자체 그림 지도 + 현재 위치 — 도로 없이 방향 감각이 잡히는가**(ADR-0007의 최대 미검증 항목. 안 잡히면 주요 도로를 직접 그려야 한다) ② 포그라운드·백그라운드 위치 권한과 지오펜스 수명주기 ③ Supabase 카카오·구글·애플 로그인과 딥링크 ④ SEED 토큰을 옮긴 대표 화면 1개(텍스트 확대·스크린 리더). 위치 수명주기가 불안정하면 React Native보다 Kotlin·Swift 네이티브를 먼저 재평가한다.
 
 SEED는 Flutter 런타임 패키지가 없다. `@seed-design/css`의 light-only 값을 Dart 토큰으로 옮기고 필요한 컴포넌트를 재구현한다. `/licenses` 상당 화면·NOTICE 고지·제휴 부인도 함께 이식한다.
 
@@ -91,7 +93,8 @@ Dart const로 바로 옮길 수 있다. 위치는 심볼명으로 grep 하라(�
 | SEED 아이콘 매핑 41개 | `SEED_ICONS` (`bundle.tsx`) |
 | 4계열 · 21 카테고리 | `CATEGORY_GROUPS` · `CATEGORIES` (`bundle.tsx`) |
 | 17광역 마스터 (id·name·full·tone) | `REGIONS` (`bundle.tsx`) |
-| 목데이터 자원 81개 | `PLACES` (`bundle.tsx`) |
+| 목데이터 자원 81개 (**WGS84 `lat`·`lng` 포함**) | `PLACES` (`bundle.tsx`) |
+| 위경도 ↔ SVG 투영 상수·haversine | `geoToSvg` · `SVG_PER_METER` · `haversineMeters` (`bundle.tsx`) |
 | 칭호 5티어 13개 | `TITLE_TIERS` · `TITLES` (`bundle.tsx`) |
 | 시군 마스터 + 계층 4패턴(A~D) | `SIGUN_NAMES` (`bundle.tsx`) |
 | 시그니처 도시 좌표 9개 | `SIGNATURE_CITIES` (`bundle.tsx`) |
@@ -102,6 +105,14 @@ Dart const로 바로 옮길 수 있다. 위치는 심볼명으로 grep 하라(�
 | 탭 역추적 규칙 | `src/components/MockApp.tsx` |
 
 `PLACES` 81개는 분포 편향이 심하다(제주가 절반 가까이, 광주·세종·울산·대구·대전 0개). `r.total = Math.max(list.length, 12)`가 지역 총계를 인위 보정하고 있어 서버 카운트로 교체해야 한다.
+
+**좌표는 실측값이고 투영은 보정된 근사다(2026-08-03).** `geoToSvg`는 광역시 7곳의 path bbox 중심 ↔ 시청 좌표로 최소제곱 보정한 선형 변환이며 잔차 RMS는 6.8 SVG 단위(≈4km)다. 거리 판정은 투영을 거치지 않고 `haversineMeters`로 실좌표에서 직접 재므로 투영 오차와 무관하다.
+
+⚠️ **핀이 바다 위에 찍히는 건 알려진 한계이고, mockup 에서 고치지 않는다(2026-08-03 결정).** 원인은 계산 실수가 아니라 **핀은 실좌표인데 배경 그림은 출처가 다르다**는 것이다. `KOREA_PATHS`는 `southKoreaHigh.svg`에서 뽑은 것이라 어떤 투영인지 알 수 없고, 그래서 위경도 → 그림 좌표 변환이 근사일 수밖에 없다. **해안가 자원은 몇 백 미터 밀려 바다에 뜬다.** 밀도 시뮬레이션 핀은 무작위 방위로 최대 3.5km 흩뿌리므로 해안에서 더 자주 뜬다.
+
+제대로 된 해법은 **위경도로 된 해안선 데이터를 받아 배경을 직접 그려, 핀과 배경이 같은 변환을 거치게 하는 것**이다. 이건 client 에서 한다. mockup 은 화면 설계 레퍼런스이지 지도 정확도 레퍼런스가 아니다 — **목업 지도의 핀 위치를 실제 위치의 근거로 쓰지 마라.**
+
+⚠️ **`haeinsa`(해인사)는 `region: 'gyeongbuk'`인데 실제 위치는 경남 합천이다.** 좌표를 실측값으로 넣었으므로 발견 화면에서 경남에 찍힌다. 도감 지역 분류를 고칠지 좌표를 맞출지 미결이다.
 
 ## 디자인 - SEED 적용 규칙은 [DESIGN.md](./DESIGN.md)
 

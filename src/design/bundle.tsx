@@ -756,6 +756,10 @@ export interface Place {
   category: string;
   collected: boolean;
   date?: string;
+  /** WGS84 위도. 발견 화면의 거리 판정·핀 배치 정본. */
+  lat: number;
+  /** WGS84 경도. */
+  lng: number;
   hue: number;
   lift: number;
   signature?: boolean;
@@ -903,106 +907,106 @@ const REGIONS: Region[] = [
 // ─────────────────────────────────────────────
 const PLACES: Place[] = [
   // 제주 자연
-  { id: 'hallasan',     name: '한라산',            region: 'jeju', category: 'mountain', collected: true,  date: '2026.04.12', hue: 175, lift: 0.05 },
-  { id: 'seongsan',     name: '성산일출봉',        region: 'jeju', category: 'mountain', collected: true,  date: '2026.04.13', hue: 32,  lift: 0.10, signature: true },
-  { id: 'sanbangsan',   name: '산방산',            region: 'jeju', category: 'mountain', collected: true,  date: '2026.04.14', hue: 145, lift: 0 },
-  { id: 'darangshi',    name: '다랑쉬오름',        region: 'jeju', category: 'mountain', collected: true,  date: '2026.05.02', hue: 95,  lift: 0.05 },
-  { id: 'yongnuni',     name: '용눈이오름',        region: 'jeju', category: 'mountain', collected: true,  date: '2026.05.03', hue: 80,  lift: 0.05 },
-  { id: 'saebyeol',     name: '새별오름',          region: 'jeju', category: 'mountain', collected: false, hue: 60,  lift: 0 },
-  { id: 'abu',          name: '아부오름',          region: 'jeju', category: 'mountain', collected: false, hue: 100, lift: 0 },
-  { id: 'geomun',       name: '거문오름',          region: 'jeju', category: 'mountain', collected: false, hue: 130, lift: 0 },
-  { id: 'hyeopjae',     name: '협재해수욕장',      region: 'jeju', category: 'sea',      collected: true,  date: '2026.04.15', hue: 195, lift: 0.10, signature: true },
-  { id: 'gimnyeong',    name: '김녕해변',          region: 'jeju', category: 'sea',      collected: true,  date: '2026.04.16', hue: 200, lift: 0.05 },
-  { id: 'woljeong',     name: '월정리해변',        region: 'jeju', category: 'sea',      collected: true,  date: '2026.04.17', hue: 205, lift: 0.05 },
-  { id: 'hamdeok',      name: '함덕해수욕장',      region: 'jeju', category: 'sea',      collected: false, hue: 190, lift: 0 },
-  { id: 'jungmun',      name: '중문색달해변',      region: 'jeju', category: 'sea',      collected: false, hue: 210, lift: 0 },
-  { id: 'udo',          name: '우도',              region: 'jeju', category: 'sea',      collected: false, hue: 198, lift: 0 },
-  { id: 'cheonjiyeon',  name: '천지연폭포',        region: 'jeju', category: 'valley',   collected: true,  date: '2026.04.18', hue: 165, lift: 0.05 },
-  { id: 'jeongbang',    name: '정방폭포',          region: 'jeju', category: 'valley',   collected: true,  date: '2026.04.19', hue: 170, lift: 0 },
-  { id: 'cheonjeyeon',  name: '천제연폭포',        region: 'jeju', category: 'valley',   collected: false, hue: 175, lift: 0 },
-  { id: 'bijarim',      name: '비자림',            region: 'jeju', category: 'forest',   collected: true,  date: '2026.04.20', hue: 120, lift: 0.05 },
-  { id: 'saryeoni',     name: '사려니숲길',        region: 'jeju', category: 'forest',   collected: true,  date: '2026.04.21', hue: 125, lift: 0 },
-  { id: 'gotjawal',     name: '곶자왈도립공원',    region: 'jeju', category: 'forest',   collected: false, hue: 115, lift: 0 },
-  { id: 'manjang',      name: '만장굴',            region: 'jeju', category: 'cave',     collected: true,  date: '2026.04.22', hue: 35,  lift: 0,    signature: true },
-  { id: 'yongcheon',    name: '용천동굴',          region: 'jeju', category: 'cave',     collected: false, hue: 45,  lift: 0 },
-  { id: 'baekrokdam',   name: '백록담',            region: 'jeju', category: 'lake',     collected: true,  date: '2026.04.12', hue: 195, lift: 0.05 },
-  { id: 'cheonji_lake', name: '천지호수',          region: 'jeju', category: 'lake',     collected: false, hue: 200, lift: 0 },
-  { id: 'olletrail',    name: '제주 자연유산',     region: 'jeju', category: 'natural',  collected: false, hue: 90,  lift: 0 },
+  { id: 'hallasan',     name: '한라산',            region: 'jeju', category: 'mountain', collected: true,  date: '2026.04.12', lat: 33.3617, lng: 126.5292, hue: 175, lift: 0.05 },
+  { id: 'seongsan',     name: '성산일출봉',        region: 'jeju', category: 'mountain', collected: true,  date: '2026.04.13', lat: 33.4581, lng: 126.9425, hue: 32,  lift: 0.10, signature: true },
+  { id: 'sanbangsan',   name: '산방산',            region: 'jeju', category: 'mountain', collected: true,  date: '2026.04.14', lat: 33.236, lng: 126.3131, hue: 145, lift: 0 },
+  { id: 'darangshi',    name: '다랑쉬오름',        region: 'jeju', category: 'mountain', collected: true,  date: '2026.05.02', lat: 33.4586, lng: 126.8253, hue: 95,  lift: 0.05 },
+  { id: 'yongnuni',     name: '용눈이오름',        region: 'jeju', category: 'mountain', collected: true,  date: '2026.05.03', lat: 33.456, lng: 126.841, hue: 80,  lift: 0.05 },
+  { id: 'saebyeol',     name: '새별오름',          region: 'jeju', category: 'mountain', collected: false, lat: 33.3639, lng: 126.3568, hue: 60,  lift: 0 },
+  { id: 'abu',          name: '아부오름',          region: 'jeju', category: 'mountain', collected: false, lat: 33.4183, lng: 126.7189, hue: 100, lift: 0 },
+  { id: 'geomun',       name: '거문오름',          region: 'jeju', category: 'mountain', collected: false, lat: 33.4553, lng: 126.7194, hue: 130, lift: 0 },
+  { id: 'hyeopjae',     name: '협재해수욕장',      region: 'jeju', category: 'sea',      collected: true,  date: '2026.04.15', lat: 33.3941, lng: 126.2397, hue: 195, lift: 0.10, signature: true },
+  { id: 'gimnyeong',    name: '김녕해변',          region: 'jeju', category: 'sea',      collected: true,  date: '2026.04.16', lat: 33.5586, lng: 126.7573, hue: 200, lift: 0.05 },
+  { id: 'woljeong',     name: '월정리해변',        region: 'jeju', category: 'sea',      collected: true,  date: '2026.04.17', lat: 33.5563, lng: 126.7955, hue: 205, lift: 0.05 },
+  { id: 'hamdeok',      name: '함덕해수욕장',      region: 'jeju', category: 'sea',      collected: false, lat: 33.5433, lng: 126.6697, hue: 190, lift: 0 },
+  { id: 'jungmun',      name: '중문색달해변',      region: 'jeju', category: 'sea',      collected: false, lat: 33.2444, lng: 126.4103, hue: 210, lift: 0 },
+  { id: 'udo',          name: '우도',              region: 'jeju', category: 'sea',      collected: false, lat: 33.5045, lng: 126.953, hue: 198, lift: 0 },
+  { id: 'cheonjiyeon',  name: '천지연폭포',        region: 'jeju', category: 'valley',   collected: true,  date: '2026.04.18', lat: 33.2464, lng: 126.5544, hue: 165, lift: 0.05 },
+  { id: 'jeongbang',    name: '정방폭포',          region: 'jeju', category: 'valley',   collected: true,  date: '2026.04.19', lat: 33.2447, lng: 126.5719, hue: 170, lift: 0 },
+  { id: 'cheonjeyeon',  name: '천제연폭포',        region: 'jeju', category: 'valley',   collected: false, lat: 33.2528, lng: 126.4192, hue: 175, lift: 0 },
+  { id: 'bijarim',      name: '비자림',            region: 'jeju', category: 'forest',   collected: true,  date: '2026.04.20', lat: 33.4906, lng: 126.8103, hue: 120, lift: 0.05 },
+  { id: 'saryeoni',     name: '사려니숲길',        region: 'jeju', category: 'forest',   collected: true,  date: '2026.04.21', lat: 33.4083, lng: 126.6417, hue: 125, lift: 0 },
+  { id: 'gotjawal',     name: '곶자왈도립공원',    region: 'jeju', category: 'forest',   collected: false, lat: 33.2831, lng: 126.3628, hue: 115, lift: 0 },
+  { id: 'manjang',      name: '만장굴',            region: 'jeju', category: 'cave',     collected: true,  date: '2026.04.22', lat: 33.5286, lng: 126.7714, hue: 35,  lift: 0,    signature: true },
+  { id: 'yongcheon',    name: '용천동굴',          region: 'jeju', category: 'cave',     collected: false, lat: 33.5303, lng: 126.7902, hue: 45,  lift: 0 },
+  { id: 'baekrokdam',   name: '백록담',            region: 'jeju', category: 'lake',     collected: true,  date: '2026.04.12', lat: 33.3617, lng: 126.5333, hue: 195, lift: 0.05 },
+  { id: 'cheonji_lake', name: '천지호수',          region: 'jeju', category: 'lake',     collected: false, lat: 33.38, lng: 126.6, hue: 200, lift: 0 },
+  { id: 'olletrail',    name: '제주 자연유산',     region: 'jeju', category: 'natural',  collected: false, lat: 33.44, lng: 126.72, hue: 90,  lift: 0 },
   // 제주 유적
-  { id: 'jeju_palace',  name: '제주목관아',        region: 'jeju', category: 'palace',   collected: true,  date: '2026.05.04', hue: 22,  lift: 0 },
-  { id: 'gwandeok',     name: '관덕정',            region: 'jeju', category: 'monument', collected: true,  date: '2026.05.05', hue: 18,  lift: 0 },
-  { id: 'yakcheonsa',   name: '약천사',            region: 'jeju', category: 'temple',   collected: false, hue: 30,  lift: 0 },
-  { id: 'samseong',     name: '삼성혈',            region: 'jeju', category: 'ruin',     collected: false, hue: 25,  lift: 0 },
-  { id: 'hangpaduri',   name: '항파두리 항몽유적', region: 'jeju', category: 'ruin',     collected: false, hue: 28,  lift: 0 },
-  { id: 'seongeup',     name: '성읍민속마을',      region: 'jeju', category: 'hanok',    collected: true,  date: '2026.05.09', hue: 38,  lift: 0.05 },
+  { id: 'jeju_palace',  name: '제주목관아',        region: 'jeju', category: 'palace',   collected: true,  date: '2026.05.04', lat: 33.5136, lng: 126.5219, hue: 22,  lift: 0 },
+  { id: 'gwandeok',     name: '관덕정',            region: 'jeju', category: 'monument', collected: true,  date: '2026.05.05', lat: 33.5136, lng: 126.5214, hue: 18,  lift: 0 },
+  { id: 'yakcheonsa',   name: '약천사',            region: 'jeju', category: 'temple',   collected: false, lat: 33.2447, lng: 126.4008, hue: 30,  lift: 0 },
+  { id: 'samseong',     name: '삼성혈',            region: 'jeju', category: 'ruin',     collected: false, lat: 33.5033, lng: 126.5286, hue: 25,  lift: 0 },
+  { id: 'hangpaduri',   name: '항파두리 항몽유적', region: 'jeju', category: 'ruin',     collected: false, lat: 33.4514, lng: 126.4114, hue: 28,  lift: 0 },
+  { id: 'seongeup',     name: '성읍민속마을',      region: 'jeju', category: 'hanok',    collected: true,  date: '2026.05.09', lat: 33.3872, lng: 126.7994, hue: 38,  lift: 0.05 },
   // 제주 문화
-  { id: 'jeju_museum',  name: '국립제주박물관',    region: 'jeju', category: 'museum',   collected: true,  date: '2026.05.06', hue: 250, lift: 0 },
-  { id: 'haenyeo',      name: '해녀박물관',        region: 'jeju', category: 'museum',   collected: true,  date: '2026.05.07', hue: 220, lift: 0.05 },
-  { id: 'folk_museum',  name: '민속자연사박물관',  region: 'jeju', category: 'museum',   collected: false, hue: 240, lift: 0 },
-  { id: 'lee_jungseop', name: '이중섭미술관',      region: 'jeju', category: 'gallery',  collected: true,  date: '2026.05.08', hue: 320, lift: 0 },
-  { id: 'kimchanglyul', name: '김창열미술관',      region: 'jeju', category: 'gallery',  collected: false, hue: 310, lift: 0 },
-  { id: 'arario',       name: '아라리오뮤지엄',    region: 'jeju', category: 'gallery',  collected: false, hue: 330, lift: 0 },
-  { id: 'jeju_art_ctr', name: '제주아트센터',      region: 'jeju', category: 'theater',  collected: false, hue: 290, lift: 0 },
-  { id: 'chilmori',     name: '칠머리당영등굿',    region: 'jeju', category: 'intangible',collected: false, hue: 12,  lift: 0 },
-  { id: 'osulloc',      name: '오설록 티 뮤지엄',  region: 'jeju', category: 'tradition', collected: false, hue: 50,  lift: 0 },
+  { id: 'jeju_museum',  name: '국립제주박물관',    region: 'jeju', category: 'museum',   collected: true,  date: '2026.05.06', lat: 33.5194, lng: 126.5497, hue: 250, lift: 0 },
+  { id: 'haenyeo',      name: '해녀박물관',        region: 'jeju', category: 'museum',   collected: true,  date: '2026.05.07', lat: 33.5278, lng: 126.8256, hue: 220, lift: 0.05 },
+  { id: 'folk_museum',  name: '민속자연사박물관',  region: 'jeju', category: 'museum',   collected: false, lat: 33.5061, lng: 126.5333, hue: 240, lift: 0 },
+  { id: 'lee_jungseop', name: '이중섭미술관',      region: 'jeju', category: 'gallery',  collected: true,  date: '2026.05.08', lat: 33.2447, lng: 126.5622, hue: 320, lift: 0 },
+  { id: 'kimchanglyul', name: '김창열미술관',      region: 'jeju', category: 'gallery',  collected: false, lat: 33.3597, lng: 126.2708, hue: 310, lift: 0 },
+  { id: 'arario',       name: '아라리오뮤지엄',    region: 'jeju', category: 'gallery',  collected: false, lat: 33.5111, lng: 126.5225, hue: 330, lift: 0 },
+  { id: 'jeju_art_ctr', name: '제주아트센터',      region: 'jeju', category: 'theater',  collected: false, lat: 33.4864, lng: 126.5308, hue: 290, lift: 0 },
+  { id: 'chilmori',     name: '칠머리당영등굿',    region: 'jeju', category: 'intangible',collected: false, lat: 33.5217, lng: 126.5406, hue: 12,  lift: 0 },
+  { id: 'osulloc',      name: '오설록 티 뮤지엄',  region: 'jeju', category: 'tradition', collected: false, lat: 33.3056, lng: 126.2892, hue: 50,  lift: 0 },
   // 제주 축제
-  { id: 'fire_fest',    name: '제주들불축제',      region: 'jeju', category: 'fest_main', collected: false, hue: 15,  lift: 0 },
-  { id: 'tangerine',    name: '서귀포 감귤박람회', region: 'jeju', category: 'fest_local',collected: false, hue: 28,  lift: 0 },
-  { id: 'tamla_fest',   name: '탐라문화제',        region: 'jeju', category: 'fest_local',collected: true,  date: '2026.05.10', hue: 350, lift: 0 },
-  { id: 'cheongbori',   name: '청보리축제',        region: 'jeju', category: 'fest_season',collected: false,hue: 70,  lift: 0 },
-  { id: 'bitbunker',    name: '빛의 벙커',         region: 'jeju', category: 'fest_light',collected: false, hue: 280, lift: 0 },
+  { id: 'fire_fest',    name: '제주들불축제',      region: 'jeju', category: 'fest_main', collected: false, lat: 33.3639, lng: 126.3568, hue: 15,  lift: 0 },
+  { id: 'tangerine',    name: '서귀포 감귤박람회', region: 'jeju', category: 'fest_local',collected: false, lat: 33.2542, lng: 126.56, hue: 28,  lift: 0 },
+  { id: 'tamla_fest',   name: '탐라문화제',        region: 'jeju', category: 'fest_local',collected: true,  date: '2026.05.10', lat: 33.4996, lng: 126.5312, hue: 350, lift: 0 },
+  { id: 'cheongbori',   name: '청보리축제',        region: 'jeju', category: 'fest_season',collected: false,lat: 33.1667, lng: 126.2694, hue: 70,  lift: 0 },
+  { id: 'bitbunker',    name: '빛의 벙커',         region: 'jeju', category: 'fest_light',collected: false, lat: 33.43, lng: 126.9147, hue: 280, lift: 0 },
 
   // 강원
-  { id: 'seoraksan',    name: '설악산',            region: 'gangwon', category: 'mountain', collected: true,  date: '2025.10.22', hue: 25, lift: 0.10, signature: true, busy: 92 },
-  { id: 'odaesan',      name: '오대산',            region: 'gangwon', category: 'mountain', collected: true,  date: '2025.11.03', hue: 30, lift: 0.05 },
-  { id: 'taebaek',      name: '태백산',            region: 'gangwon', category: 'mountain', collected: false, hue: 35, lift: 0 },
-  { id: 'gyeongpo',     name: '경포해변',          region: 'gangwon', category: 'sea',      collected: true,  date: '2025.08.15', hue: 200, lift: 0.05 },
-  { id: 'nami',         name: '남이섬',            region: 'gangwon', category: 'forest',   collected: true,  date: '2025.09.20', hue: 100, lift: 0.05 },
-  { id: 'woljeongsa',   name: '월정사',            region: 'gangwon', category: 'temple',   collected: false, hue: 28, lift: 0 },
-  { id: 'gangneung_yj', name: '강릉 단오제',       region: 'gangwon', category: 'fest_local',collected: false, hue: 350, lift: 0 },
+  { id: 'seoraksan',    name: '설악산',            region: 'gangwon', category: 'mountain', collected: true,  date: '2025.10.22', lat: 38.1194, lng: 128.4656, hue: 25, lift: 0.10, signature: true, busy: 92 },
+  { id: 'odaesan',      name: '오대산',            region: 'gangwon', category: 'mountain', collected: true,  date: '2025.11.03', lat: 37.7944, lng: 128.5428, hue: 30, lift: 0.05 },
+  { id: 'taebaek',      name: '태백산',            region: 'gangwon', category: 'mountain', collected: false, lat: 37.0961, lng: 128.9156, hue: 35, lift: 0 },
+  { id: 'gyeongpo',     name: '경포해변',          region: 'gangwon', category: 'sea',      collected: true,  date: '2025.08.15', lat: 37.8047, lng: 128.9092, hue: 200, lift: 0.05 },
+  { id: 'nami',         name: '남이섬',            region: 'gangwon', category: 'forest',   collected: true,  date: '2025.09.20', lat: 37.7906, lng: 127.5253, hue: 100, lift: 0.05 },
+  { id: 'woljeongsa',   name: '월정사',            region: 'gangwon', category: 'temple',   collected: false, lat: 37.7317, lng: 128.5928, hue: 28, lift: 0 },
+  { id: 'gangneung_yj', name: '강릉 단오제',       region: 'gangwon', category: 'fest_local',collected: false, lat: 37.7519, lng: 128.8761, hue: 350, lift: 0 },
 
   // 경북
-  { id: 'bulguksa',     name: '불국사',            region: 'gyeongbuk', category: 'temple',   collected: true,  date: '2025.06.10', hue: 35, lift: 0.05, signature: true },
-  { id: 'seokguram',    name: '석굴암',            region: 'gyeongbuk', category: 'temple',   collected: true,  date: '2025.06.11', hue: 28, lift: 0 },
-  { id: 'haeinsa',      name: '해인사',            region: 'gyeongbuk', category: 'temple',   collected: false, hue: 22, lift: 0 },
-  { id: 'cheomsongdae', name: '첨성대',            region: 'gyeongbuk', category: 'monument', collected: true,  date: '2025.06.12', hue: 18, lift: 0 },
-  { id: 'andong_hahoe', name: '하회마을',          region: 'gyeongbuk', category: 'hanok',    collected: false, hue: 32, lift: 0 },
-  { id: 'palgongsan',   name: '팔공산',            region: 'gyeongbuk', category: 'mountain', collected: false, hue: 125, lift: 0 },
-  { id: 'andong_mask',  name: '안동 탈춤축제',     region: 'gyeongbuk', category: 'fest_main',collected: false, hue: 12, lift: 0 },
+  { id: 'bulguksa',     name: '불국사',            region: 'gyeongbuk', category: 'temple',   collected: true,  date: '2025.06.10', lat: 35.79, lng: 129.332, hue: 35, lift: 0.05, signature: true },
+  { id: 'seokguram',    name: '석굴암',            region: 'gyeongbuk', category: 'temple',   collected: true,  date: '2025.06.11', lat: 35.795, lng: 129.3494, hue: 28, lift: 0 },
+  { id: 'haeinsa',      name: '해인사',            region: 'gyeongbuk', category: 'temple',   collected: false, lat: 35.8011, lng: 128.0981, hue: 22, lift: 0 },
+  { id: 'cheomsongdae', name: '첨성대',            region: 'gyeongbuk', category: 'monument', collected: true,  date: '2025.06.12', lat: 35.8348, lng: 129.2192, hue: 18, lift: 0 },
+  { id: 'andong_hahoe', name: '하회마을',          region: 'gyeongbuk', category: 'hanok',    collected: false, lat: 36.539, lng: 128.5175, hue: 32, lift: 0 },
+  { id: 'palgongsan',   name: '팔공산',            region: 'gyeongbuk', category: 'mountain', collected: false, lat: 35.9994, lng: 128.6947, hue: 125, lift: 0 },
+  { id: 'andong_mask',  name: '안동 탈춤축제',     region: 'gyeongbuk', category: 'fest_main',collected: false, lat: 36.5636, lng: 128.7297, hue: 12, lift: 0 },
 
   // 서울
-  { id: 'gyeongbok',    name: '경복궁',            region: 'seoul', category: 'palace',  collected: true,  date: '2025.05.18', hue: 18, lift: 0.10, signature: true },
-  { id: 'changdeok',    name: '창덕궁',            region: 'seoul', category: 'palace',  collected: true,  date: '2025.05.19', hue: 22, lift: 0 },
-  { id: 'deoksugung',   name: '덕수궁',            region: 'seoul', category: 'palace',  collected: false, hue: 28, lift: 0 },
-  { id: 'bukhansan',    name: '북한산',            region: 'seoul', category: 'mountain',collected: true,  date: '2025.04.05', hue: 130, lift: 0.05 },
-  { id: 'leeum',        name: '리움미술관',        region: 'seoul', category: 'gallery', collected: true,  date: '2025.07.12', hue: 285, lift: 0 },
-  { id: 'national_mu',  name: '국립중앙박물관',    region: 'seoul', category: 'museum',  collected: true,  date: '2025.07.14', hue: 250, lift: 0 },
-  { id: 'sejong_ctr',   name: '세종문화회관',      region: 'seoul', category: 'theater', collected: false, hue: 290, lift: 0 },
-  { id: 'lantern',      name: '연등회',            region: 'seoul', category: 'fest_light',collected: false,hue: 15, lift: 0 },
+  { id: 'gyeongbok',    name: '경복궁',            region: 'seoul', category: 'palace',  collected: true,  date: '2025.05.18', lat: 37.5796, lng: 126.977, hue: 18, lift: 0.10, signature: true },
+  { id: 'changdeok',    name: '창덕궁',            region: 'seoul', category: 'palace',  collected: true,  date: '2025.05.19', lat: 37.5794, lng: 126.991, hue: 22, lift: 0 },
+  { id: 'deoksugung',   name: '덕수궁',            region: 'seoul', category: 'palace',  collected: false, lat: 37.5658, lng: 126.9751, hue: 28, lift: 0 },
+  { id: 'bukhansan',    name: '북한산',            region: 'seoul', category: 'mountain',collected: true,  date: '2025.04.05', lat: 37.6589, lng: 126.9812, hue: 130, lift: 0.05 },
+  { id: 'leeum',        name: '리움미술관',        region: 'seoul', category: 'gallery', collected: true,  date: '2025.07.12', lat: 37.5384, lng: 126.999, hue: 285, lift: 0 },
+  { id: 'national_mu',  name: '국립중앙박물관',    region: 'seoul', category: 'museum',  collected: true,  date: '2025.07.14', lat: 37.524, lng: 126.9803, hue: 250, lift: 0 },
+  { id: 'sejong_ctr',   name: '세종문화회관',      region: 'seoul', category: 'theater', collected: false, lat: 37.5725, lng: 126.9757, hue: 290, lift: 0 },
+  { id: 'lantern',      name: '연등회',            region: 'seoul', category: 'fest_light',collected: false,lat: 37.5745, lng: 126.9816, hue: 15, lift: 0 },
 
   // 전남
-  { id: 'damyang',      name: '죽녹원',            region: 'jeonnam', category: 'forest',   collected: true,  date: '2025.10.15', hue: 110, lift: 0.05 },
-  { id: 'boseong',      name: '보성 녹차밭',       region: 'jeonnam', category: 'natural',  collected: true,  date: '2025.10.16', hue: 100, lift: 0.05 },
-  { id: 'suncheon_bay', name: '순천만',            region: 'jeonnam', category: 'natural',  collected: false, hue: 95, lift: 0 },
+  { id: 'damyang',      name: '죽녹원',            region: 'jeonnam', category: 'forest',   collected: true,  date: '2025.10.15', lat: 35.3222, lng: 126.9878, hue: 110, lift: 0.05 },
+  { id: 'boseong',      name: '보성 녹차밭',       region: 'jeonnam', category: 'natural',  collected: true,  date: '2025.10.16', lat: 34.7433, lng: 127.0797, hue: 100, lift: 0.05 },
+  { id: 'suncheon_bay', name: '순천만',            region: 'jeonnam', category: 'natural',  collected: false, lat: 34.8853, lng: 127.5094, hue: 95, lift: 0 },
 
   // 경남
-  { id: 'tongyeong',    name: '통영 동피랑',       region: 'gyeongnam', category: 'hanok',   collected: true, date: '2025.09.05', hue: 200, lift: 0 },
-  { id: 'jinhae',       name: '진해 군항제',       region: 'gyeongnam', category: 'fest_season',collected: false, hue: 335, lift: 0 },
+  { id: 'tongyeong',    name: '통영 동피랑',       region: 'gyeongnam', category: 'hanok',   collected: true, date: '2025.09.05', lat: 34.8447, lng: 128.4269, hue: 200, lift: 0 },
+  { id: 'jinhae',       name: '진해 군항제',       region: 'gyeongnam', category: 'fest_season',collected: false, lat: 35.1489, lng: 128.6636, hue: 335, lift: 0 },
 
   // 부산
-  { id: 'haeundae',     name: '해운대해수욕장',    region: 'busan', category: 'sea',      collected: true,  date: '2025.07.20', hue: 205, lift: 0.10, signature: true },
-  { id: 'gwangalli',    name: '광안리해수욕장',    region: 'busan', category: 'sea',      collected: false, hue: 210, lift: 0 },
-  { id: 'beomeosa',     name: '범어사',            region: 'busan', category: 'temple',   collected: false, hue: 25, lift: 0 },
+  { id: 'haeundae',     name: '해운대해수욕장',    region: 'busan', category: 'sea',      collected: true,  date: '2025.07.20', lat: 35.1587, lng: 129.1604, hue: 205, lift: 0.10, signature: true },
+  { id: 'gwangalli',    name: '광안리해수욕장',    region: 'busan', category: 'sea',      collected: false, lat: 35.1532, lng: 129.1186, hue: 210, lift: 0 },
+  { id: 'beomeosa',     name: '범어사',            region: 'busan', category: 'temple',   collected: false, lat: 35.2847, lng: 129.0692, hue: 25, lift: 0 },
 
   // 인천
-  { id: 'incheon_chinatown', name: '차이나타운',   region: 'incheon', category: 'hanok',  collected: true, date: '2025.06.01', hue: 350, lift: 0.05 },
+  { id: 'incheon_chinatown', name: '차이나타운',   region: 'incheon', category: 'hanok',  collected: true, date: '2025.06.01', lat: 37.4744, lng: 126.6178, hue: 350, lift: 0.05 },
 
   // 기타
-  { id: 'sokri',        name: '속리산',            region: 'chungbuk', category: 'mountain',collected: true, date: '2025.10.30', hue: 28, lift: 0.05 },
-  { id: 'gyeryong',     name: '계룡산',            region: 'chungnam', category: 'mountain',collected: false, hue: 130, lift: 0 },
-  { id: 'jeonju_hanok', name: '전주 한옥마을',     region: 'jeonbuk', category: 'hanok',   collected: true, date: '2025.05.25', hue: 30, lift: 0.10, signature: true },
-  { id: 'gyeonggi_dmz', name: 'DMZ 평화공원',      region: 'gyeonggi', category: 'natural',collected: true, date: '2025.04.15', hue: 100, lift: 0 },
-  { id: 'suwon_fort',   name: '수원 화성',         region: 'gyeonggi', category: 'palace', collected: true, date: '2025.04.16', hue: 28, lift: 0, signature: true },
+  { id: 'sokri',        name: '속리산',            region: 'chungbuk', category: 'mountain',collected: true, date: '2025.10.30', lat: 36.5397, lng: 127.8253, hue: 28, lift: 0.05 },
+  { id: 'gyeryong',     name: '계룡산',            region: 'chungnam', category: 'mountain',collected: false, lat: 36.3428, lng: 127.2072, hue: 130, lift: 0 },
+  { id: 'jeonju_hanok', name: '전주 한옥마을',     region: 'jeonbuk', category: 'hanok',   collected: true, date: '2025.05.25', lat: 35.815, lng: 127.153, hue: 30, lift: 0.10, signature: true },
+  { id: 'gyeonggi_dmz', name: 'DMZ 평화공원',      region: 'gyeonggi', category: 'natural',collected: true, date: '2025.04.15', lat: 37.8886, lng: 126.7411, hue: 100, lift: 0 },
+  { id: 'suwon_fort',   name: '수원 화성',         region: 'gyeonggi', category: 'palace', collected: true, date: '2025.04.16', lat: 37.285, lng: 127.0119, hue: 28, lift: 0, signature: true },
 ];
 
 // Recompute region totals/collected from PLACES
@@ -1273,7 +1277,29 @@ interface DiscoverScreenProps {
 }
 
 interface DiscoverMapBgProps {
-  userRegion?: string;
+  /** 그릴 지리 뷰포트(SVG 좌표계). 사용자 위치와 스코프로 계산한다. */
+  vb: PathBox;
+  /** 사용자 위치의 SVG 좌표. 지오펜스 원의 중심이다. */
+  userSvg: { x: number; y: number };
+  /** 지오펜스 반경(SVG 단위). */
+  geofenceR: number;
+}
+
+/** 지도에 찍히는 마커 하나. `place` 가 없으면 밀도 시뮬레이션용 표시 전용 핀이다. */
+interface DiscoverMarker {
+  key: string;
+  nx: number;
+  ny: number;
+  icon: IconName;
+  place?: Place;
+}
+
+/** 한 격자 칸에 겹친 마커를 접은 묶음. */
+interface DiscoverCluster {
+  key: string;
+  nx: number;
+  ny: number;
+  count: number;
 }
 
 interface DiscoverSuccessScreenProps {
@@ -1665,6 +1691,46 @@ const KOREA_LABELS: Record<string, [number, number]> = {
 
 const KOREA_VIEWBOX = "71 -10 817 980";
 
+// ─────────────────────────────────────────────
+// 위경도 ↔ SVG 투영
+// ─────────────────────────────────────────────
+// KOREA_PATHS 는 southKoreaHigh.svg 에서 추출한 투영 좌표계라 위경도가 아니다.
+// 두 좌표계를 잇는 선형 변환을 광역시 7곳(서울·부산·대구·광주·대전·울산·세종)의
+// path bbox 중심 ↔ 실제 시청 좌표로 최소제곱 보정했다. 잔차 RMS 6.8 SVG 단위(≈4km).
+// 광역시를 쓰는 이유는 면적이 작아 bbox 중심이 실제 중심에 가깝기 때문이다.
+// Mercator 곡률을 넣어도 RMS 가 6.4 로 거의 줄지 않아 선형으로 둔다.
+const GEO_TO_SVG_X_A = 138.4925;
+const GEO_TO_SVG_X_B = -17273.6857;
+const GEO_TO_SVG_Y_A = -177.8006;
+const GEO_TO_SVG_Y_B = 6875.6364;
+
+/** 위경도 → 한반도 SVG 좌표. KOREA_PATHS 와 같은 공간이다. */
+function geoToSvg(lat: number, lng: number): { x: number; y: number } {
+  return { x: GEO_TO_SVG_X_A * lng + GEO_TO_SVG_X_B, y: GEO_TO_SVG_Y_A * lat + GEO_TO_SVG_Y_B };
+}
+
+const METERS_PER_DEG_LAT = 110574;
+/** 미터 → SVG 세로 단위. 지도 축척의 기준축으로 쓴다. */
+const SVG_PER_METER = Math.abs(GEO_TO_SVG_Y_A) / METERS_PER_DEG_LAT;
+
+/** 두 지점의 대권거리(m). 투영 오차와 무관하게 실좌표로 직접 잰다. */
+function haversineMeters(aLat: number, aLng: number, bLat: number, bLng: number): number {
+  const R = 6371000;
+  const toRad = (d: number) => (d * Math.PI) / 180;
+  const dLat = toRad(bLat - aLat);
+  const dLng = toRad(bLng - aLng);
+  const h =
+    Math.sin(dLat / 2) ** 2 +
+    Math.cos(toRad(aLat)) * Math.cos(toRad(bLat)) * Math.sin(dLng / 2) ** 2;
+  return 2 * R * Math.asin(Math.sqrt(h));
+}
+
+/** 거리 라벨. 1km 미만은 10m 단위, 이상은 소수 한 자리. */
+function formatDistance(m: number): string {
+  if (m < 1000) return `${Math.round(m / 10) * 10}m`;
+  if (m < 10000) return `${(m / 1000).toFixed(1)}km`;
+  return `${Math.round(m / 1000)}km`;
+}
 
 export interface PathBox {
   x: number;
@@ -4464,130 +4530,261 @@ function CardStat({ label, value, mono }: LabelValueProps & { mono?: boolean }) 
 // screens-discover.jsx - 발견 (GPS map check-in) + Success + Titles
 
 // ─────────────────────────────────────────────
-// Discover map
+// Discover map - 실좌표 뷰포트
 // ─────────────────────────────────────────────
+// 목업 프레임 규격. 뷰포트 종횡비와 클러스터 격자의 기준이다.
+const DISCOVER_W = 402;
+const DISCOVER_H = 874;
+
+// 사용자 위치. 제주 성산읍 인근이고 실제 앱에서는 GPS 가 채운다.
+// 이 좌표는 서버로 나가지 않는다(server ADR-0010). 아래 거리 판정은 전부 온디바이스다.
+const DISCOVER_USER = { lat: 33.4315, lng: 126.9152 };
+
+/** 발견 판정 반경(m). 이 안에 들어와야 "발견하기"가 열린다. */
+const GEOFENCE_M = 500;
+
+/** 사용자 마커가 놓이는 화면 세로 위치. 바텀시트를 피해 위쪽에 둔다. */
+const USER_SCREEN_Y = 0.45;
+
+/** 클러스터 격자 한 칸(px). 한 칸에 2개 이상 들어오면 숫자 버블로 접는다.
+ *  버블 최대 지름(52)보다 넉넉해야 이웃 칸끼리 겹쳐 보이지 않는다. */
+const CLUSTER_CELL_PX = 76;
+
+/** 이 스코프 이하에서만 핀에 이름표를 붙인다. */
+const LABEL_MAX_SCOPE_M = 1000;
+
+/** 화면 세로가 담는 실거리의 절반(m). 라벨이 곧 반경이다. */
+const DISCOVER_SCOPES = [
+  { label: '100m', m: 100 },
+  { label: '300m', m: 300 },
+  { label: '500m', m: 500 },
+  { label: '1km', m: 1000 },
+  { label: '2km', m: 2000 },
+  { label: '5km', m: 5000 },
+  { label: '10km', m: 10000 },
+  { label: '25km', m: 25000 },
+  { label: '50km', m: 50000 },
+];
+const DISCOVER_DEFAULT_SCOPE_IDX = 5;
+
+/** 축척 바에 쓸 딱 떨어지는 거리 눈금. */
+const SCALE_BAR_STEPS = [10, 20, 50, 100, 200, 500, 1000, 2000, 5000, 10000, 20000, 50000];
+
 // ─────────────────────────────────────────────
-// Discover map background - Jeju region polygon centered, real Korea coords
+// 밀도 시뮬레이션 - 표시 전용
 // ─────────────────────────────────────────────
-function DiscoverMapBg({ userRegion = 'jeju' }: DiscoverMapBgProps) {
-  const d = KOREA_PATHS[userRegion];
-  if (!d) return null;
-  const b = pathBBox(d);
-  // expand bbox so user sees neighboring water + a bit of context
-  const padX = b.w * 1.3;
-  const padY = b.h * 1.6;
-  const vb = `${b.x - padX} ${b.y - padY} ${b.w + padX * 2} ${b.h + padY * 2}`;
+// 실제 TourAPI 는 4계열만 추려도 시군당 수십~수백 건이라, 목데이터 81개로는 줌아웃 시
+// 무슨 일이 벌어지는지 화면에 드러나지 않는다. 실 자원 주변에 결정적으로 흩뿌려
+// 밀도만 흉내낸다. PLACES 에 넣지 않으므로 도감 카운트·지역 총계와 무관하고, 탭도 받지
+// 않는다. Flutter 이식 때는 시군 타일 응답으로 통째로 대체되는 자리다.
+const DENSITY_PER_PLACE = 7;
+
+interface DensityPin {
+  key: string;
+  lat: number;
+  lng: number;
+  icon: IconName;
+}
+
+const DENSITY_PINS: DensityPin[] = PLACES.flatMap(p => {
+  let seed = 0;
+  for (let i = 0; i < p.id.length; i++) seed = (seed * 31 + p.id.charCodeAt(i)) | 0;
+  let state = (Math.abs(seed) % 2147483646) + 1;
+  const next = () => (state = (state * 48271) % 2147483647) / 2147483647;
+  const icon = getCategory(p.category).icon;
+  const mPerDegLng = METERS_PER_DEG_LAT * Math.cos((p.lat * Math.PI) / 180);
+  return Array.from({ length: DENSITY_PER_PLACE }, (_, i) => {
+    const bearing = next() * Math.PI * 2;
+    const dist = 300 + next() * 3200;
+    return {
+      key: `${p.id}~${i}`,
+      lat: p.lat + (dist * Math.cos(bearing)) / METERS_PER_DEG_LAT,
+      lng: p.lng + (dist * Math.sin(bearing)) / mPerDegLng,
+      icon,
+    };
+  });
+});
+
+/** 기본 선택 자원 - 사용자에게서 가장 가까운 미발견 자원. */
+const DISCOVER_DEFAULT_TARGET = PLACES
+  .filter(p => !p.collected)
+  .reduce((best, p) =>
+    haversineMeters(DISCOVER_USER.lat, DISCOVER_USER.lng, p.lat, p.lng) <
+    haversineMeters(DISCOVER_USER.lat, DISCOVER_USER.lng, best.lat, best.lng) ? p : best
+  ).id;
+
+// ─────────────────────────────────────────────
+// Discover map background - 사용자 위치 중심 지리 뷰포트
+// ─────────────────────────────────────────────
+function DiscoverMapBg({ vb, userSvg, geofenceR }: DiscoverMapBgProps) {
+  // 패턴·선 굵기를 뷰포트에 비례시킨다. 고정값이면 줌인 할수록 화면을 덮어버린다.
+  const unit = vb.w / 20;
+  const hair = vb.w / 500;
   return (
-    <svg width="100%" height="100%" viewBox={vb} preserveAspectRatio="xMidYMid slice">
+    <svg width="100%" height="100%" viewBox={`${vb.x} ${vb.y} ${vb.w} ${vb.h}`}
+      preserveAspectRatio="xMidYMid slice">
       <defs>
-        <pattern id="discover-water" width="24" height="24" patternUnits="userSpaceOnUse">
-          <rect width="24" height="24" fill="var(--seed-color-palette-gray-400)" />
-          <circle cx="6" cy="6" r="0.7" fill="var(--seed-color-stroke-neutral-muted)" />
-          <circle cx="18" cy="18" r="0.7" fill="var(--seed-color-stroke-neutral-muted)" />
+        <pattern id="discover-water" width={unit} height={unit} patternUnits="userSpaceOnUse">
+          <rect width={unit} height={unit} fill="var(--seed-color-palette-gray-400)" />
+          <circle cx={unit * 0.25} cy={unit * 0.25} r={unit * 0.03} fill="var(--seed-color-stroke-neutral-muted)" />
+          <circle cx={unit * 0.75} cy={unit * 0.75} r={unit * 0.03} fill="var(--seed-color-stroke-neutral-muted)" />
+        </pattern>
+        <pattern id="discover-grid" width={unit} height={unit} patternUnits="userSpaceOnUse">
+          <path d={`M ${unit} 0 L 0 0 0 ${unit}`} fill="none"
+            stroke="var(--seed-color-palette-gray-500)" strokeWidth={hair} opacity="0.6" />
         </pattern>
       </defs>
-      {/* ocean */}
-      <rect x={b.x - padX} y={b.y - padY} width={b.w + padX * 2} height={b.h + padY * 2}
-        fill="url(#discover-water)" />
-      {/* land - render all Korea polygons softly, accent the user's region */}
+      {/* 바다 */}
+      <rect x={vb.x} y={vb.y} width={vb.w} height={vb.h} fill="url(#discover-water)" />
+      {/* 육지 - 실제 한반도 폴리곤. 핀과 같은 좌표계라 위치가 맞물린다. */}
       {Object.entries(KOREA_PATHS).map(([rid, dd]) => (
         <path key={rid} d={dd}
-          fill={rid === userRegion ? 'var(--seed-color-bg-neutral-weak)' : 'var(--seed-color-palette-gray-300)'}
-          stroke="var(--seed-color-palette-gray-500)" strokeWidth="0.8" strokeLinejoin="round"
-        />
+          fill="var(--seed-color-bg-neutral-weak)"
+          stroke="var(--seed-color-palette-gray-500)" strokeWidth={hair * 4} strokeLinejoin="round" />
       ))}
-      {/* roads - overlay dashed lines across the user region for road feel */}
-      <path d={`M ${b.x + b.w * 0.1},${b.y + b.h * 0.6} C ${b.x + b.w * 0.5},${b.y + b.h * 0.3} ${b.x + b.w * 0.6},${b.y + b.h * 0.55} ${b.x + b.w * 0.95},${b.y + b.h * 0.5}`}
-        fill="none" stroke="var(--seed-color-palette-static-white)" strokeWidth="3"
-        strokeDasharray="4 5" opacity="0.85"
-        clipPath={`path('${d}')`}
-      />
-      <path d={`M ${b.x + b.w * 0.2},${b.y + b.h * 0.85} C ${b.x + b.w * 0.4},${b.y + b.h * 0.7} ${b.x + b.w * 0.7},${b.y + b.h * 0.7} ${b.x + b.w * 0.9},${b.y + b.h * 0.85}`}
-        fill="none" stroke="var(--seed-color-palette-static-white)" strokeWidth="2.5"
-        strokeDasharray="3 4" opacity="0.7"
-        clipPath={`path('${d}')`}
-      />
+      {/* 격자 - 실지도 SDK 가 들어올 자리의 자리표시자 겸 축척 감각 */}
+      <rect x={vb.x} y={vb.y} width={vb.w} height={vb.h} fill="url(#discover-grid)" />
+      {/* 발견 판정 반경. 실제 500m 라서 축소하면 점으로 줄어든다 - 그게 요점이다. */}
+      <circle cx={userSvg.x} cy={userSvg.y} r={geofenceR}
+        fill="var(--seed-color-bg-brand-weak)" fillOpacity="0.5"
+        stroke="var(--seed-color-stroke-brand-solid)" strokeWidth={hair * 3} />
     </svg>
   );
 }
 
 function DiscoverScreen({ onDiscoverSuccess }: DiscoverScreenProps) {
-  const [target, setTarget] = React.useState('seongsan');
+  const [zoomIdx, setZoomIdx] = React.useState(DISCOVER_DEFAULT_SCOPE_IDX);
+  const [target, setTarget] = React.useState(DISCOVER_DEFAULT_TARGET);
+  const [density, setDensity] = React.useState(true);
+
+  const scope = DISCOVER_SCOPES[zoomIdx];
+  const canZoomIn = zoomIdx > 0;
+  const canZoomOut = zoomIdx < DISCOVER_SCOPES.length - 1;
+
   const place = getPlace(target);
   const category = getCategory(place.category);
   const group = getGroup(place.category);
+  const targetDist = haversineMeters(DISCOVER_USER.lat, DISCOVER_USER.lng, place.lat, place.lng);
+  const inRange = targetDist <= GEOFENCE_M;
 
-  // Zoom scope levels (radius shown on screen). Smaller scope = more zoomed in.
-  const SCOPES = [
-    { label: '100m', m: 100 },
-    { label: '300m', m: 300 },
-    { label: '500m', m: 500 },
-    { label: '1km',  m: 1000 },
-    { label: '2km',  m: 2000 },
-    { label: '5km',  m: 5000 },
-    { label: '10km', m: 10000 },
-    { label: '25km', m: 25000 },
-    { label: '50km', m: 50000 },
-  ];
-  const DEFAULT_SCOPE_IDX = 5; // 5km
-  const [zoomIdx, setZoomIdx] = React.useState(DEFAULT_SCOPE_IDX);
-  const scope = SCOPES[zoomIdx];
-  // scale relative to default. 1× = 5km in view. Smaller scope → bigger scale.
-  const baseM = SCOPES[DEFAULT_SCOPE_IDX].m;
-  const mapScale = baseM / scope.m;
+  const userSvg = geoToSvg(DISCOVER_USER.lat, DISCOVER_USER.lng);
 
-  const canZoomIn = zoomIdx > 0;
-  const canZoomOut = zoomIdx < SCOPES.length - 1;
+  // 뷰포트는 세로로 실거리 2 × scope 를 담는다. 가로는 화면 종횡비를 따른다.
+  // SVG 가 이미 투영 좌표라 축척이 축마다 미세하게 다르지만(제주 기준 가로가 세로보다 ~8%
+  // 촘촘하다), 지도와 핀이 같은 공간에 있어 서로 어긋나지는 않는다. 라벨은 세로 기준이다.
+  const vbH = 2 * scope.m * SVG_PER_METER;
+  const vbW = vbH * (DISCOVER_W / DISCOVER_H);
+  const vb: PathBox = { x: userSvg.x - vbW / 2, y: userSvg.y - vbH * USER_SCREEN_Y, w: vbW, h: vbH };
 
-  const nearbyPins = [
-    { id: 'seongsan',  x: 0.50, y: 0.45 },
-    { id: 'manjang',   x: 0.30, y: 0.30 },
-    { id: 'hamdeok',   x: 0.22, y: 0.50 },
-    { id: 'darangshi', x: 0.42, y: 0.28 },
-    { id: 'woljeong',  x: 0.34, y: 0.40 },
-    { id: 'jeongbang', x: 0.62, y: 0.74 },
-    { id: 'saebyeol',  x: 0.18, y: 0.34 },
-  ];
+  const toNorm = (lat: number, lng: number) => {
+    const p = geoToSvg(lat, lng);
+    return { nx: (p.x - vb.x) / vb.w, ny: (p.y - vb.y) / vb.h };
+  };
+  const onScreen = (nx: number, ny: number) => nx >= -0.08 && nx <= 1.08 && ny >= -0.04 && ny <= 1.04;
+
+  // 화면에 걸리는 자원만 추린다. 실제 앱에서는 시군 타일로 받아둔 목록이 여기 들어온다.
+  const markers: DiscoverMarker[] = [];
+  for (const p of PLACES) {
+    const { nx, ny } = toNorm(p.lat, p.lng);
+    if (!onScreen(nx, ny)) continue;
+    markers.push({ key: p.id, nx, ny, place: p, icon: getCategory(p.category).icon });
+  }
+  if (density) {
+    for (const d of DENSITY_PINS) {
+      const { nx, ny } = toNorm(d.lat, d.lng);
+      if (!onScreen(nx, ny)) continue;
+      markers.push({ key: d.key, nx, ny, icon: d.icon });
+    }
+  }
+
+  // 격자 클러스터링. 선택 핀과 발견 가능 자원은 접지 않는다 - 항상 개별로 보여야 한다.
+  const cellX = CLUSTER_CELL_PX / DISCOVER_W;
+  const cellY = CLUSTER_CELL_PX / DISCOVER_H;
+  const pins: DiscoverMarker[] = [];
+  const buckets = new Map<string, DiscoverMarker[]>();
+  for (const m of markers) {
+    const discoverable = m.place && !m.place.collected &&
+      haversineMeters(DISCOVER_USER.lat, DISCOVER_USER.lng, m.place.lat, m.place.lng) <= GEOFENCE_M;
+    if (m.place?.id === target || discoverable) { pins.push(m); continue; }
+    const k = `${Math.floor(m.nx / cellX)}:${Math.floor(m.ny / cellY)}`;
+    const b = buckets.get(k);
+    if (b) b.push(m); else buckets.set(k, [m]);
+  }
+  const clusters: DiscoverCluster[] = [];
+  buckets.forEach((b, k) => {
+    if (b.length === 1) { pins.push(b[0]); return; }
+    clusters.push({
+      key: k,
+      nx: b.reduce((s, m) => s + m.nx, 0) / b.length,
+      ny: b.reduce((s, m) => s + m.ny, 0) / b.length,
+      count: b.length,
+    });
+  });
+
+  const showLabels = scope.m <= LABEL_MAX_SCOPE_M;
+
+  // 축척 바 - 화면 가로의 28% 에 가장 가까운 눈금을 고른다.
+  const viewW_m = vb.w / SVG_PER_METER;
+  const barM = SCALE_BAR_STEPS.reduce((best, n) =>
+    Math.abs(n - viewW_m * 0.28) < Math.abs(best - viewW_m * 0.28) ? n : best, SCALE_BAR_STEPS[0]);
 
   return (
     <div style={{ width: '100%', height: '100%', position: 'relative', background: 'var(--seed-color-palette-gray-300)', overflow: 'hidden' }}>
-      {/* Scaled map canvas - background + pins + "you are here" all transform together */}
-      <div style={{
-        position: 'absolute', inset: 0,
-        transform: `scale(${mapScale})`,
-        transformOrigin: 'center 45%',
-        transition: 'transform var(--seed-duration-d6) var(--seed-timing-function-easing)',
-        willChange: 'transform',
-      }}>
-        {/* Map background - real Korea polygons centered on user's region */}
-        <div style={{ position: 'absolute', inset: 0, overflow: 'hidden' }}>
-          <DiscoverMapBg userRegion="jeju" />
-        </div>
+      {/* 지도 - 줌은 CSS scale 이 아니라 실제 지리 뷰포트 변경이다 */}
+      <div style={{ position: 'absolute', inset: 0, overflow: 'hidden' }}>
+        <DiscoverMapBg vb={vb} userSvg={userSvg} geofenceR={GEOFENCE_M * SVG_PER_METER} />
+      </div>
 
-        {/* Pins */}
-        <div style={{ position: 'absolute', inset: 0 }}>
-          {nearbyPins.map(pin => {
-            const p = PLACES.find(pp => pp.id === pin.id);
-            if (!p) return null;
-            const isTarget = pin.id === target;
-            const cat = getCategory(p.category);
-            const grp = getGroup(p.category);
-            return (
-              <div key={pin.id} {...clickable(() => setTarget(pin.id))}
-                style={{
-                  position: 'absolute',
-                  left: `${pin.x * 100}%`, top: `${pin.y * 100}%`,
-                  transform: `translate(-50%, -100%) scale(${1 / mapScale})`,
-                  transformOrigin: 'center bottom',
-                  cursor: 'pointer', zIndex: isTarget ? 4 : 3,
-                  transition: 'transform var(--seed-duration-d6) var(--seed-timing-function-easing)',
-                }}>
+      {/* 클러스터 - 탭하면 한 단계 확대한다 */}
+      <div style={{ position: 'absolute', inset: 0, zIndex: 3 }}>
+        {clusters.map(c => {
+          const size = c.count >= 50 ? 52 : c.count >= 10 ? 44 : 36;
+          return (
+            <div key={c.key} {...clickable(() => canZoomIn && setZoomIdx(zoomIdx - 1))}
+              style={{
+                position: 'absolute', left: `${c.nx * 100}%`, top: `${c.ny * 100}%`,
+                transform: 'translate(-50%, -50%)',
+                width: size, height: size, borderRadius: '50%',
+                background: 'var(--seed-color-bg-brand-solid)',
+                border: '2px solid var(--seed-color-palette-static-white)',
+                boxShadow: 'var(--seed-shadow-s2)',
+                display: 'flex', alignItems: 'center', justifyContent: 'center',
+                color: 'var(--seed-color-palette-static-white)',
+                fontSize: 'var(--seed-font-size-t2)', fontWeight: 'var(--seed-font-weight-bold)',
+                fontVariantNumeric: 'tabular-nums',
+                cursor: canZoomIn ? 'zoom-in' : 'default',
+              }}>{c.count}</div>
+          );
+        })}
+      </div>
+
+      {/* 개별 핀 */}
+      <div style={{ position: 'absolute', inset: 0, zIndex: 4 }}>
+        {pins.map(m => {
+          const p = m.place;
+          const isTarget = p?.id === target;
+          const grp = p ? getGroup(p.category) : null;
+          const size = isTarget ? 40 : p ? 30 : 20;
+          const dotColor = p?.collected ? grp!.color : 'var(--seed-color-palette-static-white)';
+          const edge = isTarget ? 'var(--seed-color-stroke-brand-solid)'
+            : p?.collected ? grp!.color
+            : p ? 'var(--seed-color-palette-gray-800)' : 'var(--seed-color-palette-gray-600)';
+          return (
+            <div key={m.key}
+              {...(p ? clickable(() => setTarget(p.id)) : {})}
+              style={{
+                position: 'absolute', left: `${m.nx * 100}%`, top: `${m.ny * 100}%`,
+                transform: 'translate(-50%, -100%)',
+                zIndex: isTarget ? 3 : p ? 2 : 1,
+                cursor: p ? 'pointer' : 'default',
+                pointerEvents: p ? 'auto' : 'none',
+                opacity: p ? 1 : 0.75,
+              }}>
               {isTarget && (
                 <>
                   <div style={{
                     position: 'absolute', left: '50%', top: '100%',
-                    width: 90, height: 90, transform: 'translate(-50%, -50%)',
-                    borderRadius: '50%',
+                    width: 90, height: 90, transform: 'translate(-50%, -50%)', borderRadius: '50%',
                     background: 'radial-gradient(circle, var(--seed-color-bg-brand-weak), transparent 70%)',
                     animation: 'seed-exit 1.8s var(--seed-timing-function-exit) infinite',
                     '--seed-exit-translate-x': '-50%', '--seed-exit-translate-y': '-50%',
@@ -4595,8 +4792,7 @@ function DiscoverScreen({ onDiscoverSuccess }: DiscoverScreenProps) {
                   } as SeedCSSProperties} />
                   <div style={{
                     position: 'absolute', left: '50%', top: '100%',
-                    width: 50, height: 50, transform: 'translate(-50%, -50%)',
-                    borderRadius: '50%',
+                    width: 50, height: 50, transform: 'translate(-50%, -50%)', borderRadius: '50%',
                     border: '2px solid var(--seed-color-stroke-brand-solid)',
                     animation: 'seed-exit 1.8s var(--seed-timing-function-exit) infinite 0.4s',
                     '--seed-exit-translate-x': '-50%', '--seed-exit-translate-y': '-50%',
@@ -4605,32 +4801,38 @@ function DiscoverScreen({ onDiscoverSuccess }: DiscoverScreenProps) {
                 </>
               )}
               <div style={{
-                width: isTarget ? 40 : 30, height: isTarget ? 40 : 30,
-                borderRadius: '50%',
-                background: p.collected ? grp.color : 'var(--seed-color-palette-static-white)',
-                border: `2px solid ${isTarget ? 'var(--seed-color-stroke-brand-solid)' : (p.collected ? grp.color : 'var(--seed-color-palette-gray-800)')}`,
+                width: size, height: size, borderRadius: '50%',
+                background: dotColor, border: `2px solid ${edge}`,
                 display: 'flex', alignItems: 'center', justifyContent: 'center',
-                boxShadow: '0 3px 8px var(--seed-color-palette-static-black-alpha-500)',
-                color: p.collected ? 'var(--seed-color-palette-static-white)' : 'var(--seed-color-fg-neutral)',
+                boxShadow: p ? '0 3px 8px var(--seed-color-palette-static-black-alpha-500)' : 'none',
               }}>
-                {p.collected
+                {p?.collected
                   ? <I n="check" s={isTarget ? 18 : 14} c="var(--seed-color-palette-static-white)" w={2.5} />
-                  : <I n={cat.icon} s={isTarget ? 18 : 14} c="var(--seed-color-fg-neutral)" w={2} />}
+                  : <I n={m.icon} s={isTarget ? 18 : p ? 14 : 10} c="var(--seed-color-fg-neutral)" w={2} />}
               </div>
               <div style={{
                 width: 0, height: 0, margin: '0 auto',
                 borderLeft: `${isTarget ? 6 : 4}px solid transparent`,
                 borderRight: `${isTarget ? 6 : 4}px solid transparent`,
-                borderTop: `${isTarget ? 10 : 7}px solid ${isTarget ? 'var(--seed-color-bg-brand-solid)' : (p.collected ? grp.color : 'var(--seed-color-palette-gray-800)')}`,
+                borderTop: `${isTarget ? 10 : 7}px solid ${edge}`,
                 marginTop: -1,
               }} />
+              {showLabels && p && (
+                <div style={{
+                  position: 'absolute', left: '50%', top: '100%', transform: 'translateX(-50%)',
+                  marginTop: 'var(--seed-dimension-x1)', whiteSpace: 'nowrap',
+                  padding: 'var(--seed-dimension-x0_5) var(--seed-dimension-x1_5)',
+                  borderRadius: 'var(--seed-radius-r1)',
+                  background: 'var(--seed-color-bg-overlay)', color: 'var(--seed-color-palette-static-white)',
+                  fontSize: 'var(--seed-font-size-t1)', fontWeight: 'var(--seed-font-weight-bold)',
+                }}>{p.name}</div>
+              )}
             </div>
           );
         })}
       </div>
-      </div>{/* end scaled map canvas */}
 
-      {/* Search bar - fixed */}
+      {/* 검색바 */}
       <div style={{ position: 'absolute', top: 56, left: 16, right: 64, zIndex: 5 }}>
         <div style={{
           background: 'var(--seed-color-palette-static-white)', borderRadius: 'var(--seed-radius-r3)', padding: 'var(--seed-dimension-x3) var(--seed-dimension-x3_5)',
@@ -4644,16 +4846,15 @@ function DiscoverScreen({ onDiscoverSuccess }: DiscoverScreenProps) {
         </div>
       </div>
 
-      {/* Top-right controls - current location button */}
-      <div style={{ position: 'absolute', top: 60, right: 16, zIndex: 5,
-        display: 'flex', flexDirection: 'column', gap: 'var(--seed-dimension-x2)' }}>
+      {/* 현 위치 */}
+      <div style={{ position: 'absolute', top: 60, right: 16, zIndex: 5 }}>
         <IconButton variant="outline" size="small" ariaLabel="현 위치"
           style={{ background: 'var(--seed-color-palette-static-white)', boxShadow: 'var(--seed-shadow-s1)' }}>
           <I n="compass" s={18} c="var(--seed-color-fg-neutral)" />
         </IconButton>
       </div>
 
-      {/* Zoom controls - right side, vertically grouped */}
+      {/* 줌 컨트롤 */}
       <div style={{
         position: 'absolute', right: 16, top: '40%',
         transform: 'translateY(-50%)', zIndex: 5,
@@ -4662,8 +4863,7 @@ function DiscoverScreen({ onDiscoverSuccess }: DiscoverScreenProps) {
         <div style={{
           background: 'var(--seed-color-palette-static-white)', borderRadius: 'var(--seed-radius-r3)',
           boxShadow: 'var(--seed-shadow-s1)',
-          display: 'flex', flexDirection: 'column',
-          overflow: 'hidden',
+          display: 'flex', flexDirection: 'column', overflow: 'hidden',
         }}>
           <button
             onClick={() => canZoomIn && setZoomIdx(zoomIdx - 1)}
@@ -4704,9 +4904,9 @@ function DiscoverScreen({ onDiscoverSuccess }: DiscoverScreenProps) {
         }}>{scope.label}</div>
       </div>
 
-      {/* You-are-here (fixed, always on visual center) */}
+      {/* 현 위치 마커 - 뷰포트가 항상 사용자를 이 지점에 두므로 화면상 고정이다 */}
       <div style={{
-        position: 'absolute', left: '50%', top: '45%',
+        position: 'absolute', left: '50%', top: `${USER_SCREEN_Y * 100}%`,
         transform: 'translate(-50%, -50%)',
         pointerEvents: 'none', zIndex: 5,
       }}>
@@ -4717,7 +4917,7 @@ function DiscoverScreen({ onDiscoverSuccess }: DiscoverScreenProps) {
         }} />
       </div>
 
-      {/* Hint */}
+      {/* 상단 안내 - 이 화면이 지금 무엇을 보여주는지 */}
       <div style={{
         position: 'absolute', top: 116, left: 16, right: 16, zIndex: 4,
         background: 'var(--seed-color-bg-neutral-inverted)', borderRadius: 'var(--seed-radius-r3)',
@@ -4725,10 +4925,44 @@ function DiscoverScreen({ onDiscoverSuccess }: DiscoverScreenProps) {
         display: 'flex', alignItems: 'center', gap: 'var(--seed-dimension-x2)',
         fontSize: 'var(--seed-font-size-t2)', fontWeight: 'var(--seed-font-weight-medium)', }}>
         <I n="info" s={14} c="var(--seed-color-fg-neutral-inverted)" />
-        <span>핀을 탭해서 시뮬레이션해보세요. 자원 반경 진입 시 GPS가 자동 감지합니다.</span>
+        <span style={{ fontVariantNumeric: 'tabular-nums' }}>
+          반경 {scope.label} · 자원 {markers.length}개
+          {clusters.length > 0 && ` · 묶음 ${clusters.length}개`}
+        </span>
       </div>
 
-      {/* Bottom sheet */}
+      {/* 축척 바 - 안내 바 바로 아래. 줌이 실제 축척이라는 걸 눈으로 확인하는 장치다. */}
+      <div style={{
+        position: 'absolute', left: 16, top: 158, zIndex: 5,
+        display: 'flex', flexDirection: 'column', gap: 'var(--seed-dimension-x0_5)',
+      }}>
+        <div style={{
+          fontSize: 'var(--seed-font-size-t1)', fontWeight: 'var(--seed-font-weight-bold)',
+          color: 'var(--seed-color-fg-neutral)', fontVariantNumeric: 'tabular-nums',
+          textShadow: '0 1px 2px var(--seed-color-palette-static-white)',
+        }}>{formatDistance(barM)}</div>
+        <div style={{
+          width: `${(barM * SVG_PER_METER / vb.w) * DISCOVER_W}px`, height: 4,
+          borderLeft: '2px solid var(--seed-color-fg-neutral)',
+          borderRight: '2px solid var(--seed-color-fg-neutral)',
+          borderBottom: '2px solid var(--seed-color-fg-neutral)',
+        }} />
+      </div>
+
+      {/* 밀도 시뮬레이션 토글 - 목업 전용. 실제 앱에는 없는 컨트롤이다. */}
+      <button onClick={() => setDensity(d => !d)}
+        aria-pressed={density}
+        style={{
+          position: 'absolute', top: 156, right: 16, zIndex: 5,
+          border: 'none', cursor: 'pointer', WebkitTapHighlightColor: 'transparent',
+          padding: 'var(--seed-dimension-x1_5) var(--seed-dimension-x2_5)', borderRadius: 'var(--seed-radius-full)',
+          background: density ? 'var(--seed-color-bg-brand-solid)' : 'var(--seed-color-palette-static-white)',
+          color: density ? 'var(--seed-color-palette-static-white)' : 'var(--seed-color-fg-neutral-muted)',
+          fontSize: 'var(--seed-font-size-t1)', fontWeight: 'var(--seed-font-weight-bold)',
+          boxShadow: 'var(--seed-shadow-s1)', whiteSpace: 'nowrap',
+        }}>밀도 시뮬 ×{DENSITY_PER_PLACE}</button>
+
+      {/* 바텀 시트 */}
       <div style={{
         position: 'absolute', left: 12, right: 12, bottom: 110,
         background: 'var(--seed-color-palette-static-white)', borderRadius: 'var(--seed-radius-r5)',
@@ -4761,7 +4995,9 @@ function DiscoverScreen({ onDiscoverSuccess }: DiscoverScreenProps) {
               marginTop: 'var(--seed-dimension-x0_5)', display: 'flex', alignItems: 'center', gap: 'var(--seed-dimension-x1)',
             }}>
               <I n="map-pin" s={12} c="var(--seed-color-fg-neutral-subtle)" />
-              <span>약 0.1km · 도착 감지됨</span>
+              <span style={{ fontVariantNumeric: 'tabular-nums' }}>
+                {formatDistance(targetDist)} · {inRange ? '도착 감지됨' : '반경 밖'}
+              </span>
             </div>
           </div>
         </div>
@@ -4780,12 +5016,27 @@ function DiscoverScreen({ onDiscoverSuccess }: DiscoverScreenProps) {
                 </div>
               </div>
             </Card>
-          ) : (
+          ) : inRange ? (
             <Button variant="primary" size="large" fullWidth
               onClick={() => onDiscoverSuccess(place.id)}
               leading={<I n="map-pin" s={16} c="var(--seed-color-palette-static-white)" w={2} />}>
               여기에서 발견하기
             </Button>
+          ) : (
+            <Card padding={12} radius={12} style={{
+              background: 'var(--seed-color-bg-neutral-weak)', border: '1px solid var(--seed-color-stroke-neutral-subtle)',
+              display: 'flex', alignItems: 'center', gap: 'var(--seed-dimension-x2_5)',
+            }}>
+              <I n="map-pin" s={18} c="var(--seed-color-fg-neutral-subtle)" w={2} />
+              <div style={{ flex: 1 }}>
+                <div style={{ fontSize: 'var(--seed-font-size-t3)', fontWeight: 'var(--seed-font-weight-bold)', color: 'var(--seed-color-fg-neutral)' }}>
+                  {formatDistance(GEOFENCE_M)} 안으로 들어가야 발견할 수 있어요
+                </div>
+                <div style={{ fontSize: 'var(--seed-font-size-t1)', fontWeight: 'var(--seed-font-weight-medium)', color: 'var(--seed-color-fg-neutral-subtle)', fontVariantNumeric: 'tabular-nums' }}>
+                  {formatDistance(targetDist - GEOFENCE_M)} 더 가까이
+                </div>
+              </div>
+            </Card>
           )}
         </div>
       </div>

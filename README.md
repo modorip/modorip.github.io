@@ -13,9 +13,9 @@
 Flutter는 기존 문서가 지정해서가 아니라 모두립의 제품 조건을 기준으로 선택합니다.
 
 - iOS와 Android에 15개 커스텀 화면, 도감, 카드, 애니메이션을 같은 모습으로 구현하고 한 코드베이스에서 유지할 수 있습니다.
-- 화면, 상태, Supabase 연동, 캐시, 오프라인 큐는 공통으로 만들고, 공식 Flutter 지도 SDK가 없는 Kakao Map만 [Platform Views](https://docs.flutter.dev/platform-integration/android/platform-views)와 [platform channels](https://docs.flutter.dev/platform-integration/platform-channels)로 Android/iOS SDK에 연결할 수 있습니다.
-- React Native를 선택해도 이 Next.js 목업의 DOM, CSS, `@seed-design/react` 화면은 다시 작성해야 하며 Kakao Map 네이티브 연결도 남습니다.
-- 완전 네이티브는 지도 연동에는 가장 직접적이지만 화면과 QA를 Kotlin, Swift로 중복 유지해야 합니다.
+- 화면, 상태, Supabase 연동, 캐시, 오프라인 큐를 한 코드베이스에서 만듭니다. **상용 지도 SDK를 쓰지 않기로 해(client ADR-0007) 지도까지 순수 Flutter 렌더링이 되므로, 네이티브 경계는 위치 권한만 남습니다.** 처음에는 Kakao Map을 [Platform Views](https://docs.flutter.dev/platform-integration/android/platform-views)와 [platform channels](https://docs.flutter.dev/platform-integration/platform-channels)로 감쌀 계획이었고 그것이 유일한 네이티브 경계였는데, 그마저 없어졌습니다.
+- React Native를 선택해도 이 Next.js 목업의 DOM, CSS, `@seed-design/react` 화면은 다시 작성해야 합니다.
+- 완전 네이티브는 화면과 QA를 Kotlin, Swift로 중복 유지해야 합니다. 지도를 직접 그리기로 한 뒤로는 네이티브가 유리한 지점도 사라졌습니다.
 - Lynx는 SEED 지원이 장점이지만 현재 공개 컴포넌트 범위와 지도·위치·카메라·인증·푸시의 네이티브 확장을 먼저 검증해야 합니다.
 
 SEED는 Flutter 선택의 이점이 아닙니다. Flutter용 SEED 런타임 패키지가 없으므로 CSS의 light-only 토큰 값을 Dart로 옮기고 필요한 컴포넌트를 다시 구현해야 합니다. client 착수 전에는 실제 기기에서 Kakao Map, 위치 수명주기, Supabase 소셜 로그인·딥링크, SEED 대표 화면과 접근성을 검증하고, 실패하면 완전 네이티브를 재평가합니다.
