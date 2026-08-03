@@ -39,15 +39,15 @@ button{font-family:inherit}
 // carrot-200 으로 정의하므로 두 경로가 같은 값을 가리키게 맞춘 것이다.
 // 나머지 carrot 단계(100·300·600·700·800)는 시맨틱 별칭 정의에만 쓰여 위 8개로 이미 덮인다.
 const BRAND = `:root[data-seed][data-seed-color-mode="light-only"]{
---seed-color-bg-brand-solid:#0B72C4;
---seed-color-bg-brand-solid-pressed:#075C97;
---seed-color-fg-brand:#075C97;
---seed-color-fg-brand-contrast:#075C97;
---seed-color-stroke-brand-solid:#075C97;
---seed-color-bg-brand-weak:#EDF4FB;
---seed-color-bg-brand-weak-pressed:#DEECF7;
---seed-color-stroke-brand-weak:#C3DCF1;
---seed-color-palette-carrot-200:#DEECF7}`;
+--seed-color-bg-brand-solid:#0266FB;
+--seed-color-bg-brand-solid-pressed:#0250C5;
+--seed-color-fg-brand:#0250C5;
+--seed-color-fg-brand-contrast:#0250C5;
+--seed-color-stroke-brand-solid:#0250C5;
+--seed-color-bg-brand-weak:#EEF5FF;
+--seed-color-bg-brand-weak-pressed:#E0ECFF;
+--seed-color-stroke-brand-weak:#BBD6FE;
+--seed-color-palette-carrot-200:#E0ECFF}`;
 
 export default function RootLayout({ children }: { children: ReactNode }) {
   return (

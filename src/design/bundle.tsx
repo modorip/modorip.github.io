@@ -743,7 +743,12 @@ export interface Region {
   id: string;
   name: string;
   full: string;
+  /** 그래픽 채우기 전용 - 실루엣·진행바·지도 폴리곤. 대비 하한 없음 */
   tone: string;
+  /** 글자·흰글자 바탕 전용. 흰 배경 4.5:1 이상, soft 위 4.5:1 이상 */
+  dark: string;
+  /** 약한 배경 tint */
+  soft: string;
   sil: string;
   total: number;
   collected: number;
@@ -877,28 +882,30 @@ const CATEGORIES: Category[] = [
 
 // ─────────────────────────────────────────────
 // 17 광역 (with abstract silhouette SVG paths)
-// tone: 광역 식별색. 디자인 토큰이 아니라 도메인 데이터라 raw hex 를 유지한다
+// 광역 식별색 3역할(2026-08-04 재확정). 디자인 토큰이 아니라 도메인 데이터라 raw hex 를 유지한다.
+//   tone 채우기 · dark 글자와 흰글자 바탕 · soft 약배경
+// 색은 전부 그 지역에 실재하는 사물에서 왔다. 값 정본은 docs/03-디자인/디자인시스템.md
 //       (`${tone}33` 알파 문자열 연결 때문에 var() 를 못 쓴다).
-//       브랜드 청색(bg.brand-solid #0B72C4 / fg.brand #075C97)과 겹치지 않게 잡혀 있다.
+//       브랜드 청색(bg.brand-solid #0266FB / fg.brand #0250C5)과 겹치지 않게 잡혀 있다.
 // ─────────────────────────────────────────────
 const REGIONS: Region[] = [
-  { id: 'seoul',     name: '서울', full: '서울특별시',       tone: '#723149', sil: 'city' },
-  { id: 'busan',     name: '부산', full: '부산광역시',       tone: '#5D4228', sil: 'bridge' },
-  { id: 'daegu',     name: '대구', full: '대구광역시',       tone: '#7E2E16', sil: 'apple' },
-  { id: 'incheon',   name: '인천', full: '인천광역시',       tone: '#573A88', sil: 'plane' },
-  { id: 'gwangju',   name: '광주', full: '광주광역시',       tone: '#731DA5', sil: 'palette' },
-  { id: 'daejeon',   name: '대전', full: '대전광역시',       tone: '#8B1870', sil: 'atom' },
-  { id: 'ulsan',     name: '울산', full: '울산광역시',       tone: '#981B3C', sil: 'whale' },
-  { id: 'sejong',    name: '세종', full: '세종특별자치시',   tone: '#315D28', sil: 'scroll' },
-  { id: 'gyeonggi',  name: '경기', full: '경기도',           tone: '#7E5416', sil: 'castle' },
-  { id: 'gangwon',   name: '강원', full: '강원특별자치도',   tone: '#1E6764', sil: 'peaks' },
-  { id: 'chungbuk',  name: '충북', full: '충청북도',         tone: '#C2002D', sil: 'cave' },
-  { id: 'chungnam',  name: '충남', full: '충청남도',         tone: '#C20067', sil: 'island' },
-  { id: 'jeonbuk',   name: '전북', full: '전북특별자치도',   tone: '#C23A00', sil: 'bowl' },
-  { id: 'jeonnam',   name: '전남', full: '전라남도',         tone: '#727231', sil: 'tea' },
-  { id: 'gyeongbuk', name: '경북', full: '경상북도',         tone: '#557B0A', sil: 'pagoda' },
-  { id: 'gyeongnam', name: '경남', full: '경상남도',         tone: '#007DA3', sil: 'sail' },
-  { id: 'jeju',      name: '제주', full: '제주특별자치도',   tone: '#00855D', sil: 'volcano' },
+  { id: 'seoul',      name: '서울', full: '서울특별시',     tone: '#6C8AE4', dark: '#0067D8', soft: '#EEF0FF', sil: 'city' },
+  { id: 'busan',      name: '부산', full: '부산광역시',     tone: '#0063A5', dark: '#0063A5', soft: '#EAF1FF', sil: 'bridge' },
+  { id: 'daegu',      name: '대구', full: '대구광역시',     tone: '#C42326', dark: '#C42326', soft: '#FFEDEA', sil: 'apple' },
+  { id: 'incheon',    name: '인천', full: '인천광역시',     tone: '#54AAD0', dark: '#007397', soft: '#E0F4FF', sil: 'plane' },
+  { id: 'gwangju',    name: '광주', full: '광주광역시',     tone: '#FCE158', dark: '#796B00', soft: '#F9F0D8', sil: 'palette' },
+  { id: 'daejeon',    name: '대전', full: '대전광역시',     tone: '#E8A200', dark: '#8F6200', soft: '#FFEEDA', sil: 'atom' },
+  { id: 'ulsan',      name: '울산', full: '울산광역시',     tone: '#137287', dark: '#137287', soft: '#D9F6FF', sil: 'whale' },
+  { id: 'sejong',     name: '세종', full: '세종특별자치시',   tone: '#F291B2', dark: '#C91D71', soft: '#FFECF1', sil: 'scroll' },
+  { id: 'gyeonggi',   name: '경기', full: '경기도',       tone: '#77A94C', dark: '#387900', soft: '#E9F5DD', sil: 'castle' },
+  { id: 'gangwon',    name: '강원', full: '강원특별자치도',   tone: '#226C4B', dark: '#226C4B', soft: '#DBF7E7', sil: 'peaks' },
+  { id: 'chungbuk',   name: '충북', full: '충청북도',      tone: '#C4D987', dark: '#547500', soft: '#EEF3DA', sil: 'cave' },
+  { id: 'chungnam',   name: '충남', full: '충청남도',      tone: '#7C50A1', dark: '#7C50A1', soft: '#F8EDFF', sil: 'island' },
+  { id: 'jeonbuk',    name: '전북', full: '전북특별자치도',   tone: '#8C3768', dark: '#8C3768', soft: '#FFECF5', sil: 'bowl' },
+  { id: 'jeonnam',    name: '전남', full: '전라남도',      tone: '#47A971', dark: '#007B45', soft: '#DDF7E5', sil: 'tea' },
+  { id: 'gyeongbuk',  name: '경북', full: '경상북도',      tone: '#6D4A2A', dark: '#6D4A2A', soft: '#FFEEE0', sil: 'pagoda' },
+  { id: 'gyeongnam',  name: '경남', full: '경상남도',      tone: '#37B4B3', dark: '#007777', soft: '#D2F8F7', sil: 'sail' },
+  { id: 'jeju',       name: '제주', full: '제주특별자치도',   tone: '#F67E22', dark: '#AE4F00', soft: '#FFEDE3', sil: 'volcano' },
 ].map((region) => ({ ...region, total: 0, collected: 0 }));
 
 // ─────────────────────────────────────────────
@@ -1021,7 +1028,8 @@ REGIONS.forEach(r => {
 // ─────────────────────────────────────────────
 const TITLE_TIERS: Record<string, TitleTier> = {
   // 티어 색은 흰 배경 위 글자·아이콘으로 쓰인다. 전부 흰 배경 대비 4.5:1 이상이며
-  // 티어 상호 최소 ΔE 29.6, 브랜드 #0B72C4 과 최소 ΔE 33 로 확보했다(2026-08-02).
+  // 티어 상호 최소 ΔE 29.6, 브랜드 #0266FB 과 최소 ΔE 26.7(카테고리) 이다.
+  // ΔE 33 은 구 브랜드 #0B72C4 기준값이었다(2026-08-03 브랜드 교체로 재계산).
   // 구 값은 표고 #FF9200 이 2.24:1 로 AA 미달이었고, 광역 #0066FF 는 구 서울 tone 과 같은
   // 값이라 브랜드가 파랑이 된 뒤 브랜드와 혼동되는 자리였다.
   intro:     { id: 'intro',     label: '입문',     color: '#70737C', tone: 'neutral' },
@@ -2965,7 +2973,7 @@ function RegionMiniCard({ region, onClick }: RegionMiniCardProps) {
           }}>{region.collected} / {region.total}곳</div>
         </div>
         <div style={{
-          fontSize: 'var(--seed-font-size-t3)', fontWeight: 'var(--seed-font-weight-bold)', color: filled ? region.tone : 'var(--seed-color-fg-neutral-subtle)',
+          fontSize: 'var(--seed-font-size-t3)', fontWeight: 'var(--seed-font-weight-bold)', color: filled ? region.dark : 'var(--seed-color-fg-neutral-subtle)',
           fontVariantNumeric: 'tabular-nums',
         }}>{Math.round(pct * 100)}%</div>
       </div>
@@ -3191,7 +3199,7 @@ function DexProvinceScreen({ regionId, onBack, onOpenSigun, onOpenPlace, onOpenP
       {/* 챕터 표지 - 그라데이션 + 챕터 번호 + 큰 타이포 + catchphrase */}
       <div style={{
         height: 300,
-        background: `linear-gradient(165deg, ${region.tone} 0%, ${region.tone} 55%, ${region.tone}B3 100%)`,
+        background: `linear-gradient(165deg, ${region.dark} 0%, ${region.dark} 55%, ${region.dark}B3 100%)`,
         color: 'var(--seed-color-palette-static-white)',
         position: 'relative', overflow: 'hidden',
       }}>
@@ -3371,16 +3379,16 @@ function DexProvinceScreen({ regionId, onBack, onOpenSigun, onOpenPlace, onOpenP
                     style={{
                       display: 'inline-flex', alignItems: 'center', gap: 'var(--seed-dimension-x1_5)',
                       padding: 'var(--seed-dimension-x2) var(--seed-dimension-x3)', borderRadius: 'var(--seed-radius-full)',
-                      background: visited ? `${region.tone}14` : 'var(--seed-color-palette-gray-100)',
-                      border: visited ? `1px solid ${region.tone}33` : '1px dashed var(--seed-color-stroke-neutral-muted)',
+                      background: visited ? region.soft : 'var(--seed-color-palette-gray-100)',
+                      border: visited ? `1px solid ${region.tone}` : '1px dashed var(--seed-color-stroke-neutral-muted)',
                       cursor: 'pointer', WebkitTapHighlightColor: 'transparent',
                     }}>
                     <span style={{
-                      fontSize: 'var(--seed-font-size-t2)', fontWeight: 'var(--seed-font-weight-bold)', color: visited ? region.tone : 'var(--seed-color-fg-neutral-subtle)',
+                      fontSize: 'var(--seed-font-size-t2)', fontWeight: 'var(--seed-font-weight-bold)', color: visited ? region.dark : 'var(--seed-color-fg-neutral-subtle)',
                     }}>{name.replace(/시$|군$/, '')}</span>
                     {visited && (
                       <span style={{
-                        fontSize: 'var(--seed-font-size-t1)', fontWeight: 'var(--seed-font-weight-bold)', color: region.tone,
+                        fontSize: 'var(--seed-font-size-t1)', fontWeight: 'var(--seed-font-weight-bold)', color: region.dark,
                         opacity: 0.65, fontVariantNumeric: 'tabular-nums',
                       }}>{sigun.collected}</span>
                     )}
@@ -3440,12 +3448,12 @@ function DexSigunPickerScreen({ regionId, onBack, onOpenSigun }: DexSigunPickerS
             background: isV ? region.tone : 'var(--seed-color-palette-gray-500)',
           }} />
           <span style={{
-            fontSize: 'var(--seed-font-size-t4)', fontWeight: isV ? 'var(--seed-font-weight-bold)' : 'var(--seed-font-weight-medium)', color: isV ? region.tone : 'var(--seed-color-fg-neutral-subtle)',
+            fontSize: 'var(--seed-font-size-t4)', fontWeight: isV ? 'var(--seed-font-weight-bold)' : 'var(--seed-font-weight-medium)', color: isV ? region.dark : 'var(--seed-color-fg-neutral-subtle)',
           }}>{s.name}</span>
         </span>
         <span style={{
           fontSize: 'var(--seed-font-size-t1)', fontWeight: 'var(--seed-font-weight-bold)', fontVariantNumeric: 'tabular-nums',
-          color: isV ? region.tone : 'var(--seed-color-fg-neutral-subtle)',
+          color: isV ? region.dark : 'var(--seed-color-fg-neutral-subtle)',
           opacity: isV ? 0.65 : 0.6,
         }}>{s.collected}/{s.total}</span>
       </button>
@@ -3546,7 +3554,7 @@ function DexRegionScreen({ regionId, onBack, onOpenPlace, onCreatePreset, sigunN
     <div style={{ paddingBottom: 'calc(var(--seed-dimension-spacing-y-screen-bottom) + var(--seed-dimension-x14))', background: 'var(--seed-color-palette-static-white)' }}>
       {/* Hero - colored by region tone */}
       <div style={{
-        background: region.tone, color: 'var(--seed-color-palette-static-white)',
+        background: region.dark, color: 'var(--seed-color-palette-static-white)',
         padding: 'var(--seed-dimension-x14) var(--seed-dimension-spacing-x-global-gutter) var(--seed-dimension-x6)',
       }}>
         <div style={{ display: 'flex', alignItems: 'flex-start', gap: 'var(--seed-dimension-x2)', justifyContent: 'space-between' }}>
@@ -6264,7 +6272,7 @@ function PresetCard({ preset, onClick, onOpenOwner, compact, savedBadge }: Prese
       }}>
         <span style={{
           width: 'var(--seed-dimension-x10)', height: 'var(--seed-dimension-x10)', borderRadius: 'var(--seed-radius-r3)',
-          background: region ? region.tone + '18' : 'var(--seed-color-bg-neutral-weak)',
+          background: region ? region.soft : 'var(--seed-color-bg-neutral-weak)',
           display: 'inline-flex', alignItems: 'center', justifyContent: 'center',
           padding: 'var(--seed-dimension-x1)', flexShrink: 0,
         }}>
@@ -6465,7 +6473,7 @@ function PresetDetailScreen({ presetId, onBack, onOpenPlace, onOpenUser }: Prese
     <div style={{ paddingBottom: 'calc(var(--seed-dimension-spacing-y-screen-bottom) + var(--seed-dimension-x14))', background: 'var(--seed-color-palette-static-white)' }}>
       {/* Hero */}
       <div style={{
-        background: region ? region.tone : 'var(--seed-color-bg-brand-solid)', color: 'var(--seed-color-palette-static-white)',
+        background: region ? region.dark : 'var(--seed-color-bg-brand-solid)', color: 'var(--seed-color-palette-static-white)',
         padding: 'var(--seed-dimension-x14) var(--seed-dimension-spacing-x-global-gutter) var(--seed-dimension-x7)',
       }}>
         <IconButton variant="inverse" onClick={onBack} ariaLabel="뒤로">
@@ -7166,7 +7174,7 @@ function ForeignRegionMini({ region, collected, onClick }: ForeignRegionMiniProp
           fontSize: 'var(--seed-font-size-t1)', fontWeight: 'var(--seed-font-weight-medium)', color: 'var(--seed-color-fg-neutral-subtle)',
           fontVariantNumeric: 'tabular-nums', }}>{collected}/{region.total}</span>
         <span style={{
-          fontSize: 'var(--seed-font-size-t1)', fontWeight: 'var(--seed-font-weight-bold)', color: region.tone,
+          fontSize: 'var(--seed-font-size-t1)', fontWeight: 'var(--seed-font-weight-bold)', color: region.dark,
           fontVariantNumeric: 'tabular-nums', }}>{Math.round(pct * 100)}%</span>
       </div>
     </Card>

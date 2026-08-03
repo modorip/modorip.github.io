@@ -4,6 +4,22 @@ Next.js 16 · React 19 · TypeScript 6. **공모전 제출물이 아니다**(구
 
 루트 공통 지침은 [../AGENTS.md](../AGENTS.md). Claude Code는 [CLAUDE.md](./CLAUDE.md)가 이 파일을 import한다.
 
+## Git — `main` 직접 push (2026-08-04 결정)
+
+**이 저장소는 브랜치·PR 없이 `main`에 직접 커밋·push한다.** `docs`와 같은 예외다. 배포되지 않고 공모전 제출물도 아니라 절차보다 속도를 택했다. `client`·`server`는 예외가 아니다.
+
+```sh
+git switch main && git pull   # 편집 → 검증 → 커밋 → git push
+```
+
+⚠️ **PR 이 없으니 CI 도 없다.** 커밋 전에 아래를 직접 통과시킨다. 이게 유일한 안전망이다.
+
+```sh
+npx tsc --noEmit && npm run lint && npm run build
+```
+
+시큐리티 검증과 한국어 Conventional Commits 는 동일하게 적용된다.
+
 ## 실행
 
 ```sh
@@ -78,7 +94,11 @@ SEED는 Flutter 런타임 패키지가 없다. `@seed-design/css`의 light-only 
 
 토큰 이식은 끝났다(2026-07-30). client는 고정 커밋 `25050dd7`의 Rootage 2.2.1과 설치된 CSS 2.2.2에서 `lib/design/tokens/seed_tokens.g.dart`를 **생성**한다(client ADR-0002(고정 커밋 생성 토큰과 재구현 컴포넌트)). 경고 대상이던 손선언 `../client/lib/design/tokens.dart`는 이제 존재하지 않는다.
 
-**⚠️ 브랜드 값은 mockup·client 양쪽에 손으로 심는다(2026-08-02).** 두 저장소 모두 SEED 원본 carrot을 청색으로 덮었고 **값은 서로 일치한다**(mockup은 `layout.tsx`의 `BRAND` 블록, client는 `lib/design/tokens/brand_overrides.dart`). 생성 파이프라인이 SEED 원본만 읽으므로 어느 쪽도 자동으로 따라오지 않는다. **브랜드 값을 바꾸면 두 곳을 함께 고쳐야 하고, 어긋나도 기계가 알려주지 않는다.** 4계열·17광역 식별색은 mockup `bundle.tsx`가 정본이며 client는 아직 도메인 데이터를 들고 있지 않다.
+**⚠️ 브랜드 값은 mockup·client 양쪽에 손으로 심는다(2026-08-02).** 두 저장소 모두 SEED 원본 carrot을 청색으로 덮었고 **값은 서로 일치한다**(mockup은 `layout.tsx`의 `BRAND` 블록, client는 `lib/design/tokens/brand_overrides.dart`). 생성 파이프라인이 SEED 원본만 읽으므로 어느 쪽도 자동으로 따라오지 않는다. **브랜드 값을 바꾸면 두 곳을 함께 고쳐야 하고, 어긋나도 기계가 알려주지 않는다.** 4계열·17광역 식별색은 mockup `bundle.tsx`가 정본이다. **client도 `lib/features/catalog/data/catalog_reference_data.dart`에 같은 데이터를 들고 있으므로**(여기에 "client는 아직 들고 있지 않다"고 적혀 있었으나 사실이 아니었다. 2026-08-04 확인) **바꾸면 두 곳을 함께 고쳐야 한다.**
+
+**⚠️ 지금 17광역 값이 갈라져 있다(2026-08-04, 의도적).** 여기 `REGIONS`는 `tone`·`dark`·`soft` 3역할 새 값이고 client는 구 단일 `tone`이다. client 이식은 담당자 협의 대기다.
+
+**17광역 식별색은 2026-08-04에 3역할로 재확정됐다.** `REGIONS[]`가 `tone`(실루엣·진행바·지도 채우기) · `dark`(% 숫자·표지 글자·흰글자 바탕) · `soft`(약배경)를 들고 있다. **역할을 뒤집어 쓰지 마라** - `tone`에는 대비 하한이 없어 글자에 쓰면 안 읽힌다. 근거는 `../docs/03-디자인/디자인시스템.md`의 "17광역 식별색 - 확장" 절.
 
 **간격 토큰 드리프트는 없다(2026-07-31 실측).** 여기에 `spacingX.globalGutter`가 mockup 20px / client 16px로 어긋난다는 경고가 있었으나 사실이 아니었다. SEED 전환으로 자체 CSS가 사라지면서 재정의도 함께 없어졌고, 지금은 양쪽 모두 SEED 원본 `x4`(16px)를 쓴다. 확인 명령은 [DESIGN.md](./DESIGN.md)에 있다.
 
@@ -92,7 +112,7 @@ Dart const로 바로 옮길 수 있다. 위치는 심볼명으로 grep 하라(�
 | 자체 아이콘 path 12개 | `CUSTOM_ICON_PATHS` (`src/lib/customIcons.ts`) |
 | SEED 아이콘 매핑 41개 | `SEED_ICONS` (`bundle.tsx`) |
 | 4계열 · 21 카테고리 | `CATEGORY_GROUPS` · `CATEGORIES` (`bundle.tsx`) |
-| 17광역 마스터 (id·name·full·tone) | `REGIONS` (`bundle.tsx`) |
+| 17광역 마스터 (id·name·full·tone. **`dark`·`soft` 추가 예정**) | `REGIONS` (`bundle.tsx`) |
 | 목데이터 자원 81개 (**WGS84 `lat`·`lng` 포함**) | `PLACES` (`bundle.tsx`) |
 | 위경도 ↔ SVG 투영 상수·haversine | `geoToSvg` · `SVG_PER_METER` · `haversineMeters` (`bundle.tsx`) |
 | 칭호 5티어 13개 | `TITLE_TIERS` · `TITLES` (`bundle.tsx`) |
@@ -121,7 +141,7 @@ Dart const로 바로 옮길 수 있다. 위치는 심볼명으로 grep 하라(�
 요점만 옮기면:
 
 - **스타일 소스는 `@seed-design/css` 하나뿐이고, 자체 CSS는 SEED 토큰 재정의 1블록 외 0개다.** `.css` 파일 추가·자체 `--*` 토큰 선언은 금지. `<style>`은 `layout.tsx`의 `RESET`·`BRAND` 2개가 전부이며 늘리지 않는다.
-- **브랜드색은 청색으로 확정됐다(2026-08-02).** `layout.tsx`의 `BRAND` 블록이 SEED brand 토큰 8개를 덮어쓴다. 바탕 `bg.brand-solid` `#0B72C4`(흰 글자 4.98:1, 모든 글자 크기 통과), 글자·아이콘 `fg.brand` `#075C97`로 **역할이 나뉘어 있으니 뒤집어 쓰지 마라.** 값과 근거는 [DESIGN.md](./DESIGN.md)의 "브랜드색 - 확정" 절.
+- **브랜드색은 청색으로 확정됐고, 2026-08-03에 앱 아이콘 기준으로 재정렬됐다.** `layout.tsx`의 `BRAND` 블록이 SEED brand 토큰 8개를 덮어쓴다. 바탕 `bg.brand-solid` `#0266FB`(앱 아이콘과 같은 값, 흰 글자 4.89:1, 모든 글자 크기 통과), 글자·아이콘 `fg.brand` `#0250C5`로 **역할이 나뉘어 있으니 뒤집어 쓰지 마라.** 값과 근거는 [DESIGN.md](./DESIGN.md)의 "브랜드색 - 확정" 절.
 - **4계열·17광역 식별색은 디자인 토큰이 아니라 도메인 데이터다.** `bundle.tsx`의 `CATEGORY_GROUPS`·`REGIONS`가 정본이고 raw hex로 둔다. 토큰으로 옮기지 마라.
 - **새 UI는 SEED에 있는지 먼저 확인**하고 없을 때만 `Box`로 조립한다. 조사 순서를 건너뛰면 있는 걸 없다고 단정한다(전례 있음).
 - **SEED는 Apache-2.0 + 당근 상표 조항이다.** `/licenses` 라우트가 귀속 고지를 이행한다. 당근 로고·상호명·캐릭터를 앱 화면에 쓰지 않는다.
