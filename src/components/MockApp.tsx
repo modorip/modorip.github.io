@@ -40,6 +40,9 @@ export default function MockApp() {
   const [user, setUser] = useState<User | null>(null);
   const [stack, setStack] = useState<StackEntry[]>([{ screen: 'onboarding' }]);
   const [overlay, setOverlay] = useState<Overlay | null>(null);
+  // 후기 남기기(04B)는 발견 성공 오버레이 위에 한 겹 더 뜬다. 스택에 넣으면
+  // 뒤의 오버레이가 가려지고 닫을 때 애니메이션이 처음부터 다시 돈다.
+  const [reviewFor, setReviewFor] = useState<string | null>(null);
   const top = stack[stack.length - 1];
 
   const push = (screen: string, params: Omit<StackEntry, 'screen'> = {}) =>
@@ -106,12 +109,26 @@ export default function MockApp() {
       </div>
       {!hideTabBar && <D.TabBar active={activeTab} onChange={switchTab} />}
       {overlay?.type === 'success' && (
-        <D.DiscoverSuccessScreen placeId={overlay.placeId} onDone={() => {
-          setOverlay(null);
-          const region = (D.PLACES as readonly { id: string; region: string }[])
-            .find((p) => p.id === overlay.placeId)?.region;
-          setStack([{ screen: 'dex' }, { screen: 'dex-region', regionId: region }]);
-        }} />
+        <D.DiscoverSuccessScreen placeId={overlay.placeId}
+          onWriteReview={setReviewFor}
+          onDone={() => {
+            setOverlay(null);
+            const region = (D.PLACES as readonly { id: string; region: string }[])
+              .find((p) => p.id === overlay.placeId)?.region;
+            setStack([{ screen: 'dex' }, { screen: 'dex-region', regionId: region }]);
+          }} />
+      )}
+      {reviewFor && (
+        <div style={{
+          position: 'absolute', inset: 0, zIndex: 300,
+          background: 'var(--seed-color-palette-static-white)',
+          overflowY: 'auto', overflowX: 'hidden', WebkitOverflowScrolling: 'touch',
+          scrollbarWidth: 'none', msOverflowStyle: 'none',
+        }}>
+          <D.ReviewCreateScreen placeId={reviewFor}
+            onBack={() => setReviewFor(null)}
+            onSubmit={() => setReviewFor(null)} />
+        </div>
       )}
     </div>
   );

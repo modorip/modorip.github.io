@@ -8,7 +8,7 @@ export default function Home() {
       <p style={{ margin: 0, color: 'var(--seed-color-fg-neutral-subtle)', fontSize: 'var(--seed-font-size-t4)', fontWeight: 'var(--seed-font-weight-bold)' }}>모두립 · Mockup</p>
       <h1 style={{ fontSize: 'var(--seed-font-size-t12)', fontWeight: 'var(--seed-font-weight-bold)', color: 'var(--seed-color-fg-neutral)', margin: 'var(--seed-dimension-x1_5) 0 var(--seed-dimension-x2_5)' }}>화면별 목업</h1>
       <p style={{ margin: 0, color: 'var(--seed-color-fg-neutral-muted)', fontSize: 'var(--seed-font-size-t5)', lineHeight: 1.6 }}>
-        claude design(<code>/app</code>) 레퍼런스를 Next.js로 이식한 목업. 15개 화면의 풀스크린 고충실도 목업과 탭 네비게이션이 동작하는 인터랙티브 프로토타입.
+        claude design(<code>/app</code>) 레퍼런스를 Next.js로 이식한 목업. 16개 화면의 풀스크린 고충실도 목업과 탭 네비게이션이 동작하는 인터랙티브 프로토타입.
       </p>
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit,minmax(240px,1fr))', gap: 'var(--seed-dimension-x4)', margin: 'var(--seed-dimension-x9) 0 var(--seed-dimension-x12)' }}>
         <CardLink href="/mockup" title="화면별 목업" description="디자인 충실 풀스크린 (전체화면)" />

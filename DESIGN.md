@@ -158,11 +158,11 @@ grep -ohE '^[[:space:]]*--seed-(font-size|radius|dimension-x)[a-z0-9_-]*:[^;]*' 
 - **타이포를 키워야 하면 `variant`로 푼다.** 값 노드의 크기는 레시피가 정하고 override 경로가 없다. `outline`/`large`는 `t5`지만 `underline`/`large`는 `t6`이다. SEED는 underline을 "화면에 입력이 하나뿐일 때" 권장하는데, 온보딩 닉네임이 정확히 그 경우라 그렇게 쓴다.
 
 ```sh
-# 기대값 1 - 어댑터 주석 1건만 잡혀야 한다(파일 첨부 input 제외)
+# 기대값 3 - 어댑터 주석 1건 + 파일 첨부 숨김 트리거 2건(화면 07 · 04B)
 grep -n '<input\|<textarea' src/design/bundle.tsx
 ```
 
-**예외 1건: 파일 첨부(`<input type="file">`, 화면 07).** `display: none`인 숨김 트리거라 시각 표면이 없고, SEED `AttachmentInput`으로 바꾸면 "내 사진" Card UI 전체를 SEED 첨부 그리드로 대체하게 된다. 기계적 교체가 아니라 화면 재설계라 **의도적으로 두었다.** 화면 07을 다시 설계할 때 함께 판단한다.
+**예외 2건: 파일 첨부(`<input type="file">`, 화면 07 · 04B).** `display: none`인 숨김 트리거라 시각 표면이 없고, SEED `AttachmentInput`으로 바꾸면 사진 UI 전체를 SEED 첨부 그리드로 대체하게 된다. 기계적 교체가 아니라 화면 재설계라 **의도적으로 두었다.** 두 화면 다 사진이 **장소당 한 장**이라 다중 첨부 그리드와 모델이 애초에 어긋난다. 사진 UI를 다시 설계할 때 함께 판단한다.
 
 스니펫 레지스트리에는 설치본보다 훨씬 많은 항목이 있다. 화면에 직접 걸리는 미설치 후보: `select` · `select-box` · `field-button` · `action-sheet` · `menu-sheet` · `error-state` · `inline-banner` · `pull-to-refresh` · `slider` · `toggle-button` · `control-chip`.
 
@@ -177,7 +177,7 @@ grep -n '<input\|<textarea' src/design/bundle.tsx
 
 ### 프리미티브 매핑 - `bundle.tsx` 상단 어댑터가 SEED API 사용법의 정답지
 
-호출부 시그니처를 유지한 어댑터로 감싸 15개 화면이 코드 변경 없이 SEED로 렌더된다. Flutter 열은 client에 있는 대응 Widget이고, 정확한 상태는 `../client/tool/seed_specs/seed_component_coverage.json`이 정본이다.
+호출부 시그니처를 유지한 어댑터로 감싸 16개 화면이 코드 변경 없이 SEED로 렌더된다. Flutter 열은 client에 있는 대응 Widget이고, 정확한 상태는 `../client/tool/seed_specs/seed_component_coverage.json`이 정본이다.
 
 | 우리 프리미티브 | SEED 대응 | 채널 | Flutter (client) |
 |---|---|---|---|

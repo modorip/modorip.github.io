@@ -7,7 +7,7 @@ Next.js 16 · React 19 · TypeScript 6. **공모전 제출물이 아니다**(구
 ## 실행
 
 ```sh
-npm run build     # ✅ exit 0, 25 페이지(10 static + /mockup/[id] SSG 15). TypeScript 검사 포함
+npm run build     # ✅ exit 0, 26 페이지(10 static + /mockup/[id] SSG 16). TypeScript 검사 포함
 npm run dev
 npm run start     # http://localhost:3080
 npx tsc --noEmit  # 경고·오류 없이 exit 0 이어야 한다
@@ -29,9 +29,9 @@ npx @seed-design/cli@latest compat   # 커밋된 SEED 스니펫 ↔ 설치 패�
 
 | URL | 목적 |
 |---|---|
-| `/` | 인덱스 (4카드 + 15화면 링크) |
+| `/` | 인덱스 (4카드 + 16화면 링크) |
 | `/storyboard` | 6 시나리오 × 단계별 프리뷰 |
-| `/mockup`, `/mockup/[id]` | 고충실도 썸네일 / 풀스크린 (15개 SSG) |
+| `/mockup`, `/mockup/[id]` | 고충실도 썸네일 / 풀스크린 (16개 SSG) |
 | `/prototype` | `MockApp` 스택 네비게이션 |
 | `/icons` | SEED Monochrome 676종 + Multicolor 100종 + 모두립 12종 카탈로그 |
 | `/design`, `/design/database` | ERD |
@@ -39,7 +39,7 @@ npx @seed-design/cli@latest compat   # 커밋된 SEED 스니펫 ↔ 설치 패�
 
 프레임 규격: `CANVAS_W=402 / CANVAS_H=874` (iPhone 14 Pro 비율).
 
-## 화면 정의 15개 - Flutter 구현 명세
+## 화면 정의 16개 - Flutter 구현 명세
 
 화면 목록 정본은 `src/lib/screens.ts`, 구현 정본은 `src/design/bundle.tsx`다. `bundle.tsx`는 생성 원본이 제거됐으므로(구 docs ADR-0016(당근 SEED 전환)) **이 파일이 정본이고 직접 수정한다.**
 
@@ -49,6 +49,7 @@ npx @seed-design/cli@latest compat   # 커밋된 SEED 스니펫 ↔ 설치 패�
 | 02 | `home` | 홈 | home |
 | 03 | `discover` | 발견 (GPS 지도, 9단계 줌) | discover |
 | 04 | `discover-success` | 발견 성공 (3-stage 오버레이) | discover |
+| 04B | `review-create` | 후기 남기기 (사진 1장 + 글) | discover |
 | 05 | `dex` | 도감 전국 (지도↔카드 토글) | dex |
 | 06 | `dex-province` | 도감 광역 | dex |
 | 06C | `dex-sigun-picker` | 도감 시·군 피커 | dex |
@@ -61,11 +62,13 @@ npx @seed-design/cli@latest compat   # 커밋된 SEED 스니펫 ↔ 설치 패�
 | 10 | `titles` | 칭호 (5티어) | profile |
 | 11 | `profile` | 프로필 | profile |
 
+`review-create`(04B)는 발견 성공 오버레이 **위에 한 겹 더** 뜬다. 스택에 넣지 않는다(넣으면 뒤의 오버레이가 사라지고 닫을 때 3-stage 애니메이션이 처음부터 다시 돈다). 사진·후기는 `modorip:photo:{placeId}` · `modorip:review:{placeId}`로 **장소당 한 칸씩만** 저장하며, 사진 한 장이 도감 카드·장소 상세 헤로·3D 카드의 대표 이미지를 겸한다.
+
 **⚠️ 명세(`../docs/01-기능명세서`)와 1:1이 아니다.** `dex-province`(06)·`dex-sigun-picker`(06C)는 명세에 없는 신규 확장이다(명세 06은 단일 계층, mockup은 전국 → 광역 → 시군피커 → 시군상세 4단. 근거는 `docs/05-API/분류체계-지역코드.md`의 계층 규칙). 명세 `08 3D카드모달`은 독립 화면이 아니라 `PlaceDetailScreen` 내부에서만 열린다. **mockup이 앞서 있고 명세가 뒤처진 상태다. 화면을 바꾸면 명세도 갱신하라.**
 
 ## Flutter 이식
 
-프레임워크는 Flutter를 우선한다: 15개 커스텀 화면·도감·카드·애니메이션 등 공통 UI 비중이 높고, 네이티브 경계를 Kakao Map(`PlatformView` + platform channel) 하나로 좁힐 수 있다. 이 목업이 React라는 사실은 선택 근거가 아니다(DOM·CSS 기반이라 React Native로도 재작성이 필요하다).
+프레임워크는 Flutter를 우선한다: 16개 커스텀 화면·도감·카드·애니메이션 등 공통 UI 비중이 높고, 네이티브 경계를 Kakao Map(`PlatformView` + platform channel) 하나로 좁힐 수 있다. 이 목업이 React라는 사실은 선택 근거가 아니다(DOM·CSS 기반이라 React Native로도 재작성이 필요하다).
 
 client 착수 전 실기기 검증 4종: ① Kakao Map 네이티브 뷰 + 현재 위치 + Flutter 오버레이 ② 포그라운드·백그라운드 위치 권한과 지오펜스 수명주기 ③ Supabase 카카오·구글·애플 로그인과 딥링크 ④ SEED 토큰을 옮긴 대표 화면 1개(텍스트 확대·스크린 리더). 지도 결합이나 위치 수명주기가 불안정하면 React Native보다 Kotlin·Swift 네이티브를 먼저 재평가한다.
 
@@ -83,7 +86,7 @@ Dart const로 바로 옮길 수 있다. 위치는 심볼명으로 grep 하라(�
 
 | 자산 | 심볼 (파일) |
 |---|---|
-| 화면 인벤토리 15개 | `SCREENS` (`src/lib/screens.ts`) |
+| 화면 인벤토리 16개 | `SCREENS` (`src/lib/screens.ts`) |
 | 자체 아이콘 path 12개 | `CUSTOM_ICON_PATHS` (`src/lib/customIcons.ts`) |
 | SEED 아이콘 매핑 41개 | `SEED_ICONS` (`bundle.tsx`) |
 | 4계열 · 21 카테고리 | `CATEGORY_GROUPS` · `CATEGORIES` (`bundle.tsx`) |

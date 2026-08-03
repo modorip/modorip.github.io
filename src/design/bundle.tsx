@@ -305,7 +305,7 @@ function clickable(onActivate: () => void): ClickableProps {
 // primitives - 당근 SEED 어댑터
 //
 // 자체 구현이던 프리미티브를 SEED 컴포넌트 위로 옮겼다. 호출부 시그니처는
-// 그대로 유지해서(어댑터 패턴) 15개 화면 전체가 코드 변경 없이 SEED 로 렌더된다.
+// 그대로 유지해서(어댑터 패턴) 16개 화면 전체가 코드 변경 없이 SEED 로 렌더된다.
 //
 // | 우리 프리미티브 | SEED 대응                       | 채널        |
 // |---|---|---|
@@ -1279,6 +1279,16 @@ interface DiscoverMapBgProps {
 interface DiscoverSuccessScreenProps {
   placeId: string;
   onDone: () => void;
+  /** 후기 남기기(04B)로 넘어간다. 오버레이 위에 화면 하나가 더 뜨는 구조다. */
+  onWriteReview: (placeId: string) => void;
+}
+
+interface ReviewCreateScreenProps {
+  placeId: string;
+  /** 등록하지 않고 닫는다. 초안(사진·글)은 버려진다. */
+  onBack: () => void;
+  /** 등록 후 호출. 저장 자체는 화면 안에서 끝나므로 호출부는 닫기만 하면 된다. */
+  onSubmit?: (result: { text: string; photo: string | null }) => void;
 }
 
 interface TitlesScreenProps {
@@ -3631,20 +3641,57 @@ function DexRegionScreen({ regionId, onBack, onOpenPlace, onCreatePreset, sigunN
 // ─────────────────────────────────────────────
 // Place Tile
 // ─────────────────────────────────────────────
-function useUserPhoto(placeId: string): [string | null, (dataUrl: string | null) => void] {
-  const key = `modorip:photo:${placeId}`;
-  const [photo, setPhoto] = React.useState(() => {
-    try { return typeof localStorage !== 'undefined' ? localStorage.getItem(key) : null; }
-    catch { return null; }
-  });
-  const save = React.useCallback((dataUrl: string | null) => {
+function readPlaceLocalValue(key: string): string | null {
+  try { return typeof localStorage !== 'undefined' ? localStorage.getItem(key) : null; }
+  catch { return null; }
+}
+
+// 같은 키를 보는 훅 인스턴스끼리 값을 맞춘다. 후기 화면(04B)이 저장한 사진·후기를
+// 그 아래 떠 있는 발견 성공 화면이 곧바로 반영해야 해서 필요하다. localStorage 는
+// 같은 탭 안에서 storage 이벤트를 쏘지 않으므로 직접 알린다.
+const placeValueListeners = new Map<string, Set<(value: string | null) => void>>();
+
+/**
+ * 장소당 한 칸만 두는 로컬 저장 값. 사진도 후기도 "한 장소에 하나"라는 같은 규칙을
+ * 쓰므로 키 접두사만 갈아끼워 공유한다. 서버가 없어 localStorage 가 유일한 보관소다.
+ */
+function usePlaceLocalValue(
+  kind: 'photo' | 'review', placeId: string,
+): [string | null, (value: string | null) => void] {
+  const key = `modorip:${kind}:${placeId}`;
+  const [value, setValue] = React.useState(() => readPlaceLocalValue(key));
+
+  React.useEffect(() => {
+    let subs = placeValueListeners.get(key);
+    if (!subs) { subs = new Set(); placeValueListeners.set(key, subs); }
+    subs.add(setValue);
+    return () => {
+      subs.delete(setValue);
+      if (subs.size === 0) placeValueListeners.delete(key);
+    };
+  }, [key]);
+
+  const save = React.useCallback((next: string | null) => {
     try {
-      if (dataUrl) localStorage.setItem(key, dataUrl);
+      if (next) localStorage.setItem(key, next);
       else localStorage.removeItem(key);
     } catch {}
-    setPhoto(dataUrl);
+    // 아직 effect 가 돌기 전이면 자기 자신이 목록에 없다. 중복 호출은 같은 값이라 무해하다.
+    setValue(next);
+    placeValueListeners.get(key)?.forEach(fn => fn(next));
   }, [key]);
-  return [photo, save];
+
+  return [value, save];
+}
+
+/** 장소당 사진 1장. 도감 카드·장소 상세 헤로·3D 카드가 전부 이 한 장을 본다. */
+function useUserPhoto(placeId: string): [string | null, (dataUrl: string | null) => void] {
+  return usePlaceLocalValue('photo', placeId);
+}
+
+/** 장소당 후기 1건. 04B 가 쓰고 발견 성공 화면(04)이 요약을 보여준다. */
+function useUserReview(placeId: string): [string | null, (text: string | null) => void] {
+  return usePlaceLocalValue('review', placeId);
 }
 
 function readFileAsDataUrl(file: File, maxSize = 800): Promise<string> {
@@ -4749,14 +4796,16 @@ function DiscoverScreen({ onDiscoverSuccess }: DiscoverScreenProps) {
 // ─────────────────────────────────────────────
 // Discover Success - quiet, on-brand
 // ─────────────────────────────────────────────
-function DiscoverSuccessScreen({ placeId, onDone }: DiscoverSuccessScreenProps) {
+function DiscoverSuccessScreen({ placeId, onDone, onWriteReview }: DiscoverSuccessScreenProps) {
   const place = getPlace(placeId);
   const region = getRegion(place.region);
   const category = getCategory(place.category);
   const group = getGroup(place.category);
   const [stage, setStage] = React.useState(0);
-  const [writing, setWriting] = React.useState(false);
-  const [review, setReview] = React.useState('');
+  // 후기·사진은 04B 에서 저장한다. 여기서는 결과만 읽어 요약으로 보여준다.
+  const [review] = useUserReview(place.id);
+  const [photo] = useUserPhoto(place.id);
+  const wrote = Boolean(review || photo);
 
   // Stage 0: scanning (dark, scan line)
   // Stage 1: card flipping & growing (rotateX spin)
@@ -4860,17 +4909,36 @@ function DiscoverSuccessScreen({ placeId, onDone }: DiscoverSuccessScreenProps) 
         <>
           <div style={{ padding: 'var(--seed-dimension-x2) var(--seed-dimension-x6) 0', animation: 'seed-enter 320ms var(--seed-timing-function-enter) 100ms both',
             '--seed-enter-opacity': 0, '--seed-enter-translate-y': '10px' } as SeedCSSProperties}>
-            {writing ? (
-              <TextArea
-                label="후기"
-                value={review}
-                onChange={setReview}
-                placeholder="이곳은 어땠나요?"
-                autoresize={false}
-                style={{ minHeight: 96 }}
-              />
+            {wrote ? (
+              <Card padding={12} radius={14} style={{
+                display: 'flex', alignItems: 'center', gap: 'var(--seed-dimension-x2_5)',
+                background: 'var(--seed-color-bg-brand-weak)', border: '1px solid var(--seed-color-stroke-brand-weak)',
+              }}>
+                {photo && (
+                  <img src={photo} alt={`${place.name} 내 사진`}
+                    style={{
+                      width: 'var(--seed-dimension-x10)', height: 'var(--seed-dimension-x10)',
+                      borderRadius: 'var(--seed-radius-r2)', objectFit: 'cover', display: 'block', flexShrink: 0,
+                    }} />
+                )}
+                <div style={{ flex: 1, minWidth: 0, textAlign: 'left' }}>
+                  <div style={{
+                    fontSize: 'var(--seed-font-size-t3)', fontWeight: 'var(--seed-font-weight-bold)',
+                    color: 'var(--seed-color-fg-brand)',
+                  }}>후기를 남겼어요</div>
+                  <div style={{
+                    fontSize: 'var(--seed-font-size-t2)', fontWeight: 'var(--seed-font-weight-medium)',
+                    color: 'var(--seed-color-fg-neutral-muted)', marginTop: 'var(--seed-dimension-x0_5)',
+                    display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical', overflow: 'hidden',
+                  }}>{review || '사진 한 장을 등록했어요'}</div>
+                </div>
+                <Button variant="outline" size="small" onClick={() => onWriteReview(place.id)}>
+                  수정
+                </Button>
+              </Card>
             ) : (
-              <Button variant="soft" size="large" fullWidth onClick={() => setWriting(true)}>
+              <Button variant="soft" size="large" fullWidth onClick={() => onWriteReview(place.id)}
+                leading={<I n="image" s={16} c="var(--seed-color-fg-brand)" w={2} />}>
                 후기 남기기
               </Button>
             )}
@@ -4878,7 +4946,9 @@ function DiscoverSuccessScreen({ placeId, onDone }: DiscoverSuccessScreenProps) 
               marginTop: 'var(--seed-dimension-x2)', textAlign: 'center',
               fontSize: 'var(--seed-font-size-t2)', fontWeight: 'var(--seed-font-weight-medium)',
               color: 'var(--seed-color-fg-neutral-subtle)', lineHeight: 1.55,
-            }}>후기를 남기면 광장에서 다른 탐험가에게 보여요</div>
+            }}>{wrote
+              ? '광장 피드와 도감 카드에 함께 보여요'
+              : '사진 한 장과 짧은 글을 남기면 광장에서 다른 탐험가에게 보여요'}</div>
           </div>
 
           <div style={{ padding: 'var(--seed-dimension-x3) var(--seed-dimension-x6) 0', animation: 'seed-enter 320ms var(--seed-timing-function-enter) 180ms both',
@@ -4918,6 +4988,227 @@ function DiscoverSuccessScreen({ placeId, onDone }: DiscoverSuccessScreenProps) 
           </div>
         </>
       )}
+    </div>
+  );
+}
+
+// ─────────────────────────────────────────────
+// Review Create (04B) - 발견 성공 위에 뜨는 후기 작성 화면
+//
+// 사진은 **한 장소에 한 장**이다. 여러 장을 받지 않는다(도감 카드·장소 상세
+// 헤로·3D 카드가 전부 이 한 장을 쓰므로 대표 이미지가 둘일 수 없다).
+// 사진·글 모두 초안 상태로 들고 있다가 [등록] 에서 한 번에 저장한다. 뒤로 나가면
+// 아무것도 남지 않는다.
+// ─────────────────────────────────────────────
+const REVIEW_MAX = 300;
+
+function ReviewCreateScreen({ placeId, onBack, onSubmit }: ReviewCreateScreenProps) {
+  const place = getPlace(placeId);
+  const region = getRegion(place.region);
+  const category = getCategory(place.category);
+  const group = getGroup(place.category);
+  const [savedPhoto, savePhoto] = useUserPhoto(place.id);
+  const [savedReview, saveReview] = useUserReview(place.id);
+  const [photo, setPhoto] = React.useState<string | null>(savedPhoto);
+  const [text, setText] = React.useState(savedReview || '');
+  const [error, setError] = React.useState<string | null>(null);
+  const inputRef = React.useRef<HTMLInputElement>(null);
+
+  const onPickFile = async (e: ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    setError(null);
+    try {
+      // 새로 고른 사진이 기존 한 장을 덮는다. 목록에 더하지 않는다.
+      setPhoto(await readFileAsDataUrl(file));
+    } catch {
+      setError('사진을 불러오지 못했어요. 다른 파일로 다시 시도해 주세요.');
+    }
+    if (inputRef.current) inputRef.current.value = '';
+  };
+
+  const canSubmit = text.trim().length > 0 || photo !== null;
+
+  const submit = () => {
+    if (!canSubmit) return;
+    const body = text.trim();
+    savePhoto(photo);
+    saveReview(body || null);
+    onSubmit?.({ text: body, photo });
+  };
+
+  return (
+    <div style={{ paddingBottom: 'calc(var(--seed-dimension-spacing-y-screen-bottom) + var(--seed-dimension-x14))', background: 'var(--seed-color-palette-static-white)' }}>
+      <AppHeader subtitle={savedReview || savedPhoto ? '기록 수정' : '방금 발견한 곳'} title="후기 남기기"
+        onBack={onBack}
+        trailing={
+          <Button variant="primary" size="small" disabled={!canSubmit} onClick={submit}>
+            등록
+          </Button>
+        } />
+
+      {/* 대상 장소 */}
+      <div style={{ padding: '0 var(--seed-dimension-spacing-x-global-gutter)' }}>
+        <Card padding={12} radius={14} style={{ display: 'flex', alignItems: 'center', gap: 'var(--seed-dimension-x3)' }}>
+          <div style={{
+            width: 'var(--seed-dimension-x14)', height: 'var(--seed-dimension-x14)',
+            borderRadius: 'var(--seed-radius-r3)', overflow: 'hidden', flexShrink: 0,
+          }}>
+            {photo ? (
+              <img src={photo} alt={place.name}
+                style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }} />
+            ) : (
+              <PhotoPlaceholder hue={place.hue} lift={place.lift} style={{ width: '100%', height: '100%' }} />
+            )}
+          </div>
+          <div style={{ flex: 1, minWidth: 0 }}>
+            <Badge tone={group.id === 'culture' ? 'accent' : group.id === 'festival' ? 'festival' : group.id === 'heritage' ? 'heritage' : 'success'}
+              variant="subtle" size="xsmall">
+              {group.label} · {category.label}
+            </Badge>
+            <div style={{
+              fontSize: 'var(--seed-font-size-t5)', fontWeight: 'var(--seed-font-weight-bold)',
+              color: 'var(--seed-color-fg-neutral)', marginTop: 'var(--seed-dimension-x1)',
+            }}>{place.name}</div>
+            <div style={{
+              fontSize: 'var(--seed-font-size-t2)', fontWeight: 'var(--seed-font-weight-medium)',
+              color: 'var(--seed-color-fg-neutral-subtle)', marginTop: 'var(--seed-dimension-x0_5)',
+              display: 'flex', alignItems: 'center', gap: 'var(--seed-dimension-x1)',
+            }}>
+              <I n="map-pin" s={12} c="var(--seed-color-fg-neutral-subtle)" />
+              <span>{region.full} · {place.date || '오늘'} 발견</span>
+            </div>
+          </div>
+        </Card>
+      </div>
+
+      {/* 사진 - 장소당 1장 */}
+      <SectionHeader title="사진" subtitle="한 장소에 한 장만 등록할 수 있어요" dense
+        trailing={
+          <span style={{
+            fontFamily: 'ui-monospace, monospace',
+            fontSize: 'var(--seed-font-size-t2)', fontWeight: 'var(--seed-font-weight-bold)',
+            color: photo ? 'var(--seed-color-fg-brand)' : 'var(--seed-color-fg-neutral-subtle)',
+            fontVariantNumeric: 'tabular-nums',
+          }}>{photo ? 1 : 0} / 1</span>
+        } />
+      <div style={{ padding: '0 var(--seed-dimension-spacing-x-global-gutter)' }}>
+        {/* 화면 07 과 같은 숨김 트리거. 시각 표면이 없어 SEED 어댑터 대상이 아니다. */}
+        <input ref={inputRef} type="file" accept="image/*"
+          style={{ display: 'none' }} onChange={onPickFile} />
+
+        {photo ? (
+          <div>
+            <div style={{
+              position: 'relative', height: 200, borderRadius: 'var(--seed-radius-r4)', overflow: 'hidden',
+              border: '1px solid var(--seed-color-stroke-neutral-subtle)',
+            }}>
+              <img src={photo} alt={`${place.name} 후기 사진`}
+                style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }} />
+              <span style={{
+                position: 'absolute', left: 12, top: 12,
+                padding: 'var(--seed-dimension-x1) var(--seed-dimension-x2_5)', borderRadius: 'var(--seed-radius-full)',
+                background: 'var(--seed-color-palette-static-black-alpha-800)', color: 'var(--seed-color-palette-static-white-alpha-900)',
+                fontSize: 'var(--seed-font-size-t1)', fontWeight: 'var(--seed-font-weight-bold)',
+              }}>대표 사진</span>
+            </div>
+            <div style={{ display: 'flex', gap: 'var(--seed-dimension-x2)', marginTop: 'var(--seed-dimension-x2_5)' }}>
+              <div style={{ flex: 1 }}>
+                <Button variant="outline" size="medium" fullWidth onClick={() => inputRef.current?.click()}>
+                  다른 사진으로 바꾸기
+                </Button>
+              </div>
+              <Button variant="soft" size="medium" onClick={() => setPhoto(null)}>
+                제거
+              </Button>
+            </div>
+          </div>
+        ) : (
+          <button type="button" onClick={() => inputRef.current?.click()}
+            style={{
+              width: '100%', height: 200, padding: 0,
+              borderRadius: 'var(--seed-radius-r4)', cursor: 'pointer',
+              background: 'var(--seed-color-bg-layer-basement)',
+              border: '1px dashed var(--seed-color-palette-gray-500)',
+              display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center',
+              gap: 'var(--seed-dimension-x2)', WebkitTapHighlightColor: 'transparent',
+            }}>
+            <span style={{
+              width: 'var(--seed-dimension-x12)', height: 'var(--seed-dimension-x12)', borderRadius: 'var(--seed-radius-r3)',
+              background: 'var(--seed-color-palette-static-white)', border: '1px solid var(--seed-color-stroke-neutral-subtle)',
+              display: 'inline-flex', alignItems: 'center', justifyContent: 'center',
+            }}>
+              <I n="image" s={22} c="var(--seed-color-fg-brand)" w={2} />
+            </span>
+            <div style={{
+              fontSize: 'var(--seed-font-size-t4)', fontWeight: 'var(--seed-font-weight-bold)', color: 'var(--seed-color-fg-neutral)',
+            }}>사진 추가</div>
+            <div style={{
+              fontSize: 'var(--seed-font-size-t2)', fontWeight: 'var(--seed-font-weight-medium)', color: 'var(--seed-color-fg-neutral-muted)',
+            }}>이 장소의 대표 사진 한 장이 됩니다</div>
+          </button>
+        )}
+
+        {savedPhoto && photo !== savedPhoto && (
+          <div style={{
+            marginTop: 'var(--seed-dimension-x2)',
+            fontSize: 'var(--seed-font-size-t2)', fontWeight: 'var(--seed-font-weight-medium)',
+            color: 'var(--seed-color-fg-warning)', lineHeight: 1.55,
+          }}>{photo ? '등록하면 기존 사진이 이 사진으로 교체돼요' : '등록하면 기존 사진이 삭제돼요'}</div>
+        )}
+        {error && (
+          <div style={{
+            marginTop: 'var(--seed-dimension-x2)',
+            fontSize: 'var(--seed-font-size-t2)', fontWeight: 'var(--seed-font-weight-medium)',
+            color: 'var(--seed-color-fg-critical)', lineHeight: 1.55,
+          }}>{error}</div>
+        )}
+      </div>
+
+      {/* 후기 */}
+      <SectionHeader title="후기" subtitle="다른 탐험가에게 도움이 되는 한마디" dense
+        trailing={
+          <span style={{
+            fontFamily: 'ui-monospace, monospace',
+            fontSize: 'var(--seed-font-size-t2)', fontWeight: 'var(--seed-font-weight-bold)',
+            color: text.length >= REVIEW_MAX ? 'var(--seed-color-fg-warning)' : 'var(--seed-color-fg-neutral-subtle)',
+            fontVariantNumeric: 'tabular-nums',
+          }}>{text.length} / {REVIEW_MAX}</span>
+        } />
+      <div style={{ padding: '0 var(--seed-dimension-spacing-x-global-gutter)' }}>
+        {/* 자동 확장을 끄지 않으면 입력할수록 아래 섹션이 밀린다. */}
+        <TextArea label="후기" value={text}
+          onChange={(v) => setText(v.slice(0, REVIEW_MAX))}
+          placeholder="이곳은 어땠나요? 계절·시간대·주차처럼 다음 사람에게 도움이 될 정보를 남겨주세요."
+          autoresize={false}
+          style={{ height: 140 }} />
+      </div>
+
+      {/* 공개 범위 안내 */}
+      <div style={{ padding: 'var(--seed-dimension-x4) var(--seed-dimension-spacing-x-global-gutter) 0' }}>
+        <Card padding={12} radius={12} style={{
+          background: 'var(--seed-color-palette-blue-100)', border: '1px solid var(--seed-color-stroke-brand-weak)',
+          display: 'flex', alignItems: 'flex-start', gap: 'var(--seed-dimension-x2)',
+        }}>
+          <I n="info" s={14} c="var(--seed-color-fg-brand)" style={{ flexShrink: 0, marginTop: 'var(--seed-dimension-x0_5)' }} />
+          <div style={{
+            fontSize: 'var(--seed-font-size-t2)', fontWeight: 'var(--seed-font-weight-medium)',
+            color: 'var(--seed-color-fg-neutral-muted)', lineHeight: 1.55,
+          }}>등록한 사진과 글은 광장 피드와 이 장소의 도감 카드에 함께 보여요. 발견 자체는 이미 기록됐으니 후기는 건너뛰어도 괜찮아요.</div>
+        </Card>
+      </div>
+
+      {/* CTA */}
+      <div style={{ padding: 'var(--seed-dimension-x5) var(--seed-dimension-spacing-x-global-gutter) 0' }}>
+        <Button variant="primary" size="large" fullWidth disabled={!canSubmit} onClick={submit}>
+          후기 등록
+        </Button>
+        <div style={{ marginTop: 'var(--seed-dimension-x2)' }}>
+          <Button variant="ghost" size="large" fullWidth onClick={onBack}>
+            나중에 하기
+          </Button>
+        </div>
+      </div>
     </div>
   );
 }
@@ -6910,4 +7201,4 @@ function ProfileStatDivider() {
   return <div style={{ width: 1, background: 'var(--seed-color-palette-static-white-alpha-100)' }} />;
 }
 
-export { OnboardingScreen, HomeScreen, DiscoverScreen, DiscoverSuccessScreen, DexNationScreen, DexProvinceScreen, DexSigunPickerScreen, DexRegionScreen, PlaceDetailScreen, PresetCreateScreen, PresetDetailScreen, UserProfileScreen, PlazaScreen, TitlesScreen, ProfileScreen, TabBar, PLACES, REGIONS, CATEGORIES, TITLES, PRESETS, FEED };
+export { OnboardingScreen, HomeScreen, DiscoverScreen, DiscoverSuccessScreen, ReviewCreateScreen, DexNationScreen, DexProvinceScreen, DexSigunPickerScreen, DexRegionScreen, PlaceDetailScreen, PresetCreateScreen, PresetDetailScreen, UserProfileScreen, PlazaScreen, TitlesScreen, ProfileScreen, TabBar, PLACES, REGIONS, CATEGORIES, TITLES, PRESETS, FEED };

@@ -14,7 +14,8 @@ function renderScreen(id: string): ReactElement {
     case 'onboarding':       return <D.OnboardingScreen onComplete={noop} />;
     case 'home':             return <D.HomeScreen user={{ name: '탐험가' }} onNavigate={noop} onOpenRegion={noop} onOpenPlace={noop} />;
     case 'discover':         return <D.DiscoverScreen onDiscoverSuccess={noop} />;
-    case 'discover-success': return (<><D.DiscoverScreen onDiscoverSuccess={noop} /><D.DiscoverSuccessScreen placeId={S.undiscovered} onDone={noop} /></>);
+    case 'discover-success': return (<><D.DiscoverScreen onDiscoverSuccess={noop} /><D.DiscoverSuccessScreen placeId={S.undiscovered} onDone={noop} onWriteReview={noop} /></>);
+    case 'review-create':    return <D.ReviewCreateScreen placeId={S.undiscovered} onBack={noop} onSubmit={noop} />;
     case 'dex':              return <D.DexNationScreen onOpenRegion={noop} />;
     case 'dex-province':     return <D.DexProvinceScreen regionId={S.region} onBack={noop} onOpenSigun={noop} onOpenPlace={noop} onOpenPreset={noop} onOpenSigunPicker={noop} />;
     case 'dex-sigun-picker': return <D.DexSigunPickerScreen regionId={S.region} onBack={noop} onOpenSigun={noop} />;

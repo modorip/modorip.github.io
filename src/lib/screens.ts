@@ -21,6 +21,7 @@ export const SCREENS = [
   { id: "home",            no: "02", name: "홈",                tab: "home",    group: "홈" },
   { id: "discover",        no: "03", name: "발견 (GPS 지도)",    tab: "discover",group: "발견" },
   { id: "discover-success",no: "04", name: "발견 성공 (오버레이)",tab: "discover",group: "발견" },
+  { id: "review-create",   no: "04B",name: "후기 남기기",         tab: "discover",group: "발견" },
   { id: "dex",             no: "05", name: "도감 - 전국",        tab: "dex",     group: "도감" },
   { id: "dex-province",    no: "06", name: "도감 - 광역",        tab: "dex",     group: "도감" },
   { id: "dex-sigun-picker",no: "06C",name: "도감 - 시·군 피커",    tab: "dex",     group: "도감" },

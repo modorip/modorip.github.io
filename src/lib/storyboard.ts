@@ -50,8 +50,13 @@ export const FLOWS: readonly Flow[] = [
       },
       {
         id: 'discover-success',
-        action: '카드 회전·confetti 보상 확인, 후기 남기기',
-        result: '도감 +1 · 칭호 점수 재계산 · 광장 피드 생성',
+        action: '카드 회전·confetti 보상 확인, "후기 남기기" 탭',
+        result: '도감 +1 · 칭호 점수 재계산 · 후기 작성 화면이 오버레이 위에 열림',
+      },
+      {
+        id: 'review-create',
+        action: '사진 한 장(장소당 1장)과 최대 300자 후기를 적고 등록',
+        result: '등록 시 저장 후 발견 성공 화면으로 복귀(요약 표시) · 광장 피드 생성',
       },
       {
         id: 'dex',
