@@ -89,7 +89,12 @@ npx @seed-design/cli@latest compat
 
 llms.txt는 clone·MCP 없이 URL만으로 읽을 수 있다.
 
-⚠️ **`llms.txt`는 하나가 아니다.** `https://seed-design.io/llms.txt`가 마스터 인덱스이고 그 아래 섹션이 11개다. 전체 지도는 `../docs/협업규칙.md`의 "당근 SEED 를 확인하는 법" 절.
+⚠️ **`llms.txt`는 하나가 아니고, 네임스페이스가 둘이다.** 전체 지도는 `../docs/협업규칙.md`의 "당근 SEED 를 확인하는 법" 절.
+
+```
+인덱스     /llms.txt · /<섹션>/llms.txt          ← 1차에서 끝난다 (2차 인덱스는 없다)
+개별 문서  /llms/<섹션>/[<하위>/]<문서>.txt        ← 깊은 계층은 여기 있다
+```
 
 | 용도 | URL |
 |---|---|
@@ -97,8 +102,10 @@ llms.txt는 clone·MCP 없이 URL만으로 읽을 수 있다.
 | 컴포넌트 인덱스 (**슬러그 확인은 여기서**) | `https://seed-design.io/react/llms.txt` |
 | 개별 컴포넌트 | `https://seed-design.io/llms/react/components/{슬러그}.txt` |
 | **토큰 전체 값** (light/dark 표) | `https://seed-design.io/llms/foundations/design-token/reference.txt` |
-| 파운데이션 문서 | `https://seed-design.io/foundations/llms.txt` |
+| 파운데이션 인덱스 | `https://seed-design.io/foundations/llms.txt` |
 | 전체 문서 한 파일 (**약 2MB**) | `https://seed-design.io/react/llms-full.txt` |
+
+**경로를 추측하지 마라.** `/foundations/design-token/llms.txt` 같은 2차 인덱스는 없다(2026-08-04 전수 확인). 인덱스를 타고 내려가면 문서 213개가 전부 링크돼 있다.
 
 ⚠️ **404가 59KB짜리 SPA HTML을 돌려준다.** 응답이 비어 있지 않다고 성공으로 보면 안 되고 **HTTP 상태 코드를 봐야 한다.**
 
