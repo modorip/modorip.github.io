@@ -89,11 +89,18 @@ npx @seed-design/cli@latest compat
 
 llms.txt는 clone·MCP 없이 URL만으로 읽을 수 있다.
 
+⚠️ **`llms.txt`는 하나가 아니다.** `https://seed-design.io/llms.txt`가 마스터 인덱스이고 그 아래 섹션이 11개다. 전체 지도는 `../docs/협업규칙.md`의 "당근 SEED 를 확인하는 법" 절.
+
 | 용도 | URL |
 |---|---|
+| **마스터 인덱스** (여기서 시작) | `https://seed-design.io/llms.txt` |
 | 컴포넌트 인덱스 (**슬러그 확인은 여기서**) | `https://seed-design.io/react/llms.txt` |
 | 개별 컴포넌트 | `https://seed-design.io/llms/react/components/{슬러그}.txt` |
-| 전체 문서 한 파일 | `https://seed-design.io/react/llms-full.txt` |
+| **토큰 전체 값** (light/dark 표) | `https://seed-design.io/llms/foundations/design-token/reference.txt` |
+| 파운데이션 문서 | `https://seed-design.io/foundations/llms.txt` |
+| 전체 문서 한 파일 (**약 2MB**) | `https://seed-design.io/react/llms-full.txt` |
+
+⚠️ **404가 59KB짜리 SPA HTML을 돌려준다.** 응답이 비어 있지 않다고 성공으로 보면 안 되고 **HTTP 상태 코드를 봐야 한다.**
 
 **슬러그는 컴포넌트 이름과 다를 수 있다.** `action-button`은 그대로지만 `text-field`는 존재하지 않고 `text-field-input`·`text-field-textarea`로 나뉜다. 추측하지 말고 인덱스에서 확인하라.
 
