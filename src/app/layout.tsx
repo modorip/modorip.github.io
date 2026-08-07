@@ -2,13 +2,20 @@
 import "@seed-design/css/all.css";
 import type { Metadata } from "next";
 import type { ReactNode } from "react";
-import { LayoutRoot, SideNavigationInset } from "@seed-design/react";
-import Sidebar from "@/components/Sidebar";
 
 export const metadata: Metadata = {
-  title: "모두립 · 목업",
-  description: "화면별 풀스크린 목업 (당근 SEED 기반)",
+  title: "모두립",
+  description: "GPS 로 관광자원을 발견해 채우는 여행 도감",
 };
+
+// ⚠️ **셸(사이드바)은 여기 두지 않는다.** 목업은 사이드바가 필요하고 법적
+// 페이지는 아니다. 법적 페이지는 스토어에 URL 을 제출해 **외부에 공개되므로**,
+// 목업 내비게이션이 함께 보이면 안 된다.
+//
+// 그래서 셸을 라우트 그룹별 레이아웃으로 내렸다.
+//   (mockup)/layout.tsx  사이드바 있음
+//   (legal)/layout.tsx   사이드바 없음
+// 라우트 그룹은 괄호라 **URL 에 나타나지 않는다** - 기존 주소가 그대로다.
 
 // 브라우저 정규화. SEED 는 리셋을 배포하지 않는다 - `box-sizing: border-box` 를
 // .seed-action-button 같은 컴포넌트 레시피에 개별로만 넣고 Box 레시피에는 없다.
@@ -59,12 +66,7 @@ export default function RootLayout({ children }: { children: ReactNode }) {
         fontSize: 'var(--seed-font-size-t4)',
         lineHeight: 'var(--seed-line-height-t4)',
       }}>
-        {/* 셸은 SEED 가 준다. LayoutRoot(height:100vh · flex · overflow-y:auto)가
-            SideNavigation + SideNavigationInset(본문 영역)과 짝을 이룬다. */}
-        <LayoutRoot>
-          <Sidebar />
-          <SideNavigationInset>{children}</SideNavigationInset>
-        </LayoutRoot>
+        {children}
       </body>
     </html>
   );

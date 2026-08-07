@@ -1,0 +1,60 @@
+name: Pages
+
+# 법적 페이지(개인정보처리방침 · 지원)를 GitHub Pages 로 배포한다.
+# 스토어에 제출하는 URL 이 여기서 나온다.
+#
+# 🔴 **저장소가 공개여야 동작한다.** 무료 플랜은 프라이빗 저장소에서 Pages 를
+#    제공하지 않는다. 공개로 바꾸면 이 저장소의 **목업 화면과 설계 문서도 함께
+#    공개된다** - 켜기 전에 그것을 감수할지 정한다.
+# ⚠️ **지금은 수동 실행만 걸어 두었다.** 저장소가 프라이빗인 동안에는 Pages 가
+# 없어 배포가 반드시 실패하는데, main push 마다 빨간 X 가 뜨면 **워크플로 실패를
+# 무시하는 습관**이 생긴다.
+#
+# 공개로 바꾸고 Pages 를 켠 뒤 아래 두 줄의 주석을 풀어라.
+on:
+  # push:
+  #   branches: [main]
+  workflow_dispatch:
+
+concurrency:
+  group: pages
+  cancel-in-progress: false
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+          cache: npm
+
+      - run: npm ci
+
+      # 프로젝트 사이트라 저장소 이름이 경로에 붙는다.
+      # ⚠️ 사용자 지정 도메인(modorip.com)을 붙이면 루트로 뜨므로 이 값을 비운다.
+      - name: Build
+        run: npm run build
+        env:
+          NEXT_PUBLIC_BASE_PATH: /${{ github.event.repository.name }}
+
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: out
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deploy.outputs.page_url }}
+    steps:
+      - id: deploy
+        uses: actions/deploy-pages@v4
