@@ -1,6 +1,12 @@
 'use client';
 
-import { useCallback, useEffect, useState, type FormEvent, type ReactNode } from 'react';
+import {
+  useCallback,
+  useState,
+  useSyncExternalStore,
+  type FormEvent,
+  type ReactNode,
+} from 'react';
 
 /// 내부 화면(목업·설계) 앞에 세우는 비밀번호 문.
 ///
@@ -37,18 +43,29 @@ async function sha256(value: string): Promise<string> {
     .join('');
 }
 
+/// sessionStorage 는 React 밖의 저장소다. effect 안에서 setState 로 옮기면
+/// 렌더가 한 번 더 돌고 ESLint 가 막는다. 이 훅이 그것을 위한 자리다.
+///
+/// 서버 스냅샷은 **항상 잠김**이다. 정적 export 라 이 컴포넌트가 미리 렌더되는데,
+/// 열림으로 두면 잠금 화면이 아니라 내용이 HTML 에 구워진다.
+function useUnlockedInSession(): boolean {
+  return useSyncExternalStore(
+    (onChange) => {
+      window.addEventListener('storage', onChange);
+      return () => window.removeEventListener('storage', onChange);
+    },
+    () => sessionStorage.getItem(SESSION_KEY) === '1',
+    () => false,
+  );
+}
+
 export default function PasswordGate({ children }: { children: ReactNode }) {
-  // ⚠️ **기본값이 잠김이어야 한다.** 정적 export 라 이 컴포넌트가 미리 렌더되는데,
-  // 기본이 열림이면 **잠금 화면이 아니라 내용이 HTML 에 구워진다.**
-  const [unlocked, setUnlocked] = useState(false);
-  const [checked, setChecked] = useState(false);
+  const storedUnlocked = useUnlockedInSession();
+  // 방금 푼 경우. storage 이벤트는 **다른 탭에서만** 오므로 이 탭은 따로 기억한다.
+  const [justUnlocked, setJustUnlocked] = useState(false);
   const [input, setInput] = useState('');
   const [failed, setFailed] = useState(false);
-
-  useEffect(() => {
-    setUnlocked(sessionStorage.getItem(SESSION_KEY) === '1');
-    setChecked(true);
-  }, []);
+  const unlocked = storedUnlocked || justUnlocked;
 
   const submit = useCallback(
     async (e: FormEvent) => {
@@ -60,13 +77,11 @@ export default function PasswordGate({ children }: { children: ReactNode }) {
         return;
       }
       sessionStorage.setItem(SESSION_KEY, '1');
-      setUnlocked(true);
+      setJustUnlocked(true);
     },
     [input],
   );
 
-  // 세션 확인 전에는 아무것도 그리지 않는다. 잠금 화면이 깜빡이는 것을 막는다.
-  if (!checked) return null;
   if (unlocked) return <>{children}</>;
 
   return (
