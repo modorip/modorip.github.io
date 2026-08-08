@@ -35,7 +35,8 @@ export default function LocationTermsPage() {
         <p>
           거리 계산과 도착 판정은 전부 단말기에서 이루어지고, 서버에는 그 결과인
           &ldquo;어떤 관광자원을 발견했는가&rdquo;만 전달됩니다.{' '}
-          <strong>운영자는 이용자가 언제 어디에 있었는지 알 수 없습니다.</strong>
+          <strong>다만 관광자원의 위치는 정해져 있으므로, 운영자는 이용자가 기록한 방문
+          장소와 시각을 확인할 수 있습니다.</strong>
         </p>
         <p style={legal.note}>
           이는 설계 단계에서 정해 문서로 고정한 방침이며, 이용자의 이동 경로를 남기지 않기
