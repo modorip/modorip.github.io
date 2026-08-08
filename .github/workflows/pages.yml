@@ -38,12 +38,10 @@ jobs:
 
       - run: npm ci
 
-      # 프로젝트 사이트라 저장소 이름이 경로에 붙는다.
-      # ⚠️ 사용자 지정 도메인(modorip.com)을 붙이면 루트로 뜨므로 이 값을 비운다.
+      # 조직 사이트라 루트에 뜬다. basePath 를 주입하지 않는다.
+      # ⚠️ 프로젝트 저장소로 옮기면 `/<repo>` 를 넣어야 한다.
       - name: Build
         run: npm run build
-        env:
-          NEXT_PUBLIC_BASE_PATH: /${{ github.event.repository.name }}
 
       - uses: actions/upload-pages-artifact@v3
         with:

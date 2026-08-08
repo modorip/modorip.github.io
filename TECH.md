@@ -21,7 +21,7 @@ npm ls next react typescript @seed-design/css --depth=0
 ```sh
 npm install
 npm run dev
-npm run start     # http://localhost:3080
+npm run start     # http://localhost:3000
 ```
 
 **PR 이 없으니 CI 도 없다.** 커밋 전에 아래를 직접 통과시킨다. **이게 유일한 안전망이다.**

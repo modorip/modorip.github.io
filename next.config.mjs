@@ -6,11 +6,11 @@
 // ⚠️ **동적 라우트에는 `generateStaticParams` 가 있어야 한다.**
 //    `/mockup/[id]` 가 이미 갖고 있다. 없으면 빌드가 실패한다.
 //
-// basePath 는 배포 위치에 따라 다르다.
-//   프로젝트 사이트  https://<org>.github.io/<repo>/  → '/<repo>'
-//   사용자 지정 도메인 https://modorip.com/            → ''
-// 값을 소스에 박지 않고 빌드할 때 주입한다. 도메인을 붙이면 워크플로에서
-// 이 값을 지우면 되고 코드는 그대로다.
+// ⚠️ **조직 사이트(`<org>.github.io`)라 basePath 가 없다.** 사이트가 도메인
+// 루트에 뜬다. 프로젝트 사이트였다면 `/<repo>` 가 필요했다.
+//
+// 사용자 지정 도메인(modorip.com)을 붙여도 루트라 그대로다.
+// 값이 필요해지는 날을 대비해 주입 경로만 남긴다.
 const basePath = process.env.NEXT_PUBLIC_BASE_PATH ?? '';
 
 const nextConfig = {
