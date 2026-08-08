@@ -14,6 +14,9 @@ export const metadata: Metadata = {
 /// `robots.txt` 가 색인을 막고 여기서 길을 내주지 않는다.
 ///
 /// ⚠️ 아직 출시 전이라 스토어 배지를 걸지 않았다. 링크가 생기면 여기 붙인다.
+///
+/// ⚠️ 위치기반서비스 이용약관은 **보류 중**이다(`(legal)/_location/README.md`).
+/// 공개하기로 정하면 아래 목록에 되살린다.
 const CONTACT = 'gdpark.dev@gmail.com';
 
 const FEATURES: ReadonlyArray<{ title: string; body: string }> = [
@@ -34,7 +37,6 @@ const FEATURES: ReadonlyArray<{ title: string; body: string }> = [
 const DOCUMENTS: ReadonlyArray<{ href: string; label: string }> = [
   { href: '/privacy', label: '개인정보처리방침' },
   { href: '/terms', label: '이용약관' },
-  { href: '/location', label: '위치기반서비스 이용약관' },
   { href: '/support', label: '지원' },
 ];
 

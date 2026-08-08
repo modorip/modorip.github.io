@@ -5,14 +5,19 @@
 import type { ReactNode } from 'react';
 import { LayoutRoot, SideNavigationInset } from '@seed-design/react';
 import Sidebar from '@/components/Sidebar';
+import PasswordGate from '@/components/PasswordGate';
 
 export default function MockupLayout({ children }: { children: ReactNode }) {
   // 셸은 SEED 가 준다. LayoutRoot(height:100vh · flex · overflow-y:auto)가
   // SideNavigation + SideNavigationInset(본문 영역)과 짝을 이룬다.
+  // 🔴 **문지기이지 보안이 아니다.** 한계는 PasswordGate 주석에 적혀 있다.
+  // /mockup 만 막고 /design 을 열어 두면 앞뒤가 안 맞아 그룹 전체를 감싼다.
   return (
-    <LayoutRoot>
-      <Sidebar />
-      <SideNavigationInset>{children}</SideNavigationInset>
-    </LayoutRoot>
+    <PasswordGate>
+      <LayoutRoot>
+        <Sidebar />
+        <SideNavigationInset>{children}</SideNavigationInset>
+      </LayoutRoot>
+    </PasswordGate>
   );
 }
