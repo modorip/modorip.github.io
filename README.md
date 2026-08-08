@@ -24,7 +24,7 @@ GitHub Pages 로 배포합니다.
 
 ```sh
 npm ci
-npm run dev      # http://localhost:3080
+npm run dev      # http://localhost:3000
 npm run build    # out/ 으로 정적 export
 npm run lint
 ```
