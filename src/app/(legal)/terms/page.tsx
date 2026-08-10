@@ -1,4 +1,5 @@
 import type { Metadata } from 'next';
+import Link from 'next/link';
 import { legal, Section } from '@/components/legal';
 
 export const metadata: Metadata = {
@@ -81,13 +82,18 @@ export default function TermsPage() {
 
       <Section title="제7조 (이용계약의 해지)">
         <p>
-          이용자는 언제든지 이용계약의 해지를 요청할 수 있습니다. 아래 문의처로 요청하시면
-          계정과 기록을 지체 없이 삭제합니다.
+          이용자는 언제든지 서비스 안의 <strong>계정 삭제</strong>로 이용계약을 해지할 수
+          있습니다.
         </p>
-        <p style={legal.note}>
-          현재 서비스 안에 탈퇴 기능이 준비되어 있지 않아 문의로 처리합니다. 기능이 추가되면
-          이 약관을 갱신하고 시행일 전에 공지합니다.
+        <p>
+          회원 정보와 작성하신 사진은 지체 없이 파기합니다. <strong>후기 글은 다른 이용자를
+          위해 남으며 작성자는 익명으로 표시됩니다.</strong> 자세한 내용은{' '}
+          <Link href="/privacy" style={{ color: 'var(--seed-color-fg-brand)' }}>
+            개인정보처리방침
+          </Link>
+          에 적어 두었습니다.
         </p>
+        <p style={legal.note}>🔴 해지하면 되돌릴 수 없습니다.</p>
       </Section>
 
       <Section title="제8조 (책임의 한계)" emphasis>
