@@ -59,7 +59,7 @@ export default function SupportPage() {
           계정과 기록을 지우고 싶어요
         </h3>
         <p>
-          위 이메일로 요청해 주시면 지체 없이 삭제해 드립니다.
+          앱의 <strong>프로필 → 계정 삭제</strong>에서 직접 하실 수 있습니다. 회원 정보와 사진은 지체 없이 파기되고, 후기 글은 익명으로 남습니다.
         </p>
       </Section>
 
