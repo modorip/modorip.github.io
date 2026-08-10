@@ -1,6 +1,6 @@
-# AGENTS.md - mockup/ (모두립 화면 목업)
+# AGENTS.md - mockup/ (모두립 랜딩 페이지)
 
-**공모전 제출물이 아니다**(구 docs ADR-0015). Flutter 구현의 **화면 설계 레퍼런스**로 유지한다. 결함의 미세 조정보다 **Flutter 이식에 필요한 데이터·상호작용 명세 보존**을 우선한다.
+이 저장소는 Next.js 랜딩 페이지다. 화면 목업·관리 데이터는 `modorip/admin` 에서 관리한다.
 
 **여기 있는 것은 지키지 않으면 조용히 어긋나는 것들이다.** 명령을 돌리면 확인되는 사실(스택·명령·라우트·화면 목록·재사용 자산)은 [TECH.md](./TECH.md)에 있다.
 
@@ -69,15 +69,18 @@ Claude Code 는 `CLAUDE.md` 가 `AGENTS.md`·`TECH.md` 를 import 한다. `DESIG
 - 서비스 내에 **"한국관광공사"·"KTO" 명칭·로고를 쓰지 않는다**
 - **당근 로고·상호명·캐릭터를 앱 화면에 쓰지 않는다.** SEED 는 Apache-2.0 + 당근 상표 조항이고 `/licenses` 라우트가 귀속 고지를 이행한다. **지우지 마라**
 
-## Git - `main` 직접 push (2026-08-04 결정)
+## Git
 
-**이 저장소는 브랜치·PR 없이 `main` 에 직접 커밋·push 한다.** `docs` 와 같은 예외다. 배포되지 않고 제출물도 아니라 절차보다 속도를 택했다. **`client`·`server` 는 예외가 아니다.**
+**이 저장소는 브랜치 + PR 로 작업한다.** `main` 에 직접 push 하지 않는다.
+
+정본은 `docs/협업규칙.md` 의 Git 절이다. **2026-08-02 에는 직접 push 대상이었는데**(배포되지 않고 제출물도 아니라서) 저장소 재편으로 **GitHub Pages 공개 배포 대상**이 되면서 2026-08-11 에 옮겼다. 화면 목업 쪽 예외는 `admin` 이 물려받았다.
 
 ```sh
-git switch main && git pull   # 편집 → 검증 → 커밋 → git push
+git switch main && git pull
+git switch -c feature/<slug>
 ```
 
-⚠️ **PR 이 없으니 CI 도 없다.** 커밋 전에 `npx tsc --noEmit && npm run lint && npm run build` 를 직접 통과시킨다(TECH.md 참조).
+커밋 전에 `npx tsc --noEmit && npm run lint && npm run build` 를 직접 통과시킨다(TECH.md 참조).
 
 - **커밋 메시지는 한국어 Conventional Commits.** `type: 요약`(72자 이내, 명령형, 마침표 없음) + 본문 불릿 3~5줄
 - **커밋 전 시큐리티 게이트.** `git diff --cached` 로 키·토큰·`.env` 가 섞였는지 확인한다
