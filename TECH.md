@@ -37,14 +37,14 @@ npx tsc --noEmit && npm run lint && npm run build
 | `npm run lint` | 오류·경고 없이 exit 0 |
 | `npx @seed-design/cli@latest compat` | 커밋된 SEED 스니펫 ↔ 설치 패키지 호환성 |
 
-⚠️ **빌드 통과만으로 화면 렌더를 검증할 수 없다.** `/mockup/*`·`/prototype` 은 `ClientOnly` 로 감싸 클라이언트에서 렌더되므로 **SSG HTML 이 비어 있는 게 정상이다.** UI 를 바꿨으면 `npm run start` 로 실제 화면을 본다.
+[주의] **빌드 통과만으로 화면 렌더를 검증할 수 없다.** `/mockup/*`·`/prototype` 은 `ClientOnly` 로 감싸 클라이언트에서 렌더되므로 **SSG HTML 이 비어 있는 게 정상이다.** UI 를 바꿨으면 `npm run start` 로 실제 화면을 본다.
 
 ## TypeScript 설정 함정
 
 `tsconfig.json` 이 `paths` 로 `@/*`·`seed-design/*` 별칭을 건다. `src/` 전체, 스니펫 `seed-design/ui/*`, 화면 정본 `bundle.tsx` 까지 전부 TS 다.
 
-- **⚠️ TS 7 로 올리지 마라.** Next 가 `does not provide the compiler API required` 로 빌드를 거부한다(네이티브 Go 포팅판이라 컴파일러 API 미제공). `package.json` 의 버전 범위를 넓히지 마라
-- **⚠️ `baseUrl` 을 넣지 마라.** TS 6 에서 deprecated 오류가 나며, **이 오류가 `tsc --noEmit` 의 파일 검사 전체를 조용히 건너뛰게 만든다.** `paths` 는 tsconfig 기준 상대경로로 쓴다
+- **[주의] TS 7 로 올리지 마라.** Next 가 `does not provide the compiler API required` 로 빌드를 거부한다(네이티브 Go 포팅판이라 컴파일러 API 미제공). `package.json` 의 버전 범위를 넓히지 마라
+- **[주의] `baseUrl` 을 넣지 마라.** TS 6 에서 deprecated 오류가 나며, **이 오류가 `tsc --noEmit` 의 파일 검사 전체를 조용히 건너뛰게 만든다.** `paths` 는 tsconfig 기준 상대경로로 쓴다
 - **`jsconfig.json` 을 두지 마라.** tsconfig 와 공존하면 Next 가 tsconfig 만 읽는다
 - 새 파일도 TS 로 만든다. `any` 금지, 객체 형태는 `export interface`, interface 로 표현하기 어려운 형태(튜플 등)만 `type` 별칭
 

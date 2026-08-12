@@ -41,7 +41,7 @@ client는 `tool/seed_tokens/vendor/`에 동봉한 SEED 원본에서 Dart 토큰�
 
 **기준은 버전 문자열이 아니라 토큰 값이다.** 버전이 달라도 값이 같으면 화면은 갈라지지 않는다.
 
-**⚠️ 브랜드 축은 양쪽 다 SEED 원본에서 갈라져 있다(2026-08-02).** mockup은 `layout.tsx`의 `BRAND` 블록으로, client는 `lib/design/tokens/brand_overrides.dart`의 `SeedBrandColors`로 각각 청색을 덮는다(아래 "브랜드색 - 확정" 절). **두 저장소의 값은 서로 일치한다.** 다만 아래 `diff`는 SEED 원본끼리 비교하므로 이 재정의를 **잡아내지 못한다.** 브랜드 값을 바꿀 때는 두 곳을 손으로 함께 고쳐야 하고, 기계가 어긋남을 알려주지 않는다.
+**[주의] 브랜드 축은 양쪽 다 SEED 원본에서 갈라져 있다(2026-08-02).** mockup은 `layout.tsx`의 `BRAND` 블록으로, client는 `lib/design/tokens/brand_overrides.dart`의 `SeedBrandColors`로 각각 청색을 덮는다(아래 "브랜드색 - 확정" 절). **두 저장소의 값은 서로 일치한다.** 다만 아래 `diff`는 SEED 원본끼리 비교하므로 이 재정의를 **잡아내지 못한다.** 브랜드 값을 바꿀 때는 두 곳을 손으로 함께 고쳐야 하고, 기계가 어긋남을 알려주지 않는다.
 
 ```sh
 # 핀 확인
@@ -89,7 +89,7 @@ npx @seed-design/cli@latest compat
 
 llms.txt는 clone·MCP 없이 URL만으로 읽을 수 있다.
 
-⚠️ **`llms.txt`는 하나가 아니고, 네임스페이스가 둘이다.** 전체 지도는 `../docs/협업규칙.md`의 "당근 SEED 를 확인하는 법" 절.
+[주의] **`llms.txt`는 하나가 아니고, 네임스페이스가 둘이다.** 전체 지도는 `../docs/협업규칙.md`의 "당근 SEED 를 확인하는 법" 절.
 
 ```
 인덱스     /llms.txt · /<섹션>/llms.txt          ← 1차에서 끝난다 (2차 인덱스는 없다)
@@ -107,7 +107,7 @@ llms.txt는 clone·MCP 없이 URL만으로 읽을 수 있다.
 
 **경로를 추측하지 마라.** `/foundations/design-token/llms.txt` 같은 2차 인덱스는 없다(2026-08-04 전수 확인). 인덱스를 타고 내려가면 문서 213개가 전부 링크돼 있다.
 
-⚠️ **404가 59KB짜리 SPA HTML을 돌려준다.** 응답이 비어 있지 않다고 성공으로 보면 안 되고 **HTTP 상태 코드를 봐야 한다.**
+[주의] **404가 59KB짜리 SPA HTML을 돌려준다.** 응답이 비어 있지 않다고 성공으로 보면 안 되고 **HTTP 상태 코드를 봐야 한다.**
 
 **슬러그는 컴포넌트 이름과 다를 수 있다.** `action-button`은 그대로지만 `text-field`는 존재하지 않고 `text-field-input`·`text-field-textarea`로 나뉜다. 추측하지 말고 인덱스에서 확인하라.
 

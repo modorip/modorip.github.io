@@ -6,7 +6,7 @@ export const metadata: Metadata = {
   description: '모두립이 수집하는 개인정보와 그 처리 방침',
 };
 
-/// ⚠️ **여기 적은 것은 전부 실제로 구현돼 있어야 한다.**
+/// [주의] **여기 적은 것은 전부 실제로 구현돼 있어야 한다.**
 ///
 /// 처리방침에 없는 기능을 적으면 지키지 못하는 약속이 된다. 그래서 탈퇴
 /// 조항을 넣지 않았다 - server 에 `WITHDRAWN` 상태가 아직 없다(결함 C3).
@@ -83,7 +83,7 @@ export default function PrivacyPage() {
           서비스 안의 <strong>계정 삭제</strong>로 언제든 요청하실 수 있습니다.
         </p>
         <p>
-          🔴 <strong>계정을 삭제하면 되돌릴 수 없습니다.</strong> 아래와 같이 처리합니다.
+          [중요] <strong>계정을 삭제하면 되돌릴 수 없습니다.</strong> 아래와 같이 처리합니다.
         </p>
         <Table
           head={['대상', '처리']}

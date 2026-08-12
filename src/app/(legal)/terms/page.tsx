@@ -7,7 +7,7 @@ export const metadata: Metadata = {
   description: '모두립 서비스 이용약관',
 };
 
-/// ⚠️ **여기 적은 것은 전부 실제로 그렇게 운영돼야 한다.**
+/// [주의] **여기 적은 것은 전부 실제로 그렇게 운영돼야 한다.**
 ///
 /// 지키지 못할 조항을 넣으면 약관 자체가 위험해진다. 결제·환불 조항이 없는
 /// 이유가 그것이다 — 결제 기능이 없다.
@@ -93,7 +93,7 @@ export default function TermsPage() {
           </Link>
           에 적어 두었습니다.
         </p>
-        <p style={legal.note}>🔴 해지하면 되돌릴 수 없습니다.</p>
+        <p style={legal.note}>[중요] 해지하면 되돌릴 수 없습니다.</p>
       </Section>
 
       <Section title="제8조 (책임의 한계)" emphasis>
