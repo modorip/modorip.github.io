@@ -10,7 +10,7 @@ export const metadata: Metadata = {
 /// [주의] **여기 적은 것은 전부 실제로 그렇게 운영돼야 한다.**
 ///
 /// 지키지 못할 조항을 넣으면 약관 자체가 위험해진다. 결제·환불 조항이 없는
-/// 이유가 그것이다 — 결제 기능이 없다.
+/// 이유가 그것이다. 결제 기능이 없다.
 const EFFECTIVE = '2026년 8월 10일';
 const CONTACT = 'gdpark.dev@gmail.com';
 

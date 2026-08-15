@@ -3,7 +3,7 @@ import Link from 'next/link';
 import { legal } from '@/components/legal';
 
 export const metadata: Metadata = {
-  title: '모두립 — 발로 채우는 여행 도감',
+  title: '모두립 - 발로 채우는 여행 도감',
   description:
     'GPS 로 관광자원을 발견해 17개 광역 도감을 채웁니다. 위치는 기기 안에서만 쓰입니다.',
 };
