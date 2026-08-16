@@ -13,7 +13,7 @@ export const metadata: Metadata = {
 /// 대신 문의로 삭제를 요청하는 실제 경로를 적었다.
 ///
 /// 기능이 붙으면 이 문서와 시행일을 함께 고친다.
-const EFFECTIVE = '2026년 8월 10일';
+const EFFECTIVE = '2026년 8월 24일';
 const CONTACT = 'gdpark.dev@gmail.com';
 
 export default function PrivacyPage() {
@@ -28,6 +28,10 @@ export default function PrivacyPage() {
 
       <Section title="1. 수집하는 개인정보 항목">
         <p>서비스는 아래 항목을 수집합니다. 주민등록번호는 어떤 경우에도 수집하지 않습니다.</p>
+        <p>
+          이용자가 관광자원을 발견하면 그 자원의 <strong>발견 카드</strong>가 만들어집니다.
+          카드에는 이용자가 직접 <strong>노트(글)와 사진</strong>을 남길 수 있습니다.
+        </p>
         <Table
           head={['구분', '항목', '수집 시점']}
           rows={[
@@ -35,7 +39,7 @@ export default function PrivacyPage() {
             ['필수', '소셜 계정 식별자, 로그인 제공자 이름', '소셜 로그인 시'],
             ['필수', '탐험가 이름(닉네임)', '이용자가 직접 입력하거나 무작위로 생성'],
             ['선택', '발견 기록 — 관광자원 식별자, 지역·계열 구분, 발견 시각', '이용자가 발견을 기록할 때'],
-            ['선택', '후기 글, 후기 사진', '이용자가 직접 작성·첨부할 때'],
+            ['선택', '카드 노트(글), 카드 사진', '이용자가 직접 작성·첨부할 때'],
           ]}
         />
         <p style={legal.note}>
@@ -71,13 +75,35 @@ export default function PrivacyPage() {
             ['회원 식별 및 로그인 유지', '소셜 계정 식별자, 로그인 제공자'],
             ['여러 로그인 수단을 한 계정으로 연결', '이메일 주소'],
             ['도감 진행도 제공 및 기록 보관', '발견 기록'],
-            ['이용자 간 활동 표시', '탐험가 이름, 후기 글·사진'],
+            ['이용자 간 활동 표시', '탐험가 이름, 카드 노트와 사진'],
             ['부정 이용 방지 및 이용 제한', '계정 상태'],
           ]}
         />
       </Section>
 
-      <Section title="4. 보유 및 이용 기간과 파기">
+      <Section title="4. 이용자가 남긴 글과 사진의 공개 범위" emphasis>
+        <p>
+          이용자가 발견 카드에 남긴 <strong>노트와 사진은 다른 이용자에게 공개됩니다.</strong>
+          보이는 곳은 <strong>그 관광자원의 상세 화면 한 곳</strong>이며, 함께 표시되는 것은
+          탐험가 이름과 <strong>발견 날짜</strong>입니다.
+        </p>
+        <p>
+          <strong>발견한 시각(몇 시 몇 분)은 다른 이용자에게 표시하지 않습니다.</strong> 날짜
+          단위까지만 보여 줍니다.
+        </p>
+        <p>
+          <strong>발견 기록 자체는 공개되지 않습니다.</strong> 노트를 남기지 않은 발견은 다른
+          이용자에게 전혀 보이지 않으며, 도감과 진행도는 본인만 봅니다.
+        </p>
+        <p>
+          공개를 원하지 않으시면 서비스 안에서 <strong>노트를 삭제</strong>하실 수 있습니다.
+          노트를 지워도 발견 기록과 도감은 그대로 남습니다. 다른 이용자의 부적절한 글은{' '}
+          <strong>신고</strong>할 수 있고, 특정 이용자의 글을 <strong>내 화면에서 숨길</strong>{' '}
+          수도 있습니다.
+        </p>
+      </Section>
+
+      <Section title="5. 보유 및 이용 기간과 파기">
         <p>
           수집한 개인정보는 <strong>이용자가 삭제를 요청할 때까지</strong> 보유합니다.
           서비스 안의 <strong>계정 삭제</strong>로 언제든 요청하실 수 있습니다.
@@ -90,23 +116,23 @@ export default function PrivacyPage() {
           rows={[
             ['이메일 주소, 소셜 계정 식별자', '지체 없이 파기'],
             ['탐험가 이름', '개인을 알아볼 수 없는 이름으로 대체'],
-            ['후기 사진', '지체 없이 파기'],
-            ['후기 글', '남습니다 — 작성자는 익명으로 표시됩니다'],
+            ['카드 사진', '지체 없이 파기'],
+            ['카드 노트', '남습니다 — 작성자는 익명으로 표시됩니다'],
             ['발견 기록(관광자원·시각)', '남습니다 — 개인을 식별할 수 없는 통계로만'],
           ]}
         />
         <p style={legal.note}>
-          후기 글을 남기는 것은 다른 이용자가 보던 내용이 사라지지 않게 하기 위해서입니다.
+          노트를 남기는 것은 다른 이용자가 보던 내용이 사라지지 않게 하기 위해서입니다.
           작성자를 알아볼 수 있는 정보는 함께 파기되므로 누가 썼는지 확인할 수 없습니다.
           사진은 촬영 장소나 인물이 담길 수 있어 글과 달리 파기합니다.
         </p>
       </Section>
 
-      <Section title="5. 개인정보의 제3자 제공">
+      <Section title="6. 개인정보의 제3자 제공">
         <p>운영자는 이용자의 개인정보를 제3자에게 제공하지 않습니다.</p>
       </Section>
 
-      <Section title="6. 개인정보 처리의 위탁">
+      <Section title="7. 개인정보 처리의 위탁">
         <p>서비스 운영을 위해 아래와 같이 처리를 위탁하고 있습니다.</p>
         <Table
           head={['수탁자', '위탁 업무', '데이터 보관 위치']}
@@ -121,7 +147,7 @@ export default function PrivacyPage() {
         </p>
       </Section>
 
-      <Section title="7. 이용자의 권리와 행사 방법">
+      <Section title="8. 이용자의 권리와 행사 방법">
         <p>
           이용자는 언제든지 자신의 개인정보에 대해 <strong>열람 · 정정 · 삭제 · 처리정지</strong>를
           요구할 수 있습니다. 아래 문의처로 요청하시면 지체 없이 조치합니다.
@@ -132,14 +158,14 @@ export default function PrivacyPage() {
         </p>
       </Section>
 
-      <Section title="8. 개인정보의 파기">
+      <Section title="9. 개인정보의 파기">
         <p>
           보유 기간이 지나거나 처리 목적이 달성된 개인정보는 지체 없이 파기합니다. 전자적
           파일은 복구할 수 없는 방법으로 삭제합니다.
         </p>
       </Section>
 
-      <Section title="9. 안전성 확보 조치">
+      <Section title="10. 안전성 확보 조치">
         <ul style={legal.list}>
           <li>이용자와 서버 사이의 모든 통신을 HTTPS 로 암호화합니다.</li>
           <li>로그인 정보는 단말기의 보안 저장소(iOS 키체인 · Android 키스토어)에 보관합니다.</li>
@@ -148,7 +174,7 @@ export default function PrivacyPage() {
         </ul>
       </Section>
 
-      <Section title="10. 개인정보 보호책임자">
+      <Section title="11. 개인정보 보호책임자">
         <Table
           head={['구분', '내용']}
           rows={[
@@ -162,7 +188,7 @@ export default function PrivacyPage() {
         </p>
       </Section>
 
-      <Section title="11. 권익침해 구제 방법">
+      <Section title="12. 권익침해 구제 방법">
         <p>
           개인정보 침해로 도움이 필요하시면 아래 기관에 문의하실 수 있습니다.
         </p>
@@ -174,7 +200,7 @@ export default function PrivacyPage() {
         </ul>
       </Section>
 
-      <Section title="12. 방침의 변경">
+      <Section title="13. 방침의 변경">
         <p>
           이 방침을 변경할 때에는 시행일 최소 7일 전에 이 페이지를 통해 공지합니다. 이용자에게
           불리한 변경일 경우 30일 전에 공지합니다.
