@@ -68,8 +68,9 @@ export default function TermsPage() {
           서비스를 제공하고 표시하는 데 필요한 범위에서만 이를 이용합니다.
         </p>
         <p>
-          <strong>노트와 사진은 다른 이용자에게 공개됩니다.</strong> 보이는 곳은 그 관광자원의
-          상세 화면이며, 공개 범위와 삭제 방법은{' '}
+          <strong>노트와 사진은 기본적으로 다른 이용자에게 공개되며, 카드마다
+          &ldquo;나만 보기&rdquo;를 고를 수 있습니다.</strong> 보이는 곳은 그 관광자원의
+          상세 화면과 광장이며, 공개 범위와 삭제 방법은{' '}
           <Link href="/privacy" style={{ color: 'var(--seed-color-fg-brand)' }}>
             개인정보처리방침
           </Link>
