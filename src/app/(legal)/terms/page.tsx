@@ -101,8 +101,8 @@ export default function TermsPage() {
           있습니다.
         </p>
         <p>
-          회원 정보와 남기신 사진은 지체 없이 파기합니다. <strong>노트는 다른 이용자를
-          위해 남으며 작성자는 익명으로 표시됩니다.</strong> 자세한 내용은{' '}
+          <strong>회원 정보와 남기신 노트·사진, 광장에 남은 활동, 등록하신 코스를 지체 없이
+          파기합니다.</strong> 발견 기록은 통계 목적으로만 남습니다. 자세한 내용은{' '}
           <Link href="/privacy" style={{ color: 'var(--seed-color-fg-brand)' }}>
             개인정보처리방침
           </Link>
