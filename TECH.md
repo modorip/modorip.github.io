@@ -72,7 +72,7 @@ npx tsc --noEmit && npm run lint && npm run build
 | 02 | `home` | 홈 | home |
 | 03 | `discover` | 발견 (GPS 지도, 9단계 줌) | discover |
 | 04 | `discover-success` | 발견 성공 (3-stage 오버레이) | discover |
-| 04B | `review-create` | 후기 남기기 (사진 1장 + 글) | discover |
+| 04B | `review-create` | 노트 남기기 (사진 1장 + 글) | discover |
 | 05 | `dex` | 도감 전국 (지도↔카드 토글) | dex |
 | 06 | `dex-province` | 도감 광역 | dex |
 | 06C | `dex-sigun-picker` | 도감 시·군 피커 | dex |
@@ -85,7 +85,7 @@ npx tsc --noEmit && npm run lint && npm run build
 | 10 | `titles` | 칭호 (5티어) | profile |
 | 11 | `profile` | 프로필 | profile |
 
-`review-create`(04B)는 발견 성공 오버레이 **위에 한 겹 더** 뜬다. 스택에 넣지 않는다(넣으면 뒤의 오버레이가 사라지고 닫을 때 3-stage 애니메이션이 처음부터 다시 돈다). 사진·후기는 `modorip:photo:{placeId}` · `modorip:review:{placeId}` 로 **장소당 한 칸씩만** 저장하며, 사진 한 장이 도감 카드·장소 상세 헤로·3D 카드의 대표 이미지를 겸한다.
+`review-create`(04B)는 발견 성공 오버레이 **위에 한 겹 더** 뜬다. 스택에 넣지 않는다(넣으면 뒤의 오버레이가 사라지고 닫을 때 3-stage 애니메이션이 처음부터 다시 돈다). 사진·노트는 `modorip:photo:{placeId}` · `modorip:review:{placeId}` 로 **장소당 한 칸씩만** 저장하며, 사진 한 장이 도감 카드·장소 상세 헤로·3D 카드의 대표 이미지를 겸한다.
 
 ## 재사용 자산 - `bundle.tsx` 도메인 데이터가 최고 가치
 

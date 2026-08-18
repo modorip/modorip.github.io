@@ -11,7 +11,11 @@ export const metadata: Metadata = {
 ///
 /// 지키지 못할 조항을 넣으면 약관 자체가 위험해진다. 결제·환불 조항이 없는
 /// 이유가 그것이다. 결제 기능이 없다.
-const EFFECTIVE = '2026년 8월 10일';
+///
+/// [주의] **시행일은 제9조의 "최소 7일 전 공지" 에서 역산한다.** 이 페이지가
+/// 올라가는 날이 곧 공지일이라, 머지가 늦어지면 날짜가 모자라게 된다.
+/// 2026-08-16 에 08-24 로 잡았다가 08-18 에 08-26 으로 옮겼다(그날 기준 8일).
+const EFFECTIVE = '2026년 8월 26일';
 const CONTACT = 'gdpark.dev@gmail.com';
 
 export default function TermsPage() {
@@ -36,7 +40,7 @@ export default function TermsPage() {
         <ul style={legal.list}>
           <li>관광자원 정보의 조회</li>
           <li>이용자가 방문한 관광자원의 기록과 도감 형태의 표시</li>
-          <li>이용자가 작성한 후기·사진의 저장</li>
+          <li>이용자가 발견 카드에 남긴 노트와 사진의 저장 및 다른 이용자에게의 표시</li>
           <li>기록에 따른 칭호 등 성취 표시</li>
         </ul>
         <p style={legal.note}>
@@ -64,10 +68,25 @@ export default function TermsPage() {
 
       <Section title="제5조 (게시물의 권리와 관리)">
         <p>
-          이용자가 작성한 후기·사진의 <strong>저작권은 이용자에게 있습니다.</strong> 운영자는
+          이용자가 발견 카드에 남긴 노트와 사진의 <strong>저작권은 이용자에게 있습니다.</strong> 운영자는
           서비스를 제공하고 표시하는 데 필요한 범위에서만 이를 이용합니다.
         </p>
+        <p>
+          <strong>노트와 사진은 기본적으로 다른 이용자에게 공개되며, 카드마다
+          &ldquo;나만 보기&rdquo;를 고를 수 있습니다.</strong> 보이는 곳은 그 관광자원의
+          상세 화면과 광장이며, 공개 범위와 삭제 방법은{' '}
+          <Link href="/privacy" style={{ color: 'var(--seed-color-fg-brand)' }}>
+            개인정보처리방침
+          </Link>
+          에 적어 두었습니다.
+        </p>
         <p>다만 제4조를 위반한 게시물은 운영자가 삭제하거나 노출을 제한할 수 있습니다.</p>
+        <p>
+          이용자는 다른 이용자의 게시물을 <strong>신고</strong>할 수 있고, 특정 이용자의
+          게시물을 <strong>자신의 화면에서 숨길</strong> 수 있습니다. 신고가 일정 건수 이상
+          쌓이면 운영자 확인 전에 노출이 먼저 제한될 수 있으며, 확인 결과 문제가 없으면
+          다시 표시합니다.
+        </p>
       </Section>
 
       <Section title="제6조 (서비스의 변경과 중단)">
@@ -86,8 +105,8 @@ export default function TermsPage() {
           있습니다.
         </p>
         <p>
-          회원 정보와 작성하신 사진은 지체 없이 파기합니다. <strong>후기 글은 다른 이용자를
-          위해 남으며 작성자는 익명으로 표시됩니다.</strong> 자세한 내용은{' '}
+          <strong>회원 정보와 남기신 노트·사진, 광장에 남은 활동, 등록하신 코스를 지체 없이
+          파기합니다.</strong> 발견 기록은 통계 목적으로만 남습니다. 자세한 내용은{' '}
           <Link href="/privacy" style={{ color: 'var(--seed-color-fg-brand)' }}>
             개인정보처리방침
           </Link>
