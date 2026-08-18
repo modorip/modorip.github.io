@@ -135,7 +135,7 @@ action-button
 ```text
 react/component/action-buton: 문서를 찾을 수 없어요.
 
-💡 이것을 의미했나요?
+[참고] 이것을 의미했나요?
    - react/components/action-button
 ```
 

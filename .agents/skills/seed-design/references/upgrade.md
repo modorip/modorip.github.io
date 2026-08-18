@@ -65,16 +65,16 @@
 ```
 
 **질문 원칙:**
-- 추측하지 말 것 — 잘못된 패키지/버전으로 진행하면 무의미한 결과가 나옴
-- 한 번에 하나씩 — 패키지와 버전을 동시에 묻지 말고 순서대로 확인
-- 프로젝트 환경이 있으면 질문 최소화 — package.json에서 읽을 수 있는 정보는 직접 확인
+- 추측하지 말 것: 잘못된 패키지/버전으로 진행하면 무의미한 결과가 나옴
+- 한 번에 하나씩: 패키지와 버전을 동시에 묻지 말고 순서대로 확인
+- 프로젝트 환경이 있으면 질문 최소화: package.json에서 읽을 수 있는 정보는 직접 확인
 
 ### Step 2: Changelog fetch
 
 `docs --raw` 명령으로 changelog를 가져옵니다. Step 1에서 결정된 패키지와 버전에 따라 적절한 경로를 사용합니다.
 
 ```bash
-# 전체 changelog (모든 패키지) — 패키지 목록 파악에도 사용
+# 전체 changelog (모든 패키지). 패키지 목록 파악에도 사용
 npx @seed-design/cli@latest docs react/updates/changelog --raw
 
 # 특정 패키지의 버전 인덱스 (사용 가능한 버전 목록)
@@ -98,7 +98,7 @@ llms.txt 엔드포인트는 "since version → latest" 형태로 응답합니다
 
 changelog 마크다운 형식:
 ```md
-# @seed-design/react — Changes since {version}
+# @seed-design/react - Changes since {version}
 
 ## {latest-version}
 ### Patch Changes
@@ -131,10 +131,10 @@ changelog에서 언급된 컴포넌트/API를 기준으로 프로젝트 코드�
 ## 업그레이드 진단: @seed-design/react {현재버전} → {최신버전}
 
 ### 수정 필요
-- [변경 내용]: [영향받는 파일과 라인] — [수정 방법]
+- [변경 내용]: [영향받는 파일과 라인], [수정 방법]
 
 ### 확인 권장
-- [변경 내용]: [관련 파일] — [확인 포인트]
+- [변경 내용]: [관련 파일], [확인 포인트]
 
 ### 영향 없음
 - [변경 내용]: 프로젝트에서 사용하지 않음
