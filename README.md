@@ -13,7 +13,7 @@
 **모두립**은 GPS 로 관광자원을 발견해 전국 도감을 채우는 여행 앱입니다.
 2026 관광데이터 활용 공모전 출품작이며, 팀 **MILLO** 가 만듭니다.
 
-문의 — gdpark.dev@gmail.com
+문의: gdpark.dev@gmail.com
 
 ---
 

@@ -73,8 +73,8 @@ export default function LocationTermsPage() {
           <strong>단말기 설정에서 언제든 철회할 수 있습니다.</strong>
         </p>
         <ul style={legal.list}>
-          <li>iOS — 설정 &gt; 개인정보 보호 및 보안 &gt; 위치 서비스 &gt; 모두립</li>
-          <li>Android — 설정 &gt; 애플리케이션 &gt; 모두립 &gt; 권한 &gt; 위치</li>
+          <li>iOS: 설정 &gt; 개인정보 보호 및 보안 &gt; 위치 서비스 &gt; 모두립</li>
+          <li>Android: 설정 &gt; 애플리케이션 &gt; 모두립 &gt; 권한 &gt; 위치</li>
         </ul>
         <p>
           철회하면 지도에 현재 위치가 표시되지 않고 발견 기록을 남길 수 없습니다. 도감 조회 등
