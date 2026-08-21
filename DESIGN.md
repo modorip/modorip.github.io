@@ -123,11 +123,12 @@ MCP를 쓰면 더 빠르다(`claude mcp add seed-docs -- npx -y @seed-design/doc
 - 새 UI가 필요하면 위 조사 순서로 SEED에 있는지 먼저 확인하고, 없을 때만 `Box`로 조립한다. 조립할 때도 색·간격·라운드는 SEED 토큰만 참조한다.
 
 ```sh
-# 검증 - 기대값은 0 / 1 / 0 / 1 / 2 / 8 이다
+# 검증 - 기대값은 0 / 0 / 0 / 2 / 8 이다 (raw 수치는 앱 화면 삽화만 예외)
 find src public -name '*.css'                                          # 0
-grep -rho 'var(--[a-z0-9_-]*' src/ | grep -v -- '--seed-'              # 1 (Mermaid.tsx 주석 오탐)
+grep -rho 'var(--[a-z0-9_-]*' src/ | grep -v -- '--seed-'              # 0 (Mermaid.tsx 는 admin 으로 갔다)
 grep -rn 'className=' src/                                             # 0
-grep -rhoE '(fontSize|gap|padding|margin)[A-Za-z]*: [1-9][0-9]*' src/  # 1 (온보딩 아트 marginTop: 90)
+grep -rhoE '(fontSize|gap|padding|margin)[A-Za-z]*: [1-9][0-9]*' src/ \
+  --include='*.tsx' | wc -l   # landing-app-screen.tsx 를 빼면 0
 grep -o '<style>' src/app/layout.tsx | wc -l                           # 2 (RESET · BRAND)
 grep -c -- '--seed-color-.*brand.*:#' src/app/layout.tsx               # 8 (재정의는 브랜드 8개뿐)
 ```
@@ -149,7 +150,14 @@ grep -c -- '--seed-color-.*brand.*:#' src/app/layout.tsx               # 8 (재�
 grep -ohE '^[[:space:]]*--seed-(font-size|radius|dimension-x)[a-z0-9_-]*:[^;]*' node_modules/@seed-design/css/all.css | sort -u
 ```
 
-토큰 대응이 없어 raw 값으로 남긴 곳은 4개뿐이다: `MockFrame` 베젤 라운드 2개, 온보딩 아트의 높이·상단 여백·라운드. 늘리지 마라.
+토큰 대응이 없어 raw 값으로 남긴 곳은 `MockFrame` 베젤 라운드 2개와 온보딩 아트의
+높이·상단 여백·라운드였다. 늘리지 마라.
+
+[주의] **`src/components/landing-app-screen.tsx` 는 통째로 예외다.** 랜딩 히어로에 들어가는
+앱 화면 삽화이고, 402x874 라는 **기기 캔버스 안의 수치**를 `scale` 로 줄여 그린다. 거기 쓰이는
+9~10px 글자는 `t1`(11px) 아래라 토큰이 없고, 간격은 랜딩의 간격이 아니라 앱 화면의 간격이라
+`--seed-dimension-x*` 를 넣으면 축척이 어긋난다. **색은 예외가 아니다** - 그 파일도 색은
+SEED 토큰과 4계열 식별색만 쓴다.
 
 ### SEED가 안 만드는 축 - 버리거나 조립한 것
 

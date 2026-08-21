@@ -46,9 +46,9 @@ rg -n '\x{2014}' --glob '!node_modules' --glob '!.next'
 제출해 심사자와 이용자가 본다.
 
 - **`src/app/(legal)/` 아래에 둔다.** 라우트 그룹이라 URL 에는 안 나타난다
-- [주의] **목업 사이드바가 붙지 않게 레이아웃을 나눴다.** 루트 레이아웃에는 html·body·
-  SEED 설정만 있고, 셸은 `(mockup)/layout.tsx` 에 있다. **루트로 되돌리지 마라.**
-  공개 페이지에 내부 설계 화면으로 가는 길이 열린다
+- [주의] **셸을 라우트 그룹별로 나눴다.** 루트 레이아웃에는 html·body·SEED 설정만
+  있고, 읽기 폭 고정은 `(legal)/layout.tsx`, 전면 배경으로 흐르는 랜딩(`/`)은
+  `(landing)/layout.tsx` 가 잡는다. **루트로 합치지 마라** - 폭도 배경도 다르다
 - [중요] **처리방침에 없는 기능을 적지 마라.** 지키지 못하는 약속이 된다. 기능이
   붙으면 문서와 시행일을 함께 고친다
   - [정정 2026-08-18] 여기 "탈퇴 조항을 넣지 않은 이유가 그것이다(`WITHDRAWN` 이
@@ -126,16 +126,19 @@ git switch -c feature/<slug>
 
 client 착수 전 실기기 검증 항목: ① **카카오맵 SDK + 현재 위치 - 핀 300~500개에서 팬·줌이 버티는가**(수도권 밀집 구간이 그 규모다. 서드파티 래퍼 선정 기준이기도 하다) ② 포그라운드·백그라운드 위치 권한과 지오펜스 수명주기 ③ Supabase 카카오·구글·애플 로그인과 딥링크 ④ SEED 토큰을 옮긴 대표 화면 1개(텍스트 확대·스크린 리더).
 
-## 값이 두 저장소에 손으로 복제된다
+## 값이 세 저장소에 손으로 복제된다
 
 [주의] **어긋나도 기계가 알려주지 않는다.**
 
-| 값 | mockup | client |
+| 값 | 정본 | 사본 |
 |---|---|---|
-| 브랜드 8토큰 | `src/app/layout.tsx` 의 `BRAND` 블록 | `lib/design/tokens/brand_overrides.dart` |
-| 4계열 · 17광역 식별색 | `bundle.tsx` 의 `CATEGORY_GROUPS`·`REGIONS` | `lib/features/catalog/data/catalog_reference_data.dart` |
+| 브랜드 8토큰 | 여기 `src/app/layout.tsx` 의 `BRAND` 블록 | client `lib/design/tokens/brand_overrides.dart` |
+| 4계열 · 17광역 식별색 | admin `src/design/bundle.tsx` 의 `CATEGORY_GROUPS`·`REGIONS` | client `lib/features/catalog/data/catalog_reference_data.dart` · 여기 `src/components/landing.tsx` 의 `CATEGORY_GROUPS`(4계열만) |
 
-생성 파이프라인이 SEED 원본만 읽으므로 **어느 쪽도 자동으로 따라오지 않는다. 바꾸면 두 곳을 함께 고쳐야 한다.**
+생성 파이프라인이 SEED 원본만 읽으므로 **어느 쪽도 자동으로 따라오지 않는다. 바꾸면 세 곳을 함께 고쳐야 한다.**
+
+[주의] **`bundle.tsx` 는 이제 이 저장소에 없다.** 화면 목업과 함께 `admin` 으로 갔다(2026-08-08).
+랜딩이 4계열 색을 쓰면서 세 번째 사본이 생겼고, 17광역은 랜딩에 없다.
 
 - **[주의] 21개 2차 카테고리는 client 로 이식되지 않았다(2026-08-04, 확정).** `bundle.tsx` 의 `CATEGORIES` 는 화면 설계를 위해 지어낸 축이고 **KTO 데이터가 그 축을 지탱하지 않는다.** 서버는 신분류 중분류 `lclsSystm2` 23개를 쓰며 양방향으로 어긋난다. `계곡·폭포` 와 `호수·강` 은 KTO 에서 둘 다 `NA02` 라 나눌 수 없고, 반대로 문화는 KTO 가 11개로 더 잘게 쪼갠다. 근거와 전체 대조는 **client ADR-0010**
   - **여기 `CATEGORIES` 는 그대로 둔다.** 목업은 제출물이 아니라 화면 설계 레퍼런스이고, 칩 레이아웃·아이콘 선택은 여전히 참고 자산이다

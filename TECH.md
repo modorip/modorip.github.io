@@ -50,9 +50,13 @@ npx tsc --noEmit && npm run lint && npm run build
 
 ## 라우트
 
+[주의] **아래 표는 2026-08-08 저장소 재편 전에 쓰였다.** 목업·설계 라우트는 `admin` 으로
+갔고 여기 남은 것은 `/` · `/privacy` · `/terms` · `/support` 넷이다. 실제 목록은
+`npm run build` 의 Route 출력이 사실이다.
+
 | URL | 목적 |
 |---|---|
-| `/` | 인덱스 (4카드 + 16화면 링크) |
+| `/` | 랜딩 (`src/app/(landing)/`). 세로 스크롤 소개 페이지 |
 | `/storyboard` | 6 시나리오 × 단계별 프리뷰 |
 | `/mockup`, `/mockup/[id]` | 고충실도 썸네일 / 풀스크린 (16개 SSG) |
 | `/prototype` | `MockApp` 스택 내비게이션 |
