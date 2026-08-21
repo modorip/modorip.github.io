@@ -1,6 +1,8 @@
 import type { Metadata } from 'next';
 import type { ReactNode } from 'react';
+import Image from 'next/image';
 import Link from 'next/link';
+import appIcon from '@/app/icon.png';
 import { BrandChip, Eyebrow, MiddotList, Section, landing } from '@/components/landing';
 import { CollectStages, CollectionPreview } from '@/components/landing-cards';
 import {
@@ -12,7 +14,6 @@ import {
   TitleRow,
   type Step,
 } from '@/components/landing-dex';
-import { Glyph } from '@/components/landing-glyph';
 import { AppScreen } from '@/components/landing-app-screen';
 import { PhoneCaption, PhoneFrame } from '@/components/landing-phone';
 import { BeforeAfter, ContrastColumns } from '@/components/landing-story';
@@ -299,15 +300,15 @@ export default function LandingPage() {
           <p
             style={{
               ...landing.center,
-              width: 48,
-              height: 48,
+              width: 56,
+              height: 56,
               margin: '0 auto var(--seed-dimension-x6)',
-              borderRadius: 'var(--seed-radius-r3_5)',
-              background: 'var(--seed-color-bg-brand-solid)',
-              color: 'var(--seed-color-fg-neutral-inverted)',
+              borderRadius: 'var(--seed-radius-r4)',
+              background: 'var(--seed-color-bg-layer-default)',
+              boxShadow: '0 4px 16px rgba(2, 102, 251, 0.18)',
             }}
           >
-            <Glyph name="star" size={24} />
+            <Image src={appIcon} alt="" width={40} height={40} />
           </p>
           <h2 style={{ ...landing.h2, marginBottom: 'var(--seed-dimension-x3)' }}>
             다음 여행에서

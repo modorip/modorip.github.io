@@ -8,7 +8,8 @@
 // `bundle.tsx` 의 `CATEGORY_GROUPS`, 두 번째 사본은 client
 // `catalog_reference_data.dart`, 세 번째가 여기다. 바꾸면 셋을 함께 고친다.
 import type { CSSProperties, ReactNode } from 'react';
-import { Glyph } from '@/components/landing-glyph';
+import Image from 'next/image';
+import appIcon from '@/app/icon.png';
 
 const BACKGROUNDS = {
   default: 'var(--seed-color-bg-layer-default)',
@@ -219,18 +220,7 @@ export function BrandChip() {
         margin: '0 0 var(--seed-dimension-x6)',
       }}
     >
-      <span
-        style={{
-          ...landing.center,
-          width: 28,
-          height: 28,
-          borderRadius: 'var(--seed-radius-r2)',
-          background: 'var(--seed-color-bg-brand-solid)',
-          color: 'var(--seed-color-fg-neutral-inverted)',
-        }}
-      >
-        <Glyph name="star" size={16} />
-      </span>
+      <Image src={appIcon} alt="" width={28} height={28} style={{ borderRadius: 8 }} />
       <span
         style={{
           fontSize: 'var(--seed-font-size-t4)',
